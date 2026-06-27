@@ -1,0 +1,79 @@
+body{
+
+font-family:'Poppins',sans-serif;
+
+background:#020617;
+
+color:white;
+
+}
+
+.hero{
+
+height:90vh;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+text-align:center;
+
+}
+
+.hero h1{
+
+font-size:65px;
+
+font-weight:700;
+
+margin-bottom:20px;
+
+}
+
+.hero p{
+
+font-size:22px;
+
+color:#94a3b8;
+
+margin-bottom:35px;
+
+}
+
+.btn-primary{
+
+background:#2563EB;
+
+border:none;
+
+padding:14px 35px;
+
+border-radius:10px;
+
+}
+.glass-card{
+    background:rgba(255,255,255,.08);
+    backdrop-filter:blur(20px);
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:20px;
+}
+
+.form-control{
+    background:#0f172a;
+    color:white;
+    border:1px solid #334155;
+    height:50px;
+}
+
+.form-control:focus{
+    background:#0f172a;
+    color:white;
+    border-color:#2563EB;
+    box-shadow:none;
+}
+
+.card{
+    color:white;
+}
