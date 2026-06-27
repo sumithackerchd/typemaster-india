@@ -6,85 +6,93 @@
 
 <div class="container py-5">
 
-<div class="row justify-content-center">
+    <div class="row justify-content-center">
 
-<div class="col-lg-6">
+        <div class="col-lg-6">
 
-<div class="card glass-card">
+            <div class="card glass-card shadow-lg">
 
-<div class="card-body p-5">
+                <div class="card-body p-5">
 
-<h2 class="text-center mb-4">
+                    <h2 class="text-center mb-4">
+                        Create Account
+                    </h2>
 
-Create Account
+                    <!-- Flash Messages -->
 
-</h2>
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category,message in messages %}
+                                <div class="alert alert-{{ category }}">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
 
-<form>
+                    <form method="POST">
 
-<div class="mb-3">
+                        {{ form.hidden_tag() }}
 
-<label>Full Name</label>
+                        <div class="mb-3">
 
-<input class="form-control">
+                            {{ form.full_name.label(class="form-label") }}
 
-</div>
+                            {{ form.full_name(class="form-control") }}
 
-<div class="mb-3">
+                        </div>
 
-<label>Username</label>
+                        <div class="mb-3">
 
-<input class="form-control">
+                            {{ form.username.label(class="form-label") }}
 
-</div>
+                            {{ form.username(class="form-control") }}
 
-<div class="mb-3">
+                        </div>
 
-<label>Email</label>
+                        <div class="mb-3">
 
-<input type="email" class="form-control">
+                            {{ form.email.label(class="form-label") }}
 
-</div>
+                            {{ form.email(class="form-control") }}
 
-<div class="mb-3">
+                        </div>
 
-<label>Mobile</label>
+                        <div class="mb-3">
 
-<input class="form-control">
+                            {{ form.mobile.label(class="form-label") }}
 
-</div>
+                            {{ form.mobile(class="form-control") }}
 
-<div class="mb-3">
+                        </div>
 
-<label>Password</label>
+                        <div class="mb-3">
 
-<input type="password" class="form-control">
+                            {{ form.password.label(class="form-label") }}
 
-</div>
+                            {{ form.password(class="form-control") }}
 
-<div class="mb-4">
+                        </div>
 
-<label>Confirm Password</label>
+                        <div class="mb-4">
 
-<input type="password" class="form-control">
+                            {{ form.confirm_password.label(class="form-label") }}
 
-</div>
+                            {{ form.confirm_password(class="form-control") }}
 
-<button class="btn btn-primary w-100">
+                        </div>
 
-Create Account
+                        {{ form.submit(class="btn btn-primary w-100") }}
 
-</button>
+                    </form>
 
-</form>
+                </div>
 
-</div>
+            </div>
 
-</div>
+        </div>
 
-</div>
-
-</div>
+    </div>
 
 </div>
 

@@ -3,15 +3,21 @@ from flask_login import LoginManager
 from config import Config
 from models import db
 from models.user import User
+from flask_login import LoginManager, login_required
+
+# Blueprints
+from routes.auth import auth
 
 app = Flask(__name__)
 app.config.from_object(Config)
 
+# Database
 db.init_app(app)
 
+# Login Manager
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = "login"
+login_manager.login_view = "auth.login"
 
 
 @login_manager.user_loader
@@ -19,22 +25,17 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 
+# Register Blueprints
+app.register_blueprint(auth)
+
+# Routes
 @app.route("/")
 def home():
     return render_template("index.html")
 
-
-@app.route("/login")
-def login():
-    return render_template("pages/login.html")
-
-
-@app.route("/register")
-def register():
-    return render_template("pages/register.html")
-
-
+#dashboard route
 @app.route("/dashboard")
+@login_required
 def dashboard():
     return render_template("pages/dashboard.html")
 
