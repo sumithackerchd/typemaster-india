@@ -28,12 +28,15 @@ def register():
 
         hashed_password = generate_password_hash(form.password.data)
 
+        is_first_user = User.query.count() == 0
+
         user = User(
             full_name=form.full_name.data,
             username=form.username.data,
             email=form.email.data,
             mobile=form.mobile.data,
-            password=hashed_password
+            password=hashed_password,
+            is_admin=is_first_user
         )
 
         db.session.add(user)
@@ -62,7 +65,7 @@ def login():
 
             flash("Welcome Back!", "success")
 
-            return redirect(url_for("dashboard"))
+            return redirect(url_for("dashboard.dashboard_page"))
 
         flash("Invalid email or password.", "danger")
 

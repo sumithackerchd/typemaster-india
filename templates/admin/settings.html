@@ -1,0 +1,58 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}Admin Settings{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+
+<div class="container py-5">
+
+    <h2 class="mb-4">🔧 Site Settings</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="card shadow">
+
+        <div class="card-body p-4">
+
+            <form method="POST">
+
+                <div class="mb-3">
+                    <label class="form-label">Site Name</label>
+                    <input type="text" class="form-control" name="site_name"
+                           value="{{ settings.site_name }}">
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label">Default Timer (seconds)</label>
+                    <select class="form-select" name="default_timer">
+                        <option value="60" {% if settings.default_timer == 60 %}selected{% endif %}>60</option>
+                        <option value="120" {% if settings.default_timer == 120 %}selected{% endif %}>120</option>
+                        <option value="300" {% if settings.default_timer == 300 %}selected{% endif %}>300</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Save Settings</button>
+
+            </form>
+
+            <p class="text-muted mt-3 mb-0">
+                Last updated: {{ settings.updated_at }}
+            </p>
+
+        </div>
+
+    </div>
+
+    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-light mt-4">← Admin Home</a>
+
+</div>
+
+{% endblock %}

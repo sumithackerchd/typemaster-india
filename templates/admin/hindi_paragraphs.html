@@ -1,0 +1,44 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}Hindi Paragraphs{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+
+<div class="container py-5">
+
+    <h2 class="mb-4">🇮🇳 Hindi Paragraph Manager</h2>
+
+    <div class="mb-4">
+        <label class="form-label">Difficulty</label>
+        <select id="difficultySelect" class="form-select">
+            {% for level in difficulties %}
+            <option value="{{ level }}">{{ level|capitalize }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <textarea id="newParagraph" class="form-control mb-3 hindi-input" rows="3"
+                      placeholder="नया हिंदी पैराग्राफ जोड़ें..."></textarea>
+            <button id="addParagraphBtn" class="btn btn-primary" type="button">Add Paragraph</button>
+        </div>
+    </div>
+
+    <div id="paragraphList" class="paragraph-list"></div>
+
+    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-light mt-4">← Admin Home</a>
+
+</div>
+
+<script>
+    window.PARAGRAPH_ADMIN = {
+        language: "hindi",
+        initialData: {{ paragraphs|tojson }}
+    };
+</script>
+<script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+
+{% endblock %}

@@ -1,22 +1,65 @@
 from datetime import datetime
+
 from flask_login import UserMixin
-from . import db
+
+from models import db
 
 
 class User(UserMixin, db.Model):
 
     __tablename__ = "users"
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
 
-    full_name = db.Column(db.String(100), nullable=False)
+    full_name = db.Column(
+        db.String(100),
+        nullable=False
+    )
 
-    username = db.Column(db.String(50), unique=True, nullable=False)
+    username = db.Column(
+        db.String(50),
+        unique=True,
+        nullable=False
+    )
 
-    email = db.Column(db.String(120), unique=True, nullable=False)
+    email = db.Column(
+        db.String(120),
+        unique=True,
+        nullable=False
+    )
 
-    mobile = db.Column(db.String(15), nullable=False)
+    mobile = db.Column(
+        db.String(15),
+        nullable=False
+    )
 
-    password = db.Column(db.String(255), nullable=False)
+    password = db.Column(
+        db.String(255),
+        nullable=False
+    )
 
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    is_admin = db.Column(
+        db.Boolean,
+        default=False,
+        nullable=False
+    )
+
+    created_at = db.Column(
+        db.DateTime,
+        default=datetime.utcnow
+    )
+
+    # One User -> Many Results
+    results = db.relationship(
+        "Result",
+        backref="user",
+        lazy=True,
+        cascade="all, delete-orphan"
+    )
+
+    def __repr__(self):
+
+        return f"<User {self.username}>"

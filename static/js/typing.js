@@ -89,3 +89,16 @@ input.addEventListener("input",()=>{
     cpmElement.innerText=cpm;
 
 });
+
+// typing.js ke event listener mein ye logic add karein
+inputField.addEventListener('keydown', function(event) {
+    // Check karein ki agar mode 'hindi_mangal' hai
+    if (currentMode === 'hindi_mangal') {
+        const char = event.key;
+        const mappedChar = getMangalChar(char);
+        
+        // Agar aap custom input handling kar rahe hain:
+        // event.preventDefault();
+        // inputField.value += mappedChar;
+    }
+});

@@ -1,0 +1,70 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+<div class="text-center">
+
+<img src="https://ui-avatars.com/api/?name={{ current_user.full_name }}&size=180"
+class="rounded-circle shadow">
+
+<h2 class="mt-3">
+
+{{ current_user.full_name }}
+
+</h2>
+
+<p>
+
+{{ current_user.email }}
+
+</p>
+
+</div>
+
+<div class="row mt-5">
+
+<div class="col-md-4">
+
+<div class="result-card">
+
+<h6>Total Tests</h6>
+
+<h2>{{ total_tests }}</h2>
+
+</div>
+
+</div>
+
+<div class="col-md-4">
+
+<div class="result-card">
+
+<h6>Best WPM</h6>
+
+<h2>{{ best_wpm }}</h2>
+
+</div>
+
+</div>
+
+<div class="col-md-4">
+
+<div class="result-card">
+
+<h6>Average Accuracy</h6>
+
+<h2>{{ avg_accuracy }}%</h2>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+{% endblock %}

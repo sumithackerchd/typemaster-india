@@ -1,5 +1,7 @@
 from . import db
 
+#   class Paragraph(db.Model):
+
 class Paragraph(db.Model):
 
     __tablename__ = "paragraphs"

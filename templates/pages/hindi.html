@@ -1,17 +1,17 @@
 {% extends "layouts/base.html" %}
 
-{% block title %}Typing Test{% endblock %}
+{% block title %}Hindi Typing Test{% endblock %}
 
 {% block content %}
 
 <link rel="stylesheet" href="{{ url_for('static', filename='css/typing.css') }}">
 
-<div class="typing-wrapper" id="typingWrapper">
+<div class="typing-wrapper hindi-typing" id="typingWrapper">
 
     <div class="typing-top">
 
         <div class="logo-title">
-            <h2 id="typingTitle">English Typing Test</h2>
+            <h2 id="typingTitle">Hindi Mangal Typing Test</h2>
         </div>
 
         <div class="d-flex gap-2 align-items-center">
@@ -23,8 +23,8 @@
 
     <div class="toolbar">
 
-        <button class="mode language-btn active" type="button" data-lang="english">English</button>
-        <button class="mode language-btn" type="button" data-lang="hindi">Hindi Mangal</button>
+        <button class="mode language-btn" type="button" data-lang="english">English</button>
+        <button class="mode language-btn active" type="button" data-lang="hindi">Hindi Mangal</button>
 
         <span class="toolbar-divider"></span>
 
@@ -42,7 +42,7 @@
 
     <div class="typing-card">
 
-        <div id="paragraph"></div>
+        <div id="paragraph" class="hindi-paragraph"></div>
 
         <input type="text" id="typingInput" autocomplete="off"
                autocorrect="off" autocapitalize="off" spellcheck="false">
@@ -87,7 +87,7 @@
 
 <script>
     window.TYPING_CONFIG = {
-        defaultLanguage: "english",
+        defaultLanguage: "hindi",
         redirectUrl: "{{ url_for('result.result_page') }}",
         saveResultUrl: "{{ url_for('result.save_result') }}",
         languages: {

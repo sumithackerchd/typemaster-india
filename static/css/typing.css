@@ -108,6 +108,25 @@ body{
 
 }
 
+.toolbar-divider{
+
+    width:1px;
+
+    height:32px;
+
+    background:#334155;
+
+    align-self:center;
+
+}
+
+.hindi-paragraph,
+#paragraph.hindi-paragraph{
+
+    font-family:"Noto Sans Devanagari","Mangal",sans-serif;
+
+}
+
 .typing-card{
 
     background:#111827;
@@ -190,11 +209,24 @@ body{
 
     display:grid;
 
-    grid-template-columns:repeat(4,1fr);
+    grid-template-columns:repeat(6,1fr);
 
     gap:25px;
 
     margin-top:40px;
+
+}
+
+.stats-six{
+
+    grid-template-columns:repeat(6,1fr);
+
+}
+
+.hindi-paragraph,
+.hindi-typing #paragraph{
+
+    font-family:"Noto Sans Devanagari","Mangal",sans-serif;
 
 }
 
@@ -240,9 +272,10 @@ body{
 
 @media(max-width:992px){
 
-.stats{
+.stats,
+.stats-six{
 
-grid-template-columns:repeat(2,1fr);
+grid-template-columns:repeat(3,1fr);
 
 }
 
@@ -330,5 +363,52 @@ justify-content:center;
 opacity:0;
 
 }
+
+}
+.result-card{
+
+    background:#111827;
+
+    color:white;
+
+    border-radius:18px;
+
+    padding:30px;
+
+    text-align:center;
+
+    transition:.3s;
+
+    border:1px solid #1f2937;
+
+}
+
+.result-card:hover{
+
+    transform:translateY(-8px);
+
+    border-color:#2563eb;
+
+    box-shadow:0 15px 35px rgba(37,99,235,.25);
+
+}
+
+.result-card h6{
+
+    color:#94a3b8;
+
+    margin-bottom:15px;
+
+    font-size:16px;
+
+}
+
+.result-card h2{
+
+    color:#3b82f6;
+
+    font-size:38px;
+
+    font-weight:bold;
 
 }

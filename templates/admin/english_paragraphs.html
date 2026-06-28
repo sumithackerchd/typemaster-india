@@ -1,0 +1,44 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}English Paragraphs{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+
+<div class="container py-5">
+
+    <h2 class="mb-4">📝 English Paragraph Manager</h2>
+
+    <div class="mb-4">
+        <label class="form-label">Difficulty</label>
+        <select id="difficultySelect" class="form-select">
+            {% for level in difficulties %}
+            <option value="{{ level }}">{{ level|capitalize }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <textarea id="newParagraph" class="form-control mb-3" rows="3"
+                      placeholder="Add a new English paragraph..."></textarea>
+            <button id="addParagraphBtn" class="btn btn-primary" type="button">Add Paragraph</button>
+        </div>
+    </div>
+
+    <div id="paragraphList" class="paragraph-list"></div>
+
+    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-light mt-4">← Admin Home</a>
+
+</div>
+
+<script>
+    window.PARAGRAPH_ADMIN = {
+        language: "english",
+        initialData: {{ paragraphs|tojson }}
+    };
+</script>
+<script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+
+{% endblock %}

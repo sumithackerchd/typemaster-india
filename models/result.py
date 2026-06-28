@@ -6,31 +6,65 @@ class Result(db.Model):
 
     __tablename__ = "results"
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
 
     user_id = db.Column(
         db.Integer,
-        db.ForeignKey("user.id"),
+        db.ForeignKey("users.id"),
         nullable=False
     )
 
-    language = db.Column(db.String(20))
+    language = db.Column(
+        db.String(20),
+        nullable=False,
+        default="English"
+    )
 
-    difficulty = db.Column(db.String(20))
+    difficulty = db.Column(
+        db.String(20),
+        nullable=False,
+        default="Easy"
+    )
 
-    duration = db.Column(db.Integer)
+    duration = db.Column(
+        db.Integer,
+        nullable=False,
+        default=60
+    )
 
-    gross_wpm = db.Column(db.Integer)
+    gross_wpm = db.Column(
+        db.Integer,
+        default=0
+    )
 
-    net_wpm = db.Column(db.Integer)
+    net_wpm = db.Column(
+        db.Integer,
+        default=0
+    )
 
-    cpm = db.Column(db.Integer)
+    cpm = db.Column(
+        db.Integer,
+        default=0
+    )
 
-    accuracy = db.Column(db.Float)
+    accuracy = db.Column(
+        db.Float,
+        default=0
+    )
 
-    errors = db.Column(db.Integer)
+    errors = db.Column(
+        db.Integer,
+        default=0
+    )
 
     created_at = db.Column(
         db.DateTime,
         default=datetime.utcnow
     )
+
+    def __repr__(self):
+
+        return f"<Result {self.id}>"

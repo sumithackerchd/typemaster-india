@@ -1,0 +1,13 @@
+.admin-paragraph-card,
+.paragraph-list .admin-paragraph-card {
+    background: #111827;
+    border: 1px solid #1f2937;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+}
+
+.hindi-input {
+    font-family: "Noto Sans Devanagari", "Mangal", sans-serif;
+    font-size: 18px;
+}

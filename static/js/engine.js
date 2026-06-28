@@ -1,562 +1,555 @@
-// ==============================================
-// TypeMaster India Engine v2.0
-// Part 1 - Core Engine Foundation
-// ==============================================
+/**
+ * TypeMaster India — Unified Typing Engine
+ * Supports English + Hindi (Mangal Unicode) via TYPING_CONFIG
+ */
+(function () {
 
-// ---------- DOM ----------
-const paragraphElement = document.getElementById("paragraph");
-const typingInput = document.getElementById("typingInput");
+    "use strict";
 
-const accuracyElement = document.getElementById("accuracy");
-const errorsElement = document.getElementById("errors");
-const wpmElement = document.getElementById("wpm");
-const cpmElement = document.getElementById("cpm");
-
-// ---------- Default Paragraph ----------
-let paragraphText = `The quick brown fox jumps over the lazy dog. Practice every day to improve your typing speed and accuracy. Consistency is the key to success.`;
-
-// ---------- Engine Variables ----------
-let characterSpans = [];
-
-let currentIndex = 0;
-
-let totalErrors = 0;
-
-let totalCorrect = 0;
-
-let typingStarted = false;
-
-let finished = false;
-
-// ==============================================
-// Render Paragraph
-// ==============================================
-
-function renderParagraph() {
-
-    paragraphElement.innerHTML = "";
-
-    characterSpans = [];
-
-    [...paragraphText].forEach((character) => {
-
-        const span = document.createElement("span");
-
-        span.innerText = character;
-
-        span.classList.add("char");
-
-        paragraphElement.appendChild(span);
-
-        characterSpans.push(span);
-
-    });
-
-    if(characterSpans.length>0){
-
-        characterSpans[0].classList.add("current");
-
-    }
-
-}
-
-renderParagraph();
-
-
-// ==============================================
-// Auto Focus
-// ==============================================
-
-document.addEventListener("click",()=>{
-
-    typingInput.focus();
-
-});
-
-window.onload=()=>{
-
-    typingInput.focus();
-
-}
-
-
-// ==============================================
-// Reset Character Colors
-// ==============================================
-
-function resetCharacters(){
-
-    characterSpans.forEach((span)=>{
-
-        span.classList.remove(
-
-            "correct",
-
-            "wrong",
-
-            "current"
-
-        );
-
-    });
-
-}
-
-
-// ==============================================
-// Update Character UI
-// ==============================================
-
-function updateCharacters(){
-
-    resetCharacters();
-
-    totalErrors=0;
-
-    totalCorrect=0;
-
-    const typed=typingInput.value;
-
-    for(let i=0;i<characterSpans.length;i++){
-
-        const expected=paragraphText[i];
-
-        const entered=typed[i];
-
-        if(entered==null){
-
-            break;
-
+    const DEFAULT_CONFIG = {
+        defaultLanguage: "english",
+        redirectUrl: "/result",
+        saveResultUrl: "/save-result",
+        languages: {
+            english: {
+                languageKey: "english",
+                dataUrl: "/static/data/paragraphs.json",
+                saveLanguage: "English",
+                title: "English Typing Test",
+                paragraphClass: ""
+            },
+            hindi: {
+                languageKey: "hindi",
+                dataUrl: "/static/data/hindi_mangal.json",
+                saveLanguage: "Hindi",
+                title: "Hindi Mangal Typing Test",
+                paragraphClass: "hindi-paragraph"
+            }
         }
+    };
 
-        if(entered===expected){
+    const config = Object.assign({}, DEFAULT_CONFIG, window.TYPING_CONFIG || {});
 
-            characterSpans[i].classList.add("correct");
+    const paragraphElement = document.getElementById("paragraph");
+    const typingInput = document.getElementById("typingInput");
+    const timerElement = document.getElementById("timer");
+    const pageTitleElement = document.getElementById("typingTitle");
+    const netWpmElement = document.getElementById("netWpm");
+    const grossWpmElement = document.getElementById("grossWpm");
+    const liveWpmElement = document.getElementById("liveWpm");
+    const accuracyElement = document.getElementById("accuracy");
+    const errorsElement = document.getElementById("errors");
+    const cpmElement = document.getElementById("cpm");
 
-            totalCorrect++;
-
-        }
-
-        else{
-
-            characterSpans[i].classList.add("wrong");
-
-            totalErrors++;
-
-        }
-
-    }
-
-    currentIndex=typed.length;
-
-    if(currentIndex<characterSpans.length){
-
-        characterSpans[currentIndex]
-
-        .classList.add("current");
-
-    }
-
-}
-
-
-// ==============================================
-// Typing Event
-// ==============================================
-
-typingInput.addEventListener("input",()=>{
-
-    if(finished){
-
+    if (!paragraphElement || !typingInput) {
         return;
+    }
+
+    const paragraphCache = {};
+    let activeLanguage = config.defaultLanguage;
+    let activeLangConfig = config.languages[activeLanguage] || config.languages.english;
+
+    let currentDifficulty = "easy";
+    let currentTimer = 60;
+    let timer = 60;
+    let timerStarted = false;
+    let timerInterval = null;
+    let testStartTime = null;
+    let totalTyped = 0;
+    let correctTyped = 0;
+    let wrongTyped = 0;
+    let finished = false;
+    let currentParagraph = "";
+
+    function getLangConfig(lang) {
+
+        return config.languages[lang] || config.languages.english;
 
     }
 
-    if(!typingStarted){
+    async function fetchParagraphData(langConfig) {
 
-        typingStarted=true;
+        if (paragraphCache[langConfig.languageKey]) {
+            return paragraphCache[langConfig.languageKey];
+        }
 
-        if(typeof startTimer==="function"){
+        const response = await fetch(langConfig.dataUrl);
 
-            startTimer();
+        if (!response.ok) {
+            throw new Error("Failed to load " + langConfig.saveLanguage + " paragraphs");
+        }
 
+        const data = await response.json();
+        paragraphCache[langConfig.languageKey] = data;
+
+        return data;
+
+    }
+
+    async function preloadLanguages() {
+
+        const loads = Object.keys(config.languages).map(function (lang) {
+            return fetchParagraphData(getLangConfig(lang));
+        });
+
+        await Promise.all(loads);
+
+    }
+
+    function getElapsedSeconds() {
+
+        if (!testStartTime) {
+            return 0;
+        }
+
+        return (Date.now() - testStartTime) / 1000;
+
+    }
+
+    function getElapsedMinutes() {
+
+        const seconds = getElapsedSeconds();
+
+        if (seconds <= 0) {
+            return 0;
+        }
+
+        return seconds / 60;
+
+    }
+
+    function calculateGrossWPM() {
+
+        const minutes = getElapsedMinutes();
+
+        if (minutes <= 0) {
+            return 0;
+        }
+
+        return Math.round((totalTyped / 5) / minutes);
+
+    }
+
+    function calculateNetWPM() {
+
+        const minutes = getElapsedMinutes();
+
+        if (minutes <= 0) {
+            return 0;
+        }
+
+        return Math.max(0, Math.round(((correctTyped - wrongTyped) / 5) / minutes));
+
+    }
+
+    function calculateCPM() {
+
+        const minutes = getElapsedMinutes();
+
+        if (minutes <= 0) {
+            return 0;
+        }
+
+        return Math.round(correctTyped / minutes);
+
+    }
+
+    function calculateAccuracy() {
+
+        if (totalTyped <= 0) {
+            return 100;
+        }
+
+        return (correctTyped / totalTyped) * 100;
+
+    }
+
+    function updateStats() {
+
+        const accuracy = calculateAccuracy();
+        const net = calculateNetWPM();
+        const gross = calculateGrossWPM();
+        const cpm = calculateCPM();
+
+        if (netWpmElement) {
+            netWpmElement.innerText = net;
+        }
+
+        if (grossWpmElement) {
+            grossWpmElement.innerText = gross;
+        }
+
+        if (liveWpmElement) {
+            liveWpmElement.innerText = net;
+        }
+
+        if (accuracyElement) {
+            accuracyElement.innerText = accuracy.toFixed(1) + "%";
+        }
+
+        if (errorsElement) {
+            errorsElement.innerText = wrongTyped;
+        }
+
+        if (cpmElement) {
+            cpmElement.innerText = cpm;
         }
 
     }
 
-    updateCharacters();
+    function renderParagraph() {
 
-    updateBasicStats();
+        const data = paragraphCache[activeLangConfig.languageKey];
+        const languageData = data ? data[activeLangConfig.languageKey] : null;
 
-});
+        paragraphElement.className = activeLangConfig.paragraphClass || "";
 
-
-// ==============================================
-// Basic Stats
-// ==============================================
-
-function updateBasicStats(){
-
-    const typed=typingInput.value.length;
-
-    let accuracy=100;
-
-    if(typed>0){
-
-        accuracy=((totalCorrect/typed)*100)
-
-        .toFixed(1);
-
-    }
-
-    accuracyElement.innerText=accuracy+"%";
-
-    errorsElement.innerText=totalErrors;
-
-}
-
-
-// ==============================================
-// Engine Reset
-// ==============================================
-
-function resetEngine(){
-
-    typingInput.value="";
-
-    currentIndex=0;
-
-    totalErrors=0;
-
-    totalCorrect=0;
-
-    typingStarted=false;
-
-    finished=false;
-
-    renderParagraph();
-
-    accuracyElement.innerText="100%";
-
-    errorsElement.innerText="0";
-
-    wpmElement.innerText="0";
-
-    cpmElement.innerText="0";
-
-}
-// ==============================================
-// Part 2 - Keyboard + Word + Finish Engine
-// Paste this BELOW Part 1
-// ==============================================
-
-
-// ---------- Prevent Paste ----------
-typingInput.addEventListener("paste", function (e) {
-    e.preventDefault();
-});
-
-
-// ---------- Prevent Drop ----------
-typingInput.addEventListener("drop", function (e) {
-    e.preventDefault();
-});
-
-
-// ---------- Prevent Right Click ----------
-typingInput.addEventListener("contextmenu", function (e) {
-    e.preventDefault();
-});
-
-
-// ---------- Auto Focus ----------
-document.addEventListener("click", function () {
-    typingInput.focus();
-});
-
-
-// ---------- Highlight Current Word ----------
-function highlightCurrentWord() {
-
-    characterSpans.forEach(span => {
-
-        span.classList.remove("active-word");
-
-    });
-
-    let start = currentIndex;
-
-    while (start > 0 && paragraphText[start - 1] !== " ") {
-
-        start--;
-
-    }
-
-    let end = currentIndex;
-
-    while (end < paragraphText.length && paragraphText[end] !== " ") {
-
-        end++;
-
-    }
-
-    for (let i = start; i < end; i++) {
-
-        if (characterSpans[i]) {
-
-            characterSpans[i].classList.add("active-word");
-
+        if (!languageData || !languageData[currentDifficulty] || !languageData[currentDifficulty].length) {
+            paragraphElement.innerText = "No paragraph available for this level.";
+            currentParagraph = "";
+            return;
         }
 
+        const list = languageData[currentDifficulty];
+        currentParagraph = list[Math.floor(Math.random() * list.length)];
+
+        paragraphElement.innerHTML = "";
+
+        Array.from(currentParagraph).forEach(function (char) {
+
+            const span = document.createElement("span");
+            span.textContent = char;
+            paragraphElement.appendChild(span);
+
+        });
+
     }
 
-}
+    function resetCounters() {
 
+        totalTyped = 0;
+        correctTyped = 0;
+        wrongTyped = 0;
+        testStartTime = null;
 
-// ---------- Auto Scroll ----------
-function autoScrollCurrentCharacter() {
+    }
 
-    const current = document.querySelector(".current");
+    function stopTimer() {
 
-    if (!current) return;
+        clearInterval(timerInterval);
+        timerInterval = null;
+        timerStarted = false;
 
-    current.scrollIntoView({
+    }
 
-        behavior: "smooth",
+    function resetTyping(reloadParagraph) {
 
-        block: "center"
+        stopTimer();
+        finished = false;
+        timer = currentTimer;
 
-    });
-
-}
-
-
-// ---------- Finish Check ----------
-function checkTypingFinished() {
-
-    if (typingInput.value.length >= paragraphText.length) {
-
-        finished = true;
-
-        typingInput.blur();
-
-        if (typeof finishTest === "function") {
-
-            finishTest();
-
+        if (timerElement) {
+            timerElement.innerText = timer;
         }
 
-    }
+        typingInput.disabled = false;
+        typingInput.value = "";
+        resetCounters();
 
-}
+        if (reloadParagraph !== false) {
+            renderParagraph();
+        } else {
+            highlightCharacters("");
+        }
 
-
-// ---------- Engine Extension ----------
-function afterCharacterUpdate() {
-
-    highlightCurrentWord();
-
-    autoScrollCurrentCharacter();
-
-    checkTypingFinished();
-
-}
-
-
-// ---------- Attach Extension ----------
-
-typingInput.addEventListener("input", function () {
-
-    if (finished) return;
-
-    afterCharacterUpdate();
-
-});
-
-
-// ---------- Restart Focus ----------
-function focusTypingArea() {
-
-    if (!finished) {
-
+        updateStats();
         typingInput.focus();
 
     }
 
-}
+    function highlightCharacters(typedText) {
 
-window.addEventListener("load", focusTypingArea);
+        const characters = paragraphElement.querySelectorAll("span");
 
-document.addEventListener("keydown", focusTypingArea);
-// ==============================================
-// TypeMaster India Engine v2.0
-// Part 3 - WPM + Result + Finish
-// ==============================================
+        totalTyped = typedText.length;
+        correctTyped = 0;
+        wrongTyped = 0;
 
+        characters.forEach(function (span) {
+            span.className = "";
+        });
 
-// -----------------------------
-// Calculate WPM / CPM
-// -----------------------------
+        for (let i = 0; i < typedText.length; i++) {
 
-function calculateStatistics() {
+            if (!characters[i]) {
+                break;
+            }
 
-    let typed = typingInput.value.length;
+            if (typedText[i] === currentParagraph[i]) {
+                characters[i].classList.add("correct");
+                correctTyped++;
+            } else {
+                characters[i].classList.add("wrong");
+                wrongTyped++;
+            }
 
-    let elapsed = totalTime - timeLeft;
+        }
 
-    if (elapsed <= 0) elapsed = 1;
-
-    let minutes = elapsed / 60;
-
-    let grossWPM = Math.round((typed / 5) / minutes);
-
-    let netWPM = Math.round(((typed - totalErrors) / 5) / minutes);
-
-    if (grossWPM < 0) grossWPM = 0;
-
-    if (netWPM < 0) netWPM = 0;
-
-    let cpm = Math.round(typed / minutes);
-
-    document.getElementById("wpm").innerText = netWPM;
-
-    document.getElementById("cpm").innerText = cpm;
-
-}
-
-
-// -----------------------------
-// Update Live Statistics
-// -----------------------------
-
-typingInput.addEventListener("input", function () {
-
-    if (finished) return;
-
-    calculateStatistics();
-
-});
-
-
-// -----------------------------
-// Result Object
-// -----------------------------
-
-function buildResultObject() {
-
-    let typed = typingInput.value.length;
-
-    let elapsed = totalTime - timeLeft;
-
-    if (elapsed <= 0) elapsed = 1;
-
-    let minutes = elapsed / 60;
-
-    let grossWPM = Math.round((typed / 5) / minutes);
-
-    let netWPM = Math.round(((typed - totalErrors) / 5) / minutes);
-
-    if (grossWPM < 0) grossWPM = 0;
-
-    if (netWPM < 0) netWPM = 0;
-
-    let accuracy = 100;
-
-    if (typed > 0) {
-
-        accuracy = ((totalCorrect / typed) * 100).toFixed(2);
+        if (characters[typedText.length]) {
+            characters[typedText.length].classList.add("current");
+        }
 
     }
 
-    return {
+    function checkTyping() {
 
-        gross_wpm: grossWPM,
+        if (finished || !currentParagraph) {
+            return;
+        }
 
-        net_wpm: netWPM,
+        highlightCharacters(typingInput.value);
+        updateStats();
 
-        cpm: Math.round(typed / minutes),
-
-        accuracy: accuracy,
-
-        errors: totalErrors,
-
-        correct: totalCorrect,
-
-        typed: typed,
-
-        total: paragraphText.length,
-
-        language: "English",
-
-        difficulty: "Easy",
-
-        duration: totalTime
-
-    };
-
-}
-
-
-// -----------------------------
-// Finish Typing
-// -----------------------------
-
-function completeTypingTest() {
-
-    finished = true;
-
-    typingInput.disabled = true;
-
-    calculateStatistics();
-
-    const result = buildResultObject();
-
-    console.log(result);
-
-    // Future
-    // fetch("/save-result", {...})
-
-    // Future
-    // window.location="/result"
-
-}
-
-
-// -----------------------------
-// Override Finish Test
-// -----------------------------
-
-if (typeof finishTest === "function") {
-
-    const oldFinish = finishTest;
-
-    finishTest = function () {
-
-        oldFinish();
-
-        completeTypingTest();
+        if (typingInput.value.length >= currentParagraph.length) {
+            finishTest();
+        }
 
     }
 
-}
+    function startTimer() {
 
+        if (timerStarted || finished) {
+            return;
+        }
 
-// -----------------------------
-// Restart Engine
-// -----------------------------
+        timerStarted = true;
+        testStartTime = Date.now();
 
-function restartTypingTest() {
+        clearInterval(timerInterval);
 
-    resetEngine();
+        timerInterval = setInterval(function () {
 
-    typingInput.disabled = false;
+            if (timer <= 0) {
+                stopTimer();
+                finishTest();
+                return;
+            }
 
-    typingInput.focus();
+            timer--;
+            timerElement.innerText = timer;
+            updateStats();
 
-    if (typeof resetTimer === "function") {
-
-        resetTimer();
+        }, 1000);
 
     }
 
-}
+    function buildResultPayload() {
+
+        const minutes = Math.max(getElapsedMinutes(), 1 / 60);
+        const accuracy = calculateAccuracy();
+
+        return {
+            language: activeLangConfig.saveLanguage,
+            difficulty: currentDifficulty.charAt(0).toUpperCase() + currentDifficulty.slice(1),
+            duration: currentTimer,
+            gross_wpm: Math.max(0, Math.round((totalTyped / 5) / minutes)),
+            net_wpm: Math.max(0, Math.round(((correctTyped - wrongTyped) / 5) / minutes)),
+            cpm: Math.round(correctTyped / minutes),
+            accuracy: Number(accuracy.toFixed(2)),
+            errors: wrongTyped
+        };
+
+    }
+
+    async function saveResult() {
+
+        const payload = buildResultPayload();
+
+        try {
+
+            const response = await fetch(config.saveResultUrl, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "same-origin",
+                body: JSON.stringify(payload)
+            });
+
+            const result = await response.json();
+
+            if (!response.ok || !result.success) {
+                throw new Error(result.message || "Result save failed");
+            }
+
+            window.location.href = config.redirectUrl;
+
+        } catch (error) {
+
+            console.error(error);
+            alert(error.message || "Result save failed");
+
+        }
+
+    }
+
+    function finishTest() {
+
+        if (finished) {
+            return;
+        }
+
+        finished = true;
+        stopTimer();
+        typingInput.disabled = true;
+        updateStats();
+        saveResult();
+
+    }
+
+    function setActiveDifficulty(level) {
+
+        currentDifficulty = level;
+
+        document.querySelectorAll(".difficulty-btn").forEach(function (btn) {
+            btn.classList.toggle("active", btn.dataset.level === level);
+        });
+
+        resetTyping();
+
+    }
+
+    function setActiveTimer(seconds) {
+
+        stopTimer();
+        finished = false;
+        currentTimer = seconds;
+        timer = seconds;
+        timerElement.innerText = timer;
+        typingInput.disabled = false;
+
+        document.querySelectorAll(".timer-btn").forEach(function (btn) {
+            btn.classList.toggle("active", Number(btn.dataset.seconds) === seconds);
+        });
+
+        resetTyping();
+
+    }
+
+    async function setActiveLanguage(lang) {
+
+        if (!config.languages[lang]) {
+            return;
+        }
+
+        activeLanguage = lang;
+        activeLangConfig = getLangConfig(lang);
+
+        document.querySelectorAll(".language-btn").forEach(function (btn) {
+            btn.classList.toggle("active", btn.dataset.lang === lang);
+        });
+
+        if (pageTitleElement) {
+            pageTitleElement.textContent = activeLangConfig.title;
+        }
+
+        if (!paragraphCache[activeLangConfig.languageKey]) {
+            await fetchParagraphData(activeLangConfig);
+        }
+
+        resetTyping();
+
+    }
+
+    function bindControls() {
+
+        document.querySelectorAll(".difficulty-btn").forEach(function (btn) {
+            btn.addEventListener("click", function () {
+                setActiveDifficulty(btn.dataset.level);
+            });
+        });
+
+        document.querySelectorAll(".timer-btn").forEach(function (btn) {
+            btn.addEventListener("click", function () {
+                setActiveTimer(Number(btn.dataset.seconds));
+            });
+        });
+
+        document.querySelectorAll(".language-btn").forEach(function (btn) {
+            btn.addEventListener("click", function () {
+                setActiveLanguage(btn.dataset.lang);
+            });
+        });
+
+        const restartBtn = document.getElementById("restartBtn");
+
+        if (restartBtn) {
+            restartBtn.addEventListener("click", function () {
+                resetTyping();
+            });
+        }
+
+    }
+
+    typingInput.addEventListener("input", function () {
+
+        if (!timerStarted && !finished) {
+            startTimer();
+        }
+
+        checkTyping();
+
+    });
+
+    typingInput.addEventListener("paste", function (e) { e.preventDefault(); });
+    typingInput.addEventListener("copy", function (e) { e.preventDefault(); });
+    typingInput.addEventListener("cut", function (e) { e.preventDefault(); });
+
+    typingInput.addEventListener("keydown", function (e) {
+
+        if (e.key === "Enter") {
+            e.preventDefault();
+        }
+
+    });
+
+    document.addEventListener("keydown", function (e) {
+
+        if (e.ctrlKey && e.key === "r") {
+            e.preventDefault();
+            resetTyping();
+        }
+
+        if (e.key === "Escape") {
+            resetTyping();
+        }
+
+    });
+
+    document.body.addEventListener("click", function () {
+        typingInput.focus();
+    });
+
+    window.changeDifficulty = setActiveDifficulty;
+    window.changeTimer = setActiveTimer;
+    window.changeLanguage = setActiveLanguage;
+    window.restartTest = function () { resetTyping(); };
+
+    async function init() {
+
+        bindControls();
+
+        try {
+            await preloadLanguages();
+        } catch (error) {
+            console.error(error);
+            paragraphElement.innerText = "Unable to load typing paragraphs.";
+            return;
+        }
+
+        await setActiveLanguage(config.defaultLanguage);
+        typingInput.focus();
+
+    }
+
+    init();
+
+})();

@@ -1,0 +1,127 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}Typing Result{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="text-center mb-5">
+
+        <h1 class="fw-bold">🎉 Typing Test Result</h1>
+
+        <p class="text-secondary">Your typing performance summary</p>
+
+    </div>
+
+    {% if result %}
+
+    <div class="row g-4">
+
+        <div class="col-md-4 col-lg-2">
+            <div class="result-card">
+                <h6>Net WPM</h6>
+                <h2>{{ result.net_wpm }}</h2>
+            </div>
+        </div>
+
+        <div class="col-md-4 col-lg-2">
+            <div class="result-card">
+                <h6>Gross WPM</h6>
+                <h2>{{ result.gross_wpm }}</h2>
+            </div>
+        </div>
+
+        <div class="col-md-4 col-lg-2">
+            <div class="result-card">
+                <h6>CPM</h6>
+                <h2>{{ result.cpm }}</h2>
+            </div>
+        </div>
+
+        <div class="col-md-4 col-lg-2">
+            <div class="result-card">
+                <h6>Accuracy</h6>
+                <h2>{{ result.accuracy }}%</h2>
+            </div>
+        </div>
+
+        <div class="col-md-4 col-lg-2">
+            <div class="result-card">
+                <h6>Errors</h6>
+                <h2>{{ result.errors }}</h2>
+            </div>
+        </div>
+
+        <div class="col-md-4 col-lg-2">
+            <div class="result-card">
+                <h6>Duration</h6>
+                <h2>{{ result.duration }}s</h2>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row g-4 mt-2">
+
+        <div class="col-md-6">
+            <div class="result-card text-start">
+                <h6>Language</h6>
+                <h2>{{ result.language }}</h2>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="result-card text-start">
+                <h6>Difficulty</h6>
+                <h2>{{ result.difficulty }}</h2>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row mt-4">
+
+        <div class="col-lg-12">
+
+            <div class="result-card text-start">
+
+                <h4>Test Information</h4>
+
+                <hr>
+
+                <p><strong>Date:</strong> {{ result.created_at.strftime('%d-%m-%Y %I:%M %p') }}</p>
+
+                <p><strong>User:</strong> {{ current_user.full_name }}</p>
+
+                <p><strong>Email:</strong> {{ current_user.email }}</p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    {% else %}
+
+    <div class="alert alert-warning text-center">
+        No typing result found. Complete a test first.
+    </div>
+
+    {% endif %}
+
+    <div class="text-center mt-5">
+
+        <a href="/typing" class="btn btn-primary btn-lg me-2">English Test</a>
+
+        <a href="/hindi" class="btn btn-info btn-lg me-2">Hindi Test</a>
+
+        <a href="{{ url_for('history.history_page') }}" class="btn btn-warning btn-lg me-2">History</a>
+
+        <a href="{{ url_for('dashboard.dashboard_page') }}" class="btn btn-success btn-lg">Dashboard</a>
+
+    </div>
+
+</div>
+
+{% endblock %}
