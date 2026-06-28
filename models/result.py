@@ -1,5 +1,6 @@
 from datetime import datetime
-from . import db
+from models import db
+
 
 class Result(db.Model):
 
@@ -7,16 +8,29 @@ class Result(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
 
-    user_id = db.Column(db.Integer)
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("user.id"),
+        nullable=False
+    )
 
     language = db.Column(db.String(20))
 
-    gross_wpm = db.Column(db.Float)
+    difficulty = db.Column(db.String(20))
 
-    net_wpm = db.Column(db.Float)
+    duration = db.Column(db.Integer)
+
+    gross_wpm = db.Column(db.Integer)
+
+    net_wpm = db.Column(db.Integer)
+
+    cpm = db.Column(db.Integer)
 
     accuracy = db.Column(db.Float)
 
     errors = db.Column(db.Integer)
 
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(
+        db.DateTime,
+        default=datetime.utcnow
+    )

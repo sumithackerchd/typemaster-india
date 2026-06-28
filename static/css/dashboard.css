@@ -1,0 +1,215 @@
+/* ===========================
+   DASHBOARD
+=========================== */
+
+.dashboard{
+    min-height:100vh;
+    background:#0b1120;
+    padding:40px 20px;
+}
+
+/* ===========================
+   WELCOME CARD
+=========================== */
+
+.welcome-card{
+
+    background:linear-gradient(135deg,#2563eb,#4f46e5);
+
+    border-radius:20px;
+
+    padding:40px;
+
+    color:#fff;
+
+    margin-bottom:35px;
+
+    box-shadow:0 20px 40px rgba(0,0,0,.35);
+
+}
+
+.welcome-card h2{
+
+    font-size:34px;
+
+    font-weight:700;
+
+}
+
+.welcome-card p{
+
+    margin-top:10px;
+
+    font-size:18px;
+
+    opacity:.9;
+
+}
+
+/* ===========================
+   STAT CARDS
+=========================== */
+
+.stat-card{
+
+    background:#111827;
+
+    border-radius:18px;
+
+    padding:25px;
+
+    border:1px solid #1f2937;
+
+    transition:.35s;
+
+    color:#fff;
+
+    height:100%;
+
+}
+
+.stat-card:hover{
+
+    transform:translateY(-8px);
+
+    border-color:#2563eb;
+
+    box-shadow:0 15px 30px rgba(37,99,235,.2);
+
+}
+
+.stat-number{
+
+    font-size:42px;
+
+    font-weight:700;
+
+    color:#3b82f6;
+
+}
+
+.stat-title{
+
+    margin-top:10px;
+
+    color:#9ca3af;
+
+    font-size:15px;
+
+    letter-spacing:.5px;
+
+}
+
+/* ===========================
+   QUICK START
+=========================== */
+
+.quick-card{
+
+    background:#111827;
+
+    border-radius:18px;
+
+    padding:35px 20px;
+
+    text-align:center;
+
+    color:white;
+
+    transition:.35s;
+
+    cursor:pointer;
+
+    border:1px solid #1f2937;
+
+}
+
+.quick-card:hover{
+
+    transform:translateY(-8px);
+
+    background:#2563eb;
+
+    border-color:#2563eb;
+
+}
+
+.quick-card h4{
+
+    font-size:48px;
+
+    margin-bottom:20px;
+
+}
+
+.quick-card h5{
+
+    font-size:18px;
+
+    font-weight:600;
+
+}
+
+/* ===========================
+   SECTION HEADINGS
+=========================== */
+
+.dashboard h3{
+
+    color:white;
+
+    font-weight:700;
+
+}
+
+/* ===========================
+   LINKS
+=========================== */
+
+.dashboard a{
+
+    text-decoration:none;
+
+}
+
+/* ===========================
+   RESPONSIVE
+=========================== */
+
+@media(max-width:992px){
+
+.welcome-card{
+
+padding:25px;
+
+}
+
+.welcome-card h2{
+
+font-size:28px;
+
+}
+
+.stat-number{
+
+font-size:34px;
+
+}
+
+}
+
+@media(max-width:768px){
+
+.dashboard{
+
+padding:20px 10px;
+
+}
+
+.quick-card{
+
+margin-bottom:20px;
+
+}
+
+}

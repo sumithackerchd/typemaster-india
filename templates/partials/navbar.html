@@ -6,16 +6,30 @@
 
 <div>
 
-<a href="/" class="btn btn-outline-light me-2">
-Home
+{% if current_user.is_authenticated %}
+
+<a href="/dashboard" class="btn btn-outline-light me-2">
+Dashboard
 </a>
 
-<a href="/login" class="btn btn-outline-light me-2">
+<a href="{{ url_for('auth.logout') }}" class="btn btn-danger">
+Logout
+</a>
+
+{% else %}
+
+<a href="{{ url_for('auth.login') }}" class="btn btn-outline-light me-2">
 Login
 </a>
 
-<a href="/register" class="btn btn-primary">
+<a href="{{ url_for('auth.register') }}" class="btn btn-primary">
 Register
 </a>
 
+{% endif %}
+
 </div>
+
+</div>
+
+</nav>

@@ -1,0 +1,99 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Typing Test{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{{ url_for('static',filename='css/typing.css') }}">
+
+<div class="typing-wrapper">
+
+    <div class="typing-top">
+
+        <div class="logo-title">
+
+            <h2>English Typing Test</h2>
+
+        </div>
+
+        <div class="timer-card">
+
+            ⏱️ <span id="timer">60</span>
+
+        </div>
+
+    </div>
+
+    <div class="toolbar">
+
+        <button class="mode active" onclick="changeDifficulty('easy')">Easy</button>
+
+        <button class="mode" onclick="changeDifficulty('medium')">Medium</button>
+
+        <button class="mode" onclick="changeDifficulty('hard')">Hard</button>
+
+        <button class="mode">60s</button>
+
+        <button class="mode">120s</button>
+
+        <button class="mode">300s</button>
+
+    </div>
+
+    <div class="typing-card">
+
+        <div id="paragraph"></div>
+
+        <input
+        type="text"
+        id="typingInput"
+        autocomplete="off">
+
+    </div>
+
+    <div class="stats">
+
+        <div class="box">
+
+            <h5>WPM</h5>
+
+            <h2 id="wpm">0</h2>
+
+        </div>
+
+        <div class="box">
+
+            <h5>Accuracy</h5>
+
+            <h2 id="accuracy">100%</h2>
+
+        </div>
+
+        <div class="box">
+
+            <h5>Errors</h5>
+
+            <h2 id="errors">0</h2>
+
+        </div>
+
+        <div class="box">
+
+            <h5>CPM</h5>
+
+            <h2 id="cpm">0</h2>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="{{ url_for('static',filename='js/engine.js') }}"></script>
+
+<script src="{{ url_for('static',filename='js/timer.js') }}"></script>
+
+<script src="{{ url_for('static',filename='js/result.js') }}"></script>
+
+<script src="{{ url_for('static', filename='js/paragraph.js') }}"></script>
+{% endblock %}

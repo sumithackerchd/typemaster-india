@@ -30,9 +30,8 @@
                         {% endif %}
                     {% endwith %}
 
-                    <form method="POST">
-
-                        {{ form.hidden_tag() }}
+                    <form method="POST" action="{{ url_for('auth.register') }}">
+                      {{ form.hidden_tag() }}
 
                         <div class="mb-3">
 

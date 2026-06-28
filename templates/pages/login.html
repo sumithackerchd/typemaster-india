@@ -6,57 +6,70 @@
 
 <div class="container py-5">
 
-<div class="row justify-content-center">
+    <div class="row justify-content-center">
 
-<div class="col-lg-5">
+        <div class="col-lg-5">
 
-<div class="card glass-card">
+            <div class="card glass-card shadow-lg">
 
-<div class="card-body p-5">
+                <div class="card-body p-5">
 
-<h2 class="text-center mb-4">Login</h2>
+                    <h2 class="text-center mb-4">
+                        Login
+                    </h2>
 
-<form>
+                    {% with messages=get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category,message in messages %}
+                                <div class="alert alert-{{category}}">
+                                    {{message}}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
 
-<div class="mb-3">
+                    <form method="POST" action="{{ url_for('auth.login') }}">
+                        {{ form.hidden_tag() }}
 
-<label>Email</label>
+                        <div class="mb-3">
 
-<input type="email" class="form-control">
+                            {{ form.email.label(class="form-label") }}
 
-</div>
+                            {{ form.email(class="form-control") }}
 
-<div class="mb-4">
+                        </div>
 
-<label>Password</label>
+                        <div class="mb-4">
 
-<input type="password" class="form-control">
+                            {{ form.password.label(class="form-label") }}
 
-</div>
+                            {{ form.password(class="form-control") }}
 
-<button class="btn btn-primary w-100">
+                        </div>
 
-Login
+                        {{ form.submit(class="btn btn-primary w-100") }}
 
-</button>
+                    </form>
 
-</form>
+                    <p class="text-center mt-4">
 
-<p class="text-center mt-4">
+                        Don't have an account?
 
-Don't have an account?
+                        <a href="{{ url_for('auth.register') }}">
 
-<a href="/register">Register</a>
+                            Register
 
-</p>
+                        </a>
 
-</div>
+                    </p>
 
-</div>
+                </div>
 
-</div>
+            </div>
 
-</div>
+        </div>
+
+    </div>
 
 </div>
 

@@ -33,6 +33,14 @@ app.register_blueprint(auth)
 def home():
     return render_template("index.html")
 
+# typing route
+@app.route("/typing")
+def typing():
+    return render_template("pages/typing.html")
+
+
+
+
 #dashboard route
 @app.route("/dashboard")
 @login_required

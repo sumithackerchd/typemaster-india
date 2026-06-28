@@ -4,12 +4,256 @@
 
 {% block content %}
 
-<div class="container py-5">
+<div class="dashboard">
 
-<h1>Welcome to Dashboard 👋</h1>
+    <div class="container-fluid">
 
-<p>Authentication successful.</p>
+        <div class="welcome-card">
+
+            <h2>
+                👋 Welcome {{ current_user.full_name }}
+            </h2>
+
+            <p>
+                Ready to improve your typing speed today?
+            </p>
+
+        </div>
+
+        <div class="row g-4">
+
+            <div class="col-lg-3">
+
+                <div class="stat-card">
+
+                    <div class="stat-number">
+
+                        0
+
+                    </div>
+
+                    <div class="stat-title">
+
+                        Total Tests
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-lg-3">
+
+                <div class="stat-card">
+
+                    <div class="stat-number">
+
+                        0
+
+                    </div>
+
+                    <div class="stat-title">
+
+                        Best WPM
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-lg-3">
+
+                <div class="stat-card">
+
+                    <div class="stat-number">
+
+                        100%
+
+                    </div>
+
+                    <div class="stat-title">
+
+                        Accuracy
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-lg-3">
+
+                <div class="stat-card">
+
+                    <div class="stat-number">
+
+                        --
+
+                    </div>
+
+                    <div class="stat-title">
+
+                        Rank
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <h3 class="mt-5 mb-4">
+
+            Quick Start
+
+        </h3>
+
+        <div class="row g-4">
+
+            <div class="col-md-3">
+
+                <a href="/typing" class="text-decoration-none">
+
+                    <div class="quick-card">
+
+                        <h4>
+
+                            ⌨️
+
+                        </h4>
+
+                        <h5>
+
+                            English Typing
+
+                        </h5>
+
+                    </div>
+
+                </a>
+
+            </div>
+
+            <div class="col-md-3">
+
+                <div class="quick-card">
+
+                    <h4>
+
+                        🇮🇳
+
+                    </h4>
+
+                    <h5>
+
+                        Hindi Mangal
+
+                    </h5>
+
+                </div>
+
+            </div>
+
+            <div class="col-md-3">
+
+                <div class="quick-card">
+
+                    <h4>
+
+                        📝
+
+                    </h4>
+
+                    <h5>
+
+                        Mock Tests
+
+                    </h5>
+
+                </div>
+
+            </div>
+
+            <div class="col-md-3">
+
+                <div class="quick-card">
+
+                    <h4>
+
+                        🏆
+
+                    </h4>
+
+                    <h5>
+
+                        Leaderboard
+
+                    </h5>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="row mt-5">
+
+            <div class="col-lg-8">
+
+                <div class="stat-card">
+
+                    <h4>
+
+                        Recent Activity
+
+                    </h4>
+
+                    <hr>
+
+                    <p>
+
+                        No typing test completed yet.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="col-lg-4">
+
+                <div class="stat-card">
+
+                    <h4>
+
+                        Daily Goal
+
+                    </h4>
+
+                    <hr>
+
+                    <h1>
+
+                        0%
+
+                    </h1>
+
+                    <p>
+
+                        Complete one typing test today.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
 
 </div>
-
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 {% endblock %}

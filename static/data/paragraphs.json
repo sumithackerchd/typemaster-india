@@ -1,0 +1,19 @@
+{
+  "english": {
+    "easy": [
+      "The quick brown fox jumps over the lazy dog.",
+      "Practice every day to improve your typing speed.",
+      "Typing is an important skill for competitive exams.",
+      "Consistency is the key to success."
+    ],
+    "medium": [
+      "Technology is changing the way people communicate and work around the world.",
+      "Learning programming requires patience, practice and problem solving skills.",
+      "Good typing speed saves time and increases productivity."
+    ],
+    "hard": [
+      "Artificial intelligence is transforming industries by automating repetitive tasks and improving decision making.",
+      "Success in competitive examinations depends upon discipline, regular practice and effective time management."
+    ]
+  }
+}

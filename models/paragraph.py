@@ -13,3 +13,5 @@ class Paragraph(db.Model):
     category = db.Column(db.String(50))
 
     content = db.Column(db.Text)
+
+    
