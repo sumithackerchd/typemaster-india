@@ -46,7 +46,8 @@ app.register_blueprint(hindi)
 def init_db():
 
     os.makedirs(DATABASE_DIR, exist_ok=True)
-    db.create_all()
+    with app.app_context():
+        db.create_all()
 
     inspector = inspect(db.engine)
     columns = [col["name"] for col in inspector.get_columns("users")]
