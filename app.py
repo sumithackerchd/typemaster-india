@@ -79,9 +79,10 @@ def typing():
     return render_template("pages/typing.html")
 
 
+# Render / Gunicorn startup
+with app.app_context():
+    init_db()
+
+
 if __name__ == "__main__":
-
-    with app.app_context():
-        init_db()
-
     app.run(debug=True, port=5009)
