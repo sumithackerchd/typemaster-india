@@ -17,6 +17,13 @@ from routes.profile import profile
 from routes.leaderboard import leaderboard
 from routes.hindi import hindi
 
+# Error handling
+import traceback
+
+
+#-------------------------------------
+#-------------------------------------
+
 app = Flask(__name__)
 app.config.from_object(Config)
 
@@ -79,6 +86,13 @@ def typing():
     return render_template("pages/typing.html")
 
 
+
+
+
+@app.errorhandler(Exception)
+def handle_exception(e):
+    traceback.print_exc()
+    return f"ERROR: {e}", 500
 # Render / Gunicorn startup
 with app.app_context():
     init_db()
