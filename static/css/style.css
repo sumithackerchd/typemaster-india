@@ -2,9 +2,15 @@ body{
 
 font-family:'Poppins',sans-serif;
 
-background:#020617;
+min-height:100vh;
+
+background:
+
+linear-gradient(135deg,#020617,#0f172a,#111827);
 
 color:white;
+
+overflow-x:hidden;
 
 }
 
@@ -42,29 +48,101 @@ margin-bottom:35px;
 
 }
 
-.btn-primary{
+/* ===========================================
+   LOGIN BUTTON
+=========================================== */
 
-background:#2563EB;
+.glass-card .btn-primary{
+
+width:100%;
+
+height:58px;
 
 border:none;
 
-padding:14px 35px;
+border-radius:14px;
 
-border-radius:10px;
+background:linear-gradient(135deg,#2563eb,#4f46e5);
+
+font-size:18px;
+
+font-weight:600;
+
+transition:.35s;
+
+}
+
+.glass-card .btn-primary:hover{
+
+transform:translateY(-3px);
+
+box-shadow:0 18px 35px rgba(37,99,235,.35);
 
 }
 .glass-card{
-    background:rgba(255,255,255,.08);
-    backdrop-filter:blur(20px);
-    border:1px solid rgba(255,255,255,.12);
-    border-radius:20px;
+
+width:100%;
+
+max-width:620px;
+
+padding:55px;
+
+border-radius:24px;
+
+background:rgba(22,28,45,.82);
+
+backdrop-filter:blur(18px);
+
+border:1px solid rgba(255,255,255,.08);
+
+box-shadow:
+
+0 20px 60px rgba(0,0,0,.45),
+
+0 0 30px rgba(37,99,235,.12);
+
 }
 
-.form-control{
-    background:#0f172a;
-    color:white;
-    border:1px solid #334155;
-    height:50px;
+/* ===========================================
+   FORM INPUTS
+=========================================== */
+
+.glass-card .form-control{
+
+height:58px;
+
+border-radius:14px;
+
+padding:0 18px;
+
+background:#111827;
+
+border:1px solid rgba(255,255,255,.10);
+
+color:white;
+
+font-size:17px;
+
+transition:.3s;
+
+}
+
+.glass-card .form-control:focus{
+
+background:#111827;
+
+border-color:#3b82f6;
+
+box-shadow:0 0 0 4px rgba(59,130,246,.18);
+
+color:white;
+
+}
+
+.glass-card .form-control::placeholder{
+
+color:#94a3b8;
+
 }
 
 .form-control:focus{
@@ -86,17 +164,76 @@ border-radius:10px;
     perspective: 1000px; /* 3D effect ke liye */
 }
 
-.glass-card {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 40px 25px;
-    border-radius: 20px;
-    width: 280px;
-    text-align: center;
-    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    position: relative;
-    overflow: hidden;
+/* ===========================================
+   LOGIN / REGISTER GLASS CARD
+=========================================== */
+
+.glass-card{
+
+    width:100%;
+
+    max-width:760px;
+
+    margin:40px auto;
+
+    padding:55px;
+
+    border-radius:25px;
+
+    background:rgba(15,23,42,.88);
+
+    backdrop-filter:blur(18px);
+
+    -webkit-backdrop-filter:blur(18px);
+
+    border:1px solid rgba(255,255,255,.08);
+
+    box-shadow:0 25px 60px rgba(0,0,0,.45);
+
+    transition:.35s;
+
+    position:relative;
+
+    overflow:hidden;
+
+}
+/* ===========================================
+   GLASS CARD HOVER
+=========================================== */
+
+.glass-card:hover{
+
+    transform:translateY(-8px);
+
+    box-shadow:0 35px 80px rgba(37,99,235,.30);
+
+}
+/* ===========================================
+   GLASS SHINE EFFECT
+=========================================== */
+
+.glass-card::before{
+
+content:"";
+
+position:absolute;
+
+inset:0;
+
+background:linear-gradient(
+
+135deg,
+
+rgba(37,99,235,.08),
+
+transparent,
+
+rgba(99,102,241,.08)
+
+);
+
+pointer-events:none;
+
 }
 
 /* Hover Animation */
@@ -152,5 +289,283 @@ color:#fff;
 border-radius:3px;
 
 padding:2px;
+
+}
+
+/* ===========================================
+   LOGIN HEADING
+=========================================== */
+
+.glass-card h2{
+
+font-size:42px;
+
+font-weight:700;
+
+margin-bottom:35px;
+
+text-align:center;
+
+}
+/* ===========================================
+   MOBILE
+=========================================== */
+
+@media(max-width:768px){
+
+.glass-card{
+
+max-width:100%;
+
+padding:30px;
+
+margin:20px auto;
+
+}
+
+.glass-card h2{
+
+font-size:32px;
+
+}
+
+.hero h1{
+
+font-size:42px;
+
+}
+
+.hero p{
+
+font-size:18px;
+
+}
+
+}
+.form-label{
+
+font-size:15px;
+
+font-weight:600;
+
+margin-bottom:8px;
+
+}
+
+.form-control{
+
+font-size:17px;
+
+}
+/*==========================
+AUTH PAGE
+==========================*/
+
+.auth-page{
+
+min-height:100vh;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+padding:60px 20px;
+
+}
+.auth-input .input-group-text{
+
+background:#111827;
+
+border:1px solid rgba(255,255,255,.12);
+
+color:#60a5fa;
+
+}
+.auth-input .form-control{
+
+background:#111827;
+
+border:1px solid rgba(255,255,255,.12);
+
+color:#fff;
+
+}
+.auth-btn{
+
+margin-top:15px;
+
+height:58px;
+
+font-size:18px;
+
+font-weight:600;
+
+background:linear-gradient(90deg,#2563eb,#4f46e5);
+
+border:none;
+
+border-radius:14px;
+
+}
+.auth-title{
+
+font-size:56px;
+
+font-weight:700;
+
+margin-bottom:10px;
+
+text-align:center;
+
+}
+.auth-subtitle{
+
+text-align:center;
+
+color:#94a3b8;
+
+margin-bottom:35px;
+
+font-size:18px;
+
+}
+/*=========================
+PASSWORD BUTTON
+=========================*/
+
+.password-toggle{
+
+background:#111827;
+
+border:1px solid rgba(255,255,255,.12);
+
+border-left:none;
+
+color:#94a3b8;
+
+}
+
+.password-toggle:hover{
+
+background:#1e293b;
+
+color:white;
+
+}
+
+/*=========================
+REMEMBER
+=========================*/
+
+.form-check-label{
+
+color:#cbd5e1;
+
+}
+
+.form-check-input{
+
+background:#111827;
+
+border:1px solid rgba(255,255,255,.15);
+
+}
+
+.form-check-input:checked{
+
+background:#2563eb;
+
+border-color:#2563eb;
+
+}
+
+.forgot-link{
+
+text-decoration:none;
+
+color:#60a5fa;
+
+font-weight:500;
+
+}
+
+.forgot-link:hover{
+
+color:#3b82f6;
+
+}
+
+.auth-input .input-group-text{
+
+width:55px;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+font-size:18px;
+
+}
+
+.auth-input .form-control{
+
+border-left:none;
+
+}
+/*==============================
+PASSWORD STRENGTH
+==============================*/
+
+.password-strength{
+
+height:8px;
+
+background:#1e293b;
+
+border-radius:20px;
+
+margin-top:10px;
+
+overflow:hidden;
+
+}
+
+#strengthBar{
+
+height:100%;
+
+width:0;
+
+background:red;
+
+transition:.35s;
+
+}
+
+#strengthText{
+
+display:block;
+
+margin-top:8px;
+
+font-size:14px;
+
+font-weight:600;
+
+}
+
+#matchText{
+
+display:block;
+
+margin-top:10px;
+
+font-size:14px;
+
+font-weight:600;
 
 }

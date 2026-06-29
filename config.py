@@ -2,7 +2,9 @@ import os
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
-DATABASE_DIR = os.path.join(BASE_DIR, "database")
+import tempfile
+
+DATABASE_DIR = tempfile.gettempdir()
 
 os.makedirs(DATABASE_DIR, exist_ok=True)
 

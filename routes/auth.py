@@ -45,6 +45,7 @@ def register():
         flash("Account created successfully. Please login.", "success")
         return redirect(url_for("auth.login"))
 
+
     return render_template("pages/register.html", form=form)
 
 
@@ -63,7 +64,7 @@ def login():
 
             login_user(user)
 
-            flash("Welcome Back!", "success")
+            
 
             return redirect(url_for("dashboard.dashboard_page"))
 
@@ -80,6 +81,6 @@ def logout():
 
     logout_user()
 
-    flash("Logged out successfully.", "success")
+    flash("Logged out successfully.", "info")
 
     return redirect(url_for("auth.login"))

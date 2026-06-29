@@ -8,15 +8,19 @@
 
     <div class="row justify-content-center">
 
-        <div class="col-lg-6">
+        <div class="col-lg-9 col-xl-7 col-xxl-6">
 
             <div class="card glass-card shadow-lg">
 
                 <div class="card-body p-5">
 
-                    <h2 class="text-center mb-4">
-                        Create Account
-                    </h2>
+                    <h2 class="auth-title">
+    Create Account
+</h2>
+
+<p class="auth-subtitle">
+    Join TypeMaster India and improve your typing speed.
+</p>
 
                     <!-- Flash Messages -->
 
@@ -33,58 +37,168 @@
                     <form method="POST" action="{{ url_for('auth.register') }}">
                       {{ form.hidden_tag() }}
 
-                        <div class="mb-3">
+                        <div class="mb-4">
 
-                            {{ form.full_name.label(class="form-label") }}
+<label class="form-label">
+Full Name
+</label>
 
-                            {{ form.full_name(class="form-control") }}
+<div class="input-group auth-input">
 
-                        </div>
+<span class="input-group-text">
 
-                        <div class="mb-3">
+<i class="fa-solid fa-user"></i>
 
-                            {{ form.username.label(class="form-label") }}
+</span>
 
-                            {{ form.username(class="form-control") }}
+{{ form.full_name(class="form-control",placeholder="Enter your full name") }}
 
-                        </div>
+</div>
 
-                        <div class="mb-3">
-
-                            {{ form.email.label(class="form-label") }}
-
-                            {{ form.email(class="form-control") }}
-
-                        </div>
-
-                        <div class="mb-3">
-
-                            {{ form.mobile.label(class="form-label") }}
-
-                            {{ form.mobile(class="form-control") }}
-
-                        </div>
-
-                        <div class="mb-3">
-
-                            {{ form.password.label(class="form-label") }}
-
-                            {{ form.password(class="form-control") }}
-
-                        </div>
+</div>
 
                         <div class="mb-4">
 
-                            {{ form.confirm_password.label(class="form-label") }}
+<label class="form-label">
+Username
+</label>
 
-                            {{ form.confirm_password(class="form-control") }}
+<div class="input-group auth-input">
 
-                        </div>
+<span class="input-group-text">
 
-                        {{ form.submit(class="btn btn-primary w-100") }}
+<i class="fa-solid fa-at"></i>
+
+</span>
+
+{{ form.username(class="form-control",placeholder="Choose a username") }}
+
+</div>
+
+</div>
+
+                        <div class="mb-4">
+
+<label class="form-label">
+Email Address
+</label>
+
+<div class="input-group auth-input">
+
+<span class="input-group-text">
+
+<i class="fa-regular fa-envelope"></i>
+
+</span>
+
+{{ form.email(class="form-control",placeholder="Enter your email") }}
+
+</div>
+
+</div>
+
+                        <div class="mb-4">
+
+<label class="form-label">
+Mobile Number
+</label>
+
+<div class="input-group auth-input">
+
+<span class="input-group-text">
+
+<i class="fa-solid fa-phone"></i>
+
+</span>
+
+{{ form.mobile(class="form-control",placeholder="Enter mobile number") }}
+
+</div>
+
+</div>
+
+                        <div class="mb-4">
+
+<label class="form-label">
+Password
+</label>
+
+<div class="input-group auth-input">
+
+<span class="input-group-text">
+
+<i class="fa-solid fa-lock"></i>
+
+</span>
+
+{{ form.password(
+    class="form-control",
+    placeholder="Create password",
+    id="password",
+    onkeyup="checkPasswordStrength();checkPasswordMatch();"
+) }}
+
+<button
+class="btn password-toggle"
+type="button"
+onclick="togglePassword()">
+
+<i id="eyeIcon" class="fa-regular fa-eye"></i>
+
+</button>
+
+</div>
+
+</div>
+
+                        <div class="mb-4">
+
+<label class="form-label">
+Confirm Password
+</label>
+
+<div class="input-group auth-input">
+
+    <span class="input-group-text">
+        <i class="fa-solid fa-shield-halved"></i>
+    </span>
+
+    {{ form.confirm_password(
+        class="form-control",
+        placeholder="Confirm password",
+        id="confirmPassword",
+        onkeyup="checkPasswordMatch()"
+    ) }}
+
+</div>
+<small id="matchText"></small>
+
+</div>
+
+<div class="password-strength">
+
+    <div id="strengthBar"></div>
+
+</div>
+
+<small id="strengthText"></small>
+                        {{ form.submit(class="btn btn-primary auth-btn") }}
 
                     </form>
+<div class="text-center mt-4">
 
+    <span class="text-secondary">
+        Already have an account?
+    </span>
+
+    <a href="{{ url_for('auth.login') }}"
+       class="register-link">
+
+        Login
+
+    </a>
+
+</div>
                 </div>
 
             </div>
