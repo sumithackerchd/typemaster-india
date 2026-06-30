@@ -31,7 +31,59 @@
     const config = Object.assign({}, DEFAULT_CONFIG, window.TYPING_CONFIG || {});
 
     const paragraphElement = document.getElementById("paragraph");
+    const typingViewport = document.getElementById("typingViewport");
     const typingInput = document.getElementById("typingInput");
+
+    // Remember the line offset (relative to #paragraph) we last scrolled to,
+    // so we only re-translate when the caret actually moves to a new line.
+    let lastLineTop = -1;
+
+    // Focus the input WITHOUT letting the browser scroll the page to it.
+    function focusInput() {
+        try {
+            typingInput.focus({ preventScroll: true });
+        } catch (e) {
+            typingInput.focus();
+        }
+    }
+
+    // Keep the active character's line visible by translating the paragraph
+    // UP inside its fixed-height viewport. The browser window never moves —
+    // only the text inside the container does (Monkeytype / TypingBaba style).
+    function scrollToCaret() {
+
+        if (!typingViewport) {
+            return;
+        }
+
+        const caretIndex = prevCurrentIndex >= 0 ? prevCurrentIndex : 0;
+        const caret = paragraphSpans[Math.min(caretIndex, paragraphSpans.length - 1)];
+
+        if (!caret) {
+            return;
+        }
+
+        const lineTop = caret.offsetTop;
+
+        if (lineTop === lastLineTop) {
+            return;
+        }
+
+        lastLineTop = lineTop;
+
+        const lineHeight = caret.offsetHeight || 0;
+
+        // Keep the active line one line down from the top of the viewport so
+        // the user always sees a little of what comes next.
+        let offset = lineTop - lineHeight;
+
+        if (offset < 0) {
+            offset = 0;
+        }
+
+        paragraphElement.style.transform = "translateY(" + (-offset) + "px)";
+
+    }
     const timerElement = document.getElementById("timer");
     const pageTitleElement = document.getElementById("typingTitle");
     const netWpmElement = document.getElementById("netWpm");
@@ -289,6 +341,8 @@
         currentParagraph = buildText(list, currentTimer);
 
         paragraphElement.innerHTML = "";
+        paragraphElement.style.transform = "translateY(0)";
+        lastLineTop = -1;
         prevTypedLen = 0;
         prevCurrentIndex = -1;
 
@@ -349,7 +403,7 @@
         }
 
         updateStats();
-        typingInput.focus();
+        focusInput();
 
     }
 
@@ -423,6 +477,7 @@
         }
 
         highlightCharacters(typingInput.value);
+        scrollToCaret();
         updateStats();
 
         if (typingInput.value.length >= currentParagraph.length) {
@@ -640,7 +695,7 @@
     });
 
     document.body.addEventListener("click", function () {
-        typingInput.focus();
+        focusInput();
     });
 
     window.changeDifficulty = setActiveDifficulty;
@@ -661,7 +716,7 @@
         }
 
         await setActiveLanguage(config.defaultLanguage);
-        typingInput.focus();
+        focusInput();
 
     }
 

@@ -388,8 +388,10 @@ a { text-decoration: none; }
 .tm-footer a:hover { color: var(--primary); }
 .tm-footer .brand-line { display: flex; align-items: center; gap: 10px; color: var(--text); font-family: var(--font-display); font-weight: 800; font-size: 20px; }
 .tm-footer .footer-bottom { border-top: 1px solid var(--border); margin-top: 36px; padding-top: 22px; font-size: 14px; }
-.tm-footer .social { width: 38px; height: 38px; border-radius: 10px; display: inline-grid; place-items: center; background: var(--surface); border: 1px solid var(--border); margin-right: 8px; }
-.tm-footer .social:hover { background: var(--primary); color: #fff; }
+.tm-footer .social { width: 38px; height: 38px; border-radius: 10px; display: inline-grid; place-items: center; background: var(--surface); border: 1px solid var(--border); margin-right: 8px; transition: transform .2s ease, background .2s ease, color .2s ease, box-shadow .2s ease, border-color .2s ease; }
+.tm-footer .social i { transition: transform .2s ease; }
+.tm-footer .social:hover { background: var(--primary); color: #fff; border-color: var(--primary); transform: translateY(-3px) scale(1.08); box-shadow: 0 8px 20px rgba(47, 107, 255, .35); }
+.tm-footer .social:hover i { transform: scale(1.12); }
 
 /* ==========================================================================
    Auth pages (login / register / forgot / otp)
