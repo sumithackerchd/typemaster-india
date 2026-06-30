@@ -1,13 +1,15 @@
 import os
+import traceback
 
 from flask import Flask, render_template
-from flask_login import LoginManager, login_required
 from sqlalchemy import inspect, text
 
 from config import Config, DATABASE_DIR
 from models import db
 from models.user import User
 
+from extensions import mail, login_manager
+from flask_login import login_required
 from routes.auth import auth
 from routes.result import result
 from routes.dashboard import dashboard
@@ -17,28 +19,25 @@ from routes.profile import profile
 from routes.leaderboard import leaderboard
 from routes.hindi import hindi
 
-# Error handling
-import traceback
 
-
-#-------------------------------------
-#-------------------------------------
+# -------------------------------------
+# App Initialization
+# -------------------------------------
 
 app = Flask(__name__)
 app.config.from_object(Config)
 
 db.init_app(app)
 
-login_manager = LoginManager()
+mail.init_app(app)
+
 login_manager.init_app(app)
 login_manager.login_view = "auth.login"
 
 
 @login_manager.user_loader
 def load_user(user_id):
-
     return db.session.get(User, int(user_id))
-
 
 app.register_blueprint(auth)
 app.register_blueprint(result)
@@ -80,6 +79,7 @@ def home():
 
 
 @app.route("/typing")
+
 @login_required
 def typing():
 
