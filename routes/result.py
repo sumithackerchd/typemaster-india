@@ -1,5 +1,14 @@
+import os
+import tempfile
+
+from flask import send_file
+
+from utils.pdf_generator import create_certificate
+
 from flask import Blueprint, request, jsonify, render_template
 from flask_login import login_required, current_user
+from utils.certificate import generate_certificate_id
+from flask import Blueprint, render_template, abort
 
 from models import db
 from models.result import Result
@@ -198,4 +207,66 @@ def result_page():
     return render_template(
         "pages/result.html",
         result=latest
+    )
+
+#=================
+# certi
+#
+
+@result.route("/certificate/<int:result_id>")
+@login_required
+def certificate(result_id):
+
+    result_data = Result.query.filter_by(
+        id=result_id,
+        user_id=current_user.id
+    ).first()
+
+    if not result_data:
+        abort(404)
+
+    certificate_id = generate_certificate_id(
+        result_data.id
+    )
+
+    return render_template(
+
+        "pages/certificate.html",
+
+        result=result_data,
+
+        certificate_id=certificate_id
+    )
+
+# ccccc
+@result.route("/certificate/download/<int:result_id>")
+@login_required
+def download_certificate(result_id):
+
+    result_data = Result.query.filter_by(
+        id=result_id,
+        user_id=current_user.id
+    ).first_or_404()
+
+    certificate_id = generate_certificate_id(
+        result_data.id
+    )
+
+    pdf_path = os.path.join(
+        tempfile.gettempdir(),
+        f"certificate_{result_data.id}.pdf"
+    )
+
+    create_certificate(
+        pdf_path,
+        result_data,
+        certificate_id,
+        current_user
+    )
+
+    return send_file(
+        pdf_path,
+        as_attachment=True,
+        download_name=f"{certificate_id}.pdf",
+        mimetype="application/pdf"
     )

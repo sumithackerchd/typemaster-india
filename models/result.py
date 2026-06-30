@@ -62,9 +62,9 @@ class Result(db.Model):
 
     created_at = db.Column(
         db.DateTime,
-        default=datetime.utcnow
+        default=datetime.utcnow,
+        nullable=False
     )
 
     def __repr__(self):
-
         return f"<Result {self.id}>"

@@ -1,0 +1,407 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Certificate{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet"
+href="{{ url_for('static', filename='css/certificate.css') }}">
+
+<div class="certificate-page">
+
+<div class="certificate">
+
+    <!-- Border -->
+
+    <div class="outer-border"></div>
+    <div class="inner-border"></div>
+
+    <!-- Corners -->
+
+    <div class="corner tl"></div>
+    <div class="corner tr"></div>
+    <div class="corner bl"></div>
+    <div class="corner br"></div>
+
+    <!-- Gold Seal -->
+
+    <div class="gold-seal">
+
+        <div class="seal-inner">
+
+            <span>EXCELLENCE</span>
+
+            <strong>IN</strong>
+
+            <span>TYPING</span>
+
+        </div>
+
+    </div>
+
+    <!-- Watermark -->
+
+    <div class="certificate-watermark">
+
+        TYPEMASTER INDIA
+
+    </div>
+
+    <!-- ================= HEADER ================= -->
+
+    <header class="certificate-header">
+
+        <div class="logo-circle">
+
+            👑
+
+        </div>
+
+        <h1>
+
+            TypeMaster India
+
+        </h1>
+
+        <h2>
+
+            CERTIFICATE OF ACHIEVEMENT
+
+        </h2>
+
+        <div class="divider"></div>
+
+        <p>
+
+            This is to certify that
+
+        </p>
+
+    </header>
+
+    <!-- ================= NAME ================= -->
+
+    <section class="student-section">
+
+        <h3>
+
+            {{ current_user.full_name }}
+
+        </h3>
+
+        <div class="name-line"></div>
+
+        <p>
+
+            has successfully completed the
+
+            <strong>
+
+                TypeMaster India Typing Test
+
+            </strong>
+
+            with outstanding typing performance
+            and dedication.
+
+        </p>
+
+    </section>
+
+    <!-- ================= STATS ================= -->
+
+    <section class="stats-row">
+
+        <div class="stat-box">
+
+            <div class="icon">
+
+                ⚡
+
+            </div>
+
+            <span>
+
+                NET WPM
+
+            </span>
+
+            <h4>
+
+                {{ result.net_wpm }}
+
+            </h4>
+
+        </div>
+
+        <div class="stat-box">
+
+            <div class="icon">
+
+                🎯
+
+            </div>
+
+            <span>
+
+                ACCURACY
+
+            </span>
+
+            <h4>
+
+                {{ result.accuracy }}%
+
+            </h4>
+
+        </div>
+
+        <div class="stat-box">
+
+            <div class="icon">
+
+                🌐
+
+            </div>
+
+            <span>
+
+                LANGUAGE
+
+            </span>
+
+            <h4>
+
+                {{ result.language }}
+
+            </h4>
+
+        </div>
+
+        <div class="stat-box">
+
+            <div class="icon">
+
+                📊
+
+            </div>
+
+            <span>
+
+                DIFFICULTY
+
+            </span>
+
+            <h4>
+
+                {{ result.difficulty }}
+
+            </h4>
+
+        </div>
+
+    </section>
+        <!-- ================= FOOTER ================= -->
+
+    <section class="certificate-footer">
+
+        <!-- Left -->
+
+        <div class="certificate-meta">
+
+            <div class="meta-item">
+
+                <small>
+
+                    CERTIFICATE ID
+
+                </small>
+
+                <h5>
+
+                    {{ certificate_id }}
+
+                </h5>
+
+            </div>
+
+            <div class="meta-item">
+
+                <small>
+
+                    DATE OF ISSUE
+
+                </small>
+
+                <h5>
+
+                    {{ result.created_at.strftime("%d %B %Y") }}
+
+                </h5>
+
+            </div>
+
+        </div>
+
+        <!-- Center -->
+
+        <div class="certificate-qr">
+
+            {% if qr_code %}
+
+            <img
+
+                src="{{ qr_code }}"
+
+                alt="QR Code"
+
+            >
+
+            {% else %}
+
+            <div class="qr-placeholder">
+
+                QR
+
+            </div>
+
+            {% endif %}
+
+            <span>
+
+                Scan to Verify
+
+            </span>
+
+        </div>
+
+        <!-- Right -->
+
+        <div class="certificate-signature">
+
+            <img
+
+                src="{{ url_for('static',
+                filename='images/signature.png') }}"
+
+                class="signature-image"
+
+                alt="Signature"
+
+            >
+
+            <div class="signature-line"></div>
+
+            <strong>
+
+                Sumit Goswami
+
+            </strong>
+
+            <span>
+
+                Founder • TypeMaster India
+
+            </span>
+
+        </div>
+
+    </section>
+
+    <!-- ================= SECURITY ================= -->
+
+    <section class="certificate-security">
+
+        <div>
+
+            🔒 This certificate is digitally generated.
+
+        </div>
+
+        <div>
+
+            Verify at
+
+            <strong>
+
+                /verify/{{ certificate_id }}
+
+            </strong>
+
+        </div>
+
+        <div>
+
+            TypeMaster India © {{ result.created_at.year }}
+
+        </div>
+
+    </section>
+
+</div>
+
+<!-- ================= BUTTONS ================= -->
+
+<div class="certificate-actions">
+
+    <a
+
+        href="{{ url_for('result.download_certificate', result_id=result.id) }}"
+
+        class="btn btn-success btn-lg"
+
+    >
+
+        📄 Download PDF
+
+    </a>
+
+    <button
+
+        onclick="window.print()"
+
+        class="btn btn-primary btn-lg"
+
+    >
+
+        🖨 Print Certificate
+
+    </button>
+
+    <a
+
+        href="{{ url_for('dashboard.dashboard_page') }}"
+
+        class="btn btn-dark btn-lg"
+
+    >
+
+        Dashboard
+
+    </a>
+
+</div>
+
+<!-- Hidden Data -->
+
+<div class="certificate-hidden">
+
+    <span>{{ certificate_id }}</span>
+
+    <span>{{ current_user.full_name }}</span>
+
+    <span>{{ current_user.email }}</span>
+
+    <span>{{ result.net_wpm }}</span>
+
+    <span>{{ result.accuracy }}</span>
+
+    <span>{{ result.language }}</span>
+
+    <span>{{ result.difficulty }}</span>
+
+</div>
+
+</div>
+
+{% endblock %}

@@ -174,6 +174,127 @@ function animateGoal(){
 // Performance Chart
 // ==========================================
 
+const ctx = document.getElementById("wpmChart");
+
+if (ctx) {
+
+    new Chart(ctx, {
+
+        type: "line",
+
+        data: {
+
+            labels: chartLabels,
+
+            datasets: [
+
+                {
+
+                    label: "WPM",
+
+                    data: chartWpm,
+
+                    borderColor: "#3b82f6",
+
+                    backgroundColor: "rgba(59,130,246,.15)",
+
+                    fill: true,
+
+                    tension: 0.4,
+
+                    borderWidth: 3,
+
+                    pointRadius: 5,
+
+                    pointHoverRadius: 8
+
+                },
+
+                {
+
+                    label: "Accuracy",
+
+                    data: chartAccuracy,
+
+                    borderColor: "#22c55e",
+
+                    backgroundColor: "transparent",
+
+                    tension: 0.4,
+
+                    borderWidth: 3,
+
+                    pointRadius: 5
+
+                }
+
+            ]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            plugins: {
+
+                legend: {
+
+                    labels: {
+
+                        color: "#fff"
+
+                    }
+
+                }
+
+            },
+
+            scales: {
+
+                x: {
+
+                    ticks: {
+
+                        color: "#94a3b8"
+
+                    },
+
+                    grid: {
+
+                        color: "rgba(255,255,255,.05)"
+
+                    }
+
+                },
+
+                y: {
+
+                    beginAtZero: true,
+
+                    ticks: {
+
+                        color: "#94a3b8"
+
+                    },
+
+                    grid: {
+
+                        color: "rgba(255,255,255,.05)"
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    });
+
+}
 // Achievement Animation
 
 document.querySelectorAll(".achievement-card")
