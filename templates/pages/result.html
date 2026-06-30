@@ -3,7 +3,7 @@
 {% block title %}Typing Result{% endblock %}
 
 {% block content %}
-
+<link rel="stylesheet" href="{{ url_for('static', filename='css/result.css') }}">
 <div class="container py-5">
 
     <div class="text-center mb-5">
@@ -16,112 +16,686 @@
 
     {% if result %}
 
-    <div class="row g-4">
+<!-- ===================================== -->
+<!-- RESULT HERO -->
+<!-- ===================================== -->
 
-        <div class="col-md-4 col-lg-2">
-            <div class="result-card">
-                <h6>Net WPM</h6>
-                <h2>{{ result.net_wpm }}</h2>
-            </div>
+<div class="result-hero">
+
+    <div class="row align-items-center">
+
+        <div class="col-lg-8">
+
+            <span class="result-badge">
+
+                🎉 Test Completed Successfully
+
+            </span>
+
+            <h1 class="result-title">
+
+                Congratulations {{ current_user.full_name.split(' ')[0] }}
+
+            </h1>
+
+            <p class="result-subtitle">
+
+                Your typing test has been completed successfully.
+                Here is your performance summary.
+
+            </p>
+
         </div>
 
-        <div class="col-md-4 col-lg-2">
-            <div class="result-card">
-                <h6>Gross WPM</h6>
-                <h2>{{ result.gross_wpm }}</h2>
-            </div>
-        </div>
+        <div class="col-lg-4">
 
-        <div class="col-md-4 col-lg-2">
-            <div class="result-card">
-                <h6>CPM</h6>
-                <h2>{{ result.cpm }}</h2>
-            </div>
-        </div>
+            <div class="big-score">
 
-        <div class="col-md-4 col-lg-2">
-            <div class="result-card">
-                <h6>Accuracy</h6>
-                <h2>{{ result.accuracy }}%</h2>
-            </div>
-        </div>
+                {{ result.net_wpm }}
 
-        <div class="col-md-4 col-lg-2">
-            <div class="result-card">
-                <h6>Errors</h6>
-                <h2>{{ result.errors }}</h2>
-            </div>
-        </div>
+                <span>
 
-        <div class="col-md-4 col-lg-2">
-            <div class="result-card">
-                <h6>Duration</h6>
-                <h2>{{ result.duration }}s</h2>
-            </div>
-        </div>
+                    WPM
 
-    </div>
-
-    <div class="row g-4 mt-2">
-
-        <div class="col-md-6">
-            <div class="result-card text-start">
-                <h6>Language</h6>
-                <h2>{{ result.language }}</h2>
-            </div>
-        </div>
-
-        <div class="col-md-6">
-            <div class="result-card text-start">
-                <h6>Difficulty</h6>
-                <h2>{{ result.difficulty }}</h2>
-            </div>
-        </div>
-
-    </div>
-
-    <div class="row mt-4">
-
-        <div class="col-lg-12">
-
-            <div class="result-card text-start">
-
-                <h4>Test Information</h4>
-
-                <hr>
-
-                <p><strong>Date:</strong> {{ result.created_at.strftime('%d-%m-%Y %I:%M %p') }}</p>
-
-                <p><strong>User:</strong> {{ current_user.full_name }}</p>
-
-                <p><strong>Email:</strong> {{ current_user.email }}</p>
+                </span>
 
             </div>
 
         </div>
-
-    </div>
-
-    {% else %}
-
-    <div class="alert alert-warning text-center">
-        No typing result found. Complete a test first.
-    </div>
-
-    {% endif %}
-
-    <div class="text-center mt-5">
-
-        <a href="/typing" class="btn btn-primary btn-lg me-2">English Test</a>
-
-        <a href="/hindi" class="btn btn-info btn-lg me-2">Hindi Test</a>
-
-        <a href="{{ url_for('history.history_page') }}" class="btn btn-warning btn-lg me-2">History</a>
-
-        <a href="{{ url_for('dashboard.dashboard_page') }}" class="btn btn-success btn-lg">Dashboard</a>
 
     </div>
 
 </div>
+
+<!-- ===================================== -->
+<!-- SCORE CARDS -->
+<!-- ===================================== -->
+
+<div class="row mt-5 g-4">
+
+    <div class="col-lg-3 col-md-6">
+
+        <div class="score-card">
+
+            <div class="score-icon">
+
+                ⚡
+
+            </div>
+
+            <h6>
+
+                Net Speed
+
+            </h6>
+
+            <h2>
+
+                {{ result.net_wpm }}
+
+            </h2>
+
+            <p>
+
+                Words Per Minute
+
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="col-lg-3 col-md-6">
+
+        <div class="score-card">
+
+            <div class="score-icon">
+
+                🚀
+
+            </div>
+
+            <h6>
+
+                Gross Speed
+
+            </h6>
+
+            <h2>
+
+                {{ result.gross_wpm }}
+
+            </h2>
+
+            <p>
+
+                Before Errors
+
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="col-lg-3 col-md-6">
+
+        <div class="score-card">
+
+            <div class="score-icon">
+
+                🎯
+
+            </div>
+
+            <h6>
+
+                Accuracy
+
+            </h6>
+
+            <h2>
+
+                {{ result.accuracy }}%
+
+            </h2>
+
+            <p>
+
+                Typing Accuracy
+
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="col-lg-3 col-md-6">
+
+        <div class="score-card">
+
+            <div class="score-icon">
+
+                ❌
+
+            </div>
+
+            <h6>
+
+                Errors
+
+            </h6>
+
+            <h2>
+
+                {{ result.errors }}
+
+            </h2>
+
+            <p>
+
+                Mistakes
+
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+<!-- ===================================== -->
+<!-- PERFORMANCE SECTION -->
+<!-- ===================================== -->
+
+<div class="row mt-5 g-4">
+
+    <!-- Performance Chart -->
+
+    <div class="col-lg-8">
+
+        <div class="performance-card">
+
+            <h3>
+
+                📈 Performance Overview
+
+            </h3>
+
+            <p class="text-secondary mb-4">
+
+                Your typing performance at a glance.
+
+            </p>
+
+            <canvas id="resultChart" height="120"></canvas>
+
+        </div>
+
+    </div>
+
+    <!-- Grade Card -->
+
+    <div class="col-lg-4">
+
+        <div class="grade-card">
+
+            <h5>
+
+                Performance Grade
+
+            </h5>
+
+            {% if result.accuracy >= 98 and result.net_wpm >= 70 %}
+
+                <div class="grade-circle grade-a-plus">
+
+                    A+
+
+                </div>
+
+                <p>
+
+                    Outstanding Performance
+
+                </p>
+
+            {% elif result.accuracy >= 95 %}
+
+                <div class="grade-circle grade-a">
+
+                    A
+
+                </div>
+
+                <p>
+
+                    Excellent Work
+
+                </p>
+
+            {% elif result.accuracy >= 90 %}
+
+                <div class="grade-circle grade-b">
+
+                    B
+
+                </div>
+
+                <p>
+
+                    Good Performance
+
+                </p>
+
+            {% else %}
+
+                <div class="grade-circle grade-c">
+
+                    C
+
+                </div>
+
+                <p>
+
+                    Keep Practicing
+
+                </p>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ===================================== -->
+<!-- TEST DETAILS -->
+<!-- ===================================== -->
+
+<div class="row mt-5 g-4">
+
+    <div class="col-lg-6">
+
+        <div class="info-card">
+
+            <h4>
+
+                📝 Test Details
+
+            </h4>
+
+            <hr>
+
+            <div class="info-row">
+
+                <span>
+
+                    Language
+
+                </span>
+
+                <strong>
+
+                    {{ result.language }}
+
+                </strong>
+
+            </div>
+
+            <div class="info-row">
+
+                <span>
+
+                    Difficulty
+
+                </span>
+
+                <strong>
+
+                    {{ result.difficulty }}
+
+                </strong>
+
+            </div>
+
+            <div class="info-row">
+
+                <span>
+
+                    Duration
+
+                </span>
+
+                <strong>
+
+                    {{ result.duration }} Seconds
+
+                </strong>
+
+            </div>
+
+            <div class="info-row">
+
+                <span>
+
+                    CPM
+
+                </span>
+
+                <strong>
+
+                    {{ result.cpm }}
+
+                </strong>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-lg-6">
+
+        <div class="info-card">
+
+            <h4>
+
+                👤 User Information
+
+            </h4>
+
+            <hr>
+
+            <div class="info-row">
+
+                <span>
+
+                    Name
+
+                </span>
+
+                <strong>
+
+                    {{ current_user.full_name }}
+
+                </strong>
+
+            </div>
+
+            <div class="info-row">
+
+                <span>
+
+                    Email
+
+                </span>
+
+                <strong>
+
+                    {{ current_user.email }}
+
+                </strong>
+
+            </div>
+
+            <div class="info-row">
+
+                <span>
+
+                    Test Date
+
+                </span>
+
+                <strong>
+
+                    {{ result.created_at.strftime('%d-%m-%Y') }}
+
+                </strong>
+
+            </div>
+
+            <div class="info-row">
+
+                <span>
+
+                    Time
+
+                </span>
+
+                <strong>
+
+                    {{ result.created_at.strftime('%I:%M %p') }}
+
+                </strong>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+<!-- ===================================== -->
+<!-- ACHIEVEMENTS -->
+<!-- ===================================== -->
+
+<div class="row mt-5">
+
+    <div class="col-12">
+
+        <div class="performance-card">
+
+            <h3>
+
+                🏅 Achievements
+
+            </h3>
+
+            <div class="row mt-4 g-4">
+
+                <div class="col-lg-3 col-md-6">
+
+                    <div class="achievement-card {% if result.net_wpm >= 30 %}unlocked{% else %}locked{% endif %}">
+
+                        <div class="achievement-icon">
+
+                            🥉
+
+                        </div>
+
+                        <h5>
+
+                            30 WPM Club
+
+                        </h5>
+
+                    </div>
+
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+
+                    <div class="achievement-card {% if result.net_wpm >= 50 %}unlocked{% else %}locked{% endif %}">
+
+                        <div class="achievement-icon">
+
+                            🥈
+
+                        </div>
+
+                        <h5>
+
+                            50 WPM Club
+
+                        </h5>
+
+                    </div>
+
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+
+                    <div class="achievement-card {% if result.net_wpm >= 70 %}unlocked{% else %}locked{% endif %}">
+
+                        <div class="achievement-icon">
+
+                            🥇
+
+                        </div>
+
+                        <h5>
+
+                            70 WPM Club
+
+                        </h5>
+
+                    </div>
+
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+
+                    <div class="achievement-card {% if result.accuracy >= 98 %}unlocked{% else %}locked{% endif %}">
+
+                        <div class="achievement-icon">
+
+                            🎯
+
+                        </div>
+
+                        <h5>
+
+                            Accuracy Master
+
+                        </h5>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ===================================== -->
+<!-- PERFORMANCE TIPS -->
+<!-- ===================================== -->
+
+<div class="row mt-5">
+
+    <div class="col-12">
+
+        <div class="info-card">
+
+            <h4>
+
+                💡 Performance Tips
+
+            </h4>
+
+            <hr>
+
+            <ul class="mb-0">
+
+                {% if result.accuracy < 95 %}
+
+                <li>
+
+                    Focus on improving typing accuracy before increasing speed.
+
+                </li>
+
+                {% endif %}
+
+                {% if result.net_wpm < 40 %}
+
+                <li>
+
+                    Practice daily for 15–20 minutes to improve speed.
+
+                </li>
+
+                {% endif %}
+
+                {% if result.errors > 10 %}
+
+                <li>
+
+                    Reduce typing errors by slowing down slightly.
+
+                </li>
+
+                {% endif %}
+
+                <li>
+
+                    Maintain a proper sitting posture while typing.
+
+                </li>
+
+            </ul>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ===================================== -->
+<!-- ACTION BUTTONS -->
+<!-- ===================================== -->
+
+<div class="text-center mt-5">
+
+    <a href="/typing" class="btn btn-primary btn-lg me-2">
+
+        ⌨️ Try Again
+
+    </a>
+
+    <a href="/hindi" class="btn btn-info btn-lg me-2">
+
+        🇮🇳 Hindi Test
+
+    </a>
+
+    <a href="{{ url_for('history.history_page') }}" class="btn btn-warning btn-lg me-2">
+
+        📜 History
+
+    </a>
+
+    <a href="{{ url_for('dashboard.dashboard_page') }}" class="btn btn-success btn-lg me-2">
+
+        🏠 Dashboard
+
+    </a>
+
+    <button class="btn btn-secondary btn-lg">
+
+        📄 Download Certificate
+
+    </button>
+
+</div>
+
+{% else %}
+
+<div class="alert alert-warning text-center">
+
+    No typing result found. Complete a typing test first.
+
+</div>
+
+{% endif %}
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{ url_for('static', filename='js/result.js') }}"></script>
 
 {% endblock %}

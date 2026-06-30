@@ -1,86 +1,194 @@
-// ===============================
-// TypeMaster India Dashboard JS
-// ===============================
+// ==========================================
+// Dashboard V2
+// ==========================================
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", () => {
 
-    console.log("Dashboard Loaded Successfully");
+    animateCounters();
+
+    updateGreeting();
 
     animateCards();
 
-    showGreeting();
+    animateGoal();
 
 });
 
-// -------------------------------
-// Animate Dashboard Cards
-// -------------------------------
 
-function animateCards() {
+// ==========================================
+// Greeting
+// ==========================================
 
-    const cards = document.querySelectorAll(".stat-card, .quick-card");
+function updateGreeting(){
 
-    cards.forEach((card, index) => {
+    const title=document.querySelector(".hero-dashboard h1");
 
-        card.style.opacity = "0";
-        card.style.transform = "translateY(30px)";
+    if(!title) return;
 
-        setTimeout(() => {
+    const hour=new Date().getHours();
 
-            card.style.transition = "0.5s ease";
+    let greet="Welcome";
 
-            card.style.opacity = "1";
+    if(hour<12){
 
-            card.style.transform = "translateY(0)";
+        greet="☀️ Good Morning";
 
-        }, index * 120);
+    }
+
+    else if(hour<17){
+
+        greet="🌤 Good Afternoon";
+
+    }
+
+    else{
+
+        greet="🌙 Good Evening";
+
+    }
+
+    const badge=document.querySelector(".welcome-badge");
+
+    if(badge){
+
+        badge.innerHTML=greet;
+
+    }
+
+}
+
+
+// ==========================================
+// Counter Animation
+// ==========================================
+
+function animateCounters(){
+
+    document.querySelectorAll(".stat-number").forEach(counter=>{
+
+        const txt=counter.innerText.trim();
+
+        const value=parseFloat(txt.replace(/[^\d.]/g,""));
+
+        if(isNaN(value)) return;
+
+        let current=0;
+
+        const step=value/50;
+
+        const timer=setInterval(()=>{
+
+            current+=step;
+
+            if(current>=value){
+
+                current=value;
+
+                clearInterval(timer);
+
+            }
+
+            if(txt.includes("%")){
+
+                counter.innerHTML=current.toFixed(1)+"%";
+
+            }
+
+            else if(txt.includes("#")){
+
+                counter.innerHTML="#"+Math.floor(current);
+
+            }
+
+            else{
+
+                counter.innerHTML=Math.floor(current);
+
+            }
+
+        },20);
 
     });
 
 }
 
-// -------------------------------
-// Greeting
-// -------------------------------
 
-function showGreeting() {
+// ==========================================
+// Hover Animation
+// ==========================================
 
-    const hour = new Date().getHours();
+function animateCards(){
 
-    let greeting = "Welcome";
+    document.querySelectorAll(".stat-card,.quick-card,.recent-card,.goal-card")
+    .forEach(card=>{
 
-    if (hour < 12) {
+        card.addEventListener("mousemove",e=>{
 
-        greeting = "🌅 Good Morning";
+            const rect=card.getBoundingClientRect();
 
-    } else if (hour < 17) {
+            const x=e.clientX-rect.left;
 
-        greeting = "☀️ Good Afternoon";
+            const y=e.clientY-rect.top;
 
-    } else {
+            card.style.setProperty("--x",x+"px");
 
-        greeting = "🌙 Good Evening";
+            card.style.setProperty("--y",y+"px");
 
-    }
+        });
 
-    const heading = document.querySelector(".welcome-card h2");
-
-    if (heading) {
-
-        const username = heading.innerText.replace("👋 Welcome", "").trim();
-
-        heading.innerHTML = `${greeting} ${username} 👋`;
-
-    }
+    });
 
 }
 
-// -------------------------------
-// Future Functions
-// -------------------------------
 
-// updateStatistics()
-// loadRecentActivity()
-// loadLeaderboard()
-// loadProgressGraph()
-// loadDailyGoal()
+// ==========================================
+// Goal Circle Animation
+// ==========================================
+
+function animateGoal(){
+
+    const goal=document.querySelector(".goal-progress h1");
+
+    if(!goal) return;
+
+    const value=parseInt(goal.innerText);
+
+    let current=0;
+
+    const timer=setInterval(()=>{
+
+        current++;
+
+        goal.innerHTML=current+"%";
+
+        if(current>=value){
+
+            clearInterval(timer);
+
+        }
+
+    },18);
+
+}
+// ==========================================
+// Performance Chart
+// ==========================================
+
+// Achievement Animation
+
+document.querySelectorAll(".achievement-card")
+.forEach(card=>{
+
+card.addEventListener("mouseenter",()=>{
+
+card.style.transform="translateY(-10px) scale(1.03)";
+
+});
+
+card.addEventListener("mouseleave",()=>{
+
+card.style.transform="";
+
+});
+
+});

@@ -47,19 +47,49 @@ class User(UserMixin, db.Model):
         nullable=False
     )
 
-    created_at = db.Column(
+
+    # -----------------------------
+# Gamification
+# -----------------------------
+
+xp = db.Column(
+    db.Integer,
+    default=0
+)
+
+level = db.Column(
+    db.Integer,
+    default=1
+)
+
+current_streak = db.Column(
+    db.Integer,
+    default=0
+)
+
+best_streak = db.Column(
+    db.Integer,
+    default=0
+)
+
+last_test_date = db.Column(
+    db.Date,
+    nullable=True
+)
+
+created_at = db.Column(
         db.DateTime,
         default=datetime.utcnow
     )
 
     # One User -> Many Results
-    results = db.relationship(
+results = db.relationship(
         "Result",
         backref="user",
         lazy=True,
         cascade="all, delete-orphan"
     )
 
-    def __repr__(self):
+def __repr__(self):
 
         return f"<User {self.username}>"

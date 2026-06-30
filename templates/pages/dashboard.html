@@ -4,188 +4,103 @@
 
 {% block content %}
 
-
 <div class="dashboard">
 
-    <div class="container-fluid">
+<div class="container-fluid">
 
-        <div class="welcome-card">
+    <!-- ========================= -->
+    <!-- Hero Section -->
+    <!-- ========================= -->
 
-            <h2>
-                👋 Welcome {{ current_user.full_name }}
-            </h2>
+    <div class="hero-dashboard">
+
+        <div class="hero-left">
+
+            <span class="welcome-badge">
+
+                👋 Welcome Back
+
+            </span>
+
+            <h1>
+
+                {{ current_user.full_name.split(' ')[0] }}
+
+            </h1>
 
             <p>
-                Ready to improve your typing speed today?
+
+                Keep practicing every day and improve your typing speed.
+
             </p>
 
-        </div>
+            <div class="hero-buttons">
 
-        <div class="row g-4">
+                <a href="/typing" class="btn btn-light hero-btn">
 
-            <div class="col-lg-3">
+                    Start English Test
 
-                <div class="stat-card">
+                </a>
 
-                    <div class="stat-number">
-                     {{ total_tests }}
-                    </div>
+                <a href="/hindi" class="btn btn-outline-light hero-btn">
 
-                    <div class="stat-title">
-
-                        Total Tests
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            <div class="col-lg-3">
-
-                <div class="stat-card">
-
-                    <div class="stat-number">
-
-                        {{ best_wpm }}
-
-                    </div>
-
-                    <div class="stat-title">
-
-                        Best WPM
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            <div class="col-lg-3">
-
-                <div class="stat-card">
-
-                    <div class="stat-number">
-                        {{ average_accuracy }}%
-                    </div>
-
-                    <div class="stat-title">
-
-                        Accuracy
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            <div class="col-lg-3">
-
-                <div class="stat-card">
-
-                    <div class="stat-number">
-                    Coming Soon
-                    </div>
-
-                    <div class="stat-title">
-
-                        Rank
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <h3 class="mt-5 mb-4">
-
-            Quick Start
-
-        </h3>
-
-        <div class="row g-4">
-
-            <div class="col-md-3">
-
-                <a href="/typing" class="text-decoration-none">
-
-                    <div class="quick-card">
-
-                        <h4>
-
-                            ⌨️
-
-                        </h4>
-
-                        <h5>
-
-                            English Typing
-
-                        </h5>
-
-                    </div>
+                    Hindi Mangal
 
                 </a>
 
             </div>
 
-            <div class="col-md-3">
+        </div>
 
-                <div class="quick-card">
+        <div class="hero-right">
 
-                    <h4>
+            <div class="goal-circle">
 
-                        🇮🇳
+                <h2>
 
-                    </h4>
+                    {{ best_wpm }}
 
-                    <h5>
+                </h2>
 
-                        Hindi Mangal
+                <span>
 
-                    </h5>
+                    Best WPM
 
-                </div>
-
-            </div>
-
-            <div class="col-md-3">
-
-                <div class="quick-card">
-
-                    <h4>
-
-                        📝
-
-                    </h4>
-
-                    <h5>
-
-                        Mock Tests
-
-                    </h5>
-
-                </div>
+                </span>
 
             </div>
 
-            <div class="col-md-3">
+        </div>
 
-                <div class="quick-card">
+    </div>
 
-                    <h4>
 
-                        🏆
 
-                    </h4>
+    <!-- ========================= -->
+    <!-- Statistics -->
+    <!-- ========================= -->
 
-                    <h5>
+    <div class="row g-4">
 
-                        Leaderboard
+        <div class="col-lg-3 col-md-6">
 
-                    </h5>
+            <div class="stat-card">
+
+                <div class="stat-icon">
+
+                    📄
+
+                </div>
+
+                <div class="stat-number">
+
+                    {{ total_tests }}
+
+                </div>
+
+                <div class="stat-title">
+
+                    Total Tests
 
                 </div>
 
@@ -193,62 +108,249 @@
 
         </div>
 
-        <div class="row mt-5">
 
-            <div class="col-lg-8">
 
-                <div class="stat-card">
+        <div class="col-lg-3 col-md-6">
 
-                    <h4>
+            <div class="stat-card">
 
-                        Recent Activity
+                <div class="stat-icon">
 
-                    </h4>
+                    ⚡
 
-                    <hr>
+                </div>
 
-                    {% if last_test %}
+                <div class="stat-number">
 
-                    <p><strong>Language:</strong> {{ last_test.language }}</p>
+                    {{ best_wpm }}
 
-                    <p><strong>Difficulty:</strong> {{ last_test.difficulty }}</p>
+                </div>
 
-                    <p><strong>Net WPM:</strong> {{ last_test.net_wpm }}</p>
+                <div class="stat-title">
 
-                    <p><strong>Accuracy:</strong> {{ last_test.accuracy }}%</p>
-
-                    {% else %}
-
-                <p>No typing test completed yet.</p>
-
-                {% endif %}
+                    Best WPM
 
                 </div>
 
             </div>
 
-            <div class="col-lg-4">
+        </div>
 
-                <div class="stat-card">
 
-                    <h4>
 
-                        Daily Goal 
-                    </h4>
+        <div class="col-lg-3 col-md-6">
 
-                    <hr>
+            <div class="stat-card">
 
-                    <h1>
+                <div class="stat-icon">
 
-                        0%
+                    🎯
 
-                    </h1>
+                </div>
 
-                    <p>
+                <div class="stat-number">
 
-                        Complete one typing test today. 
+                    {{ average_accuracy }}%
 
-                    </p>
+                </div>
+
+                <div class="stat-title">
+
+                    Accuracy
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+
+                    🏆
+
+                </div>
+
+                <div class="stat-number">
+
+                    {% if user_rank %}
+
+                        #{{ user_rank }}
+
+                    {% else %}
+
+                        --
+
+                    {% endif %}
+
+                </div>
+
+                <div class="stat-title">
+
+                    Global Rank
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+<!-- ===================================== -->
+<!-- GOALS & MONTHLY PROGRESS -->
+<!-- ===================================== -->
+
+<h3 class="section-title">
+
+    📊 Progress Overview
+
+</h3>
+
+<div class="row g-4">
+
+    <div class="col-lg-6">
+
+        <div class="goal-card">
+
+            <h4>
+
+                🎯 Today's Goal
+
+            </h4>
+
+            <hr>
+
+            <div class="goal-progress">
+
+                <h1>
+
+                    {{ daily_goal }}%
+
+                </h1>
+
+            </div>
+
+            <div class="goal-info">
+
+                <p>
+
+                    Target
+
+                    <strong>
+
+                        1 Typing Test
+
+                    </strong>
+
+                </p>
+
+                <p>
+
+                    Current Progress
+
+                    <strong>
+
+                        {{ daily_goal }}%
+
+                    </strong>
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-lg-6">
+
+        <div class="goal-card">
+
+            <h4>
+
+                📅 Monthly Summary
+
+            </h4>
+
+            <hr>
+
+            <div class="summary-grid">
+
+                <div>
+
+                    <span>
+
+                        Tests
+
+                    </span>
+
+                    <h3>
+
+                        {{ total_tests }}
+
+                    </h3>
+
+                </div>
+
+                <div>
+
+                    <span>
+
+                        Best WPM
+
+                    </span>
+
+                    <h3>
+
+                        {{ best_wpm }}
+
+                    </h3>
+
+                </div>
+
+                <div>
+
+                    <span>
+
+                        Accuracy
+
+                    </span>
+
+                    <h3>
+
+                        {{ average_accuracy }}%
+
+                    </h3>
+
+                </div>
+
+                <div>
+
+                    <span>
+
+                        Rank
+
+                    </span>
+
+                    <h3>
+
+                        {% if user_rank %}
+
+                        #{{ user_rank }}
+
+                        {% else %}
+
+                        --
+
+                        {% endif %}
+
+                    </h3>
 
                 </div>
 
@@ -259,11 +361,153 @@
     </div>
 
 </div>
+
+
+<!-- ===================================== -->
+<!-- PERFORMANCE ANALYTICS -->
+<!-- ===================================== -->
+
+
+
+<!-- ===================================== -->
+<!-- RECENT TESTS -->
+<!-- ===================================== -->
+
+<h3 class="section-title">
+
+    📝 Recent Tests
+
+</h3>
+
+<div class="row g-4">
+
+{% if recent_tests %}
+
+{% for test in recent_tests %}
+
+<div class="col-lg-4">
+
+<div class="recent-test-card">
+
+<div class="recent-header">
+
+<span class="language-badge">
+
+{{ test.language }}
+
+</span>
+
+<span class="difficulty-badge">
+
+{{ test.difficulty }}
+
+</span>
+
+</div>
+
+<h2>
+
+{{ test.net_wpm }}
+
+<span>
+
+WPM
+
+</span>
+
+</h2>
+
+<div class="recent-stats">
+
+<div>
+
+<strong>
+
+{{ test.accuracy }}%
+
+</strong>
+
+<small>
+
+Accuracy
+
+</small>
+
+</div>
+
+<div>
+
+<strong>
+
+{{ test.errors }}
+
+</strong>
+
+<small>
+
+Errors
+
+</small>
+
+</div>
+
+</div>
+
+<p class="recent-date">
+
+{{ test.created_at.strftime('%d %b %Y') }}
+
+</p>
+
+</div>
+
+</div>
+
+{% endfor %}
+
+{% else %}
+
+<div class="col-12">
+
+<div class="empty-card">
+
+<h3>
+
+No Tests Yet
+
+</h3>
+
+<p>
+
+Complete your first typing test to see analytics.
+
+</p>
+
+<a href="/typing" class="btn btn-primary">
+
+Start Typing
+
+</a>
+
+</div>
+
+</div>
+
+{% endif %}
+
+</div>
+    
+
+
+</div>
+
+</div>
+
+
+
+
+
 <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
-
-
-
-
 
 {% endblock %}
 
