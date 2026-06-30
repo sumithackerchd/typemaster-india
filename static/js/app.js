@@ -1,7 +1,24 @@
 // TypeMaster India — global app helpers
 document.addEventListener("DOMContentLoaded", function () {
-    console.log("TypeMaster India loaded");
+    syncThemeIcon();
 });
+
+// ---------------- Theme toggle ----------------
+function toggleTheme() {
+    const root = document.documentElement;
+    const next = root.getAttribute("data-theme") === "light" ? "dark" : "light";
+    root.setAttribute("data-theme", next);
+    try { localStorage.setItem("tm-theme", next); } catch (e) {}
+    syncThemeIcon();
+}
+
+function syncThemeIcon() {
+    const isLight = document.documentElement.getAttribute("data-theme") === "light";
+    document.querySelectorAll("[data-theme-icon]").forEach(function (el) {
+        el.classList.toggle("fa-moon", !isLight);
+        el.classList.toggle("fa-sun", isLight);
+    });
+}
 function togglePassword(){
 
 const input=document.getElementById("password");

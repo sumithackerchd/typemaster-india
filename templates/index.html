@@ -1,171 +1,309 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'layouts/base.html' %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TypeMaster India</title>
+{% block title %}TypeMaster India — Master English & Hindi Typing for Govt Exams{% endblock %}
 
-    <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+{% block content %}
 
-    <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- ===================== HERO ===================== -->
+<section class="hero">
+    <div class="container">
+        <div class="row align-items-center g-5">
 
-    <!-- CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
+            <div class="col-lg-6">
+                <span class="eyebrow"><i class="fa-solid fa-bolt"></i> India's #1 Typing Practice Platform</span>
+                <h1 class="mt-3">
+                    Master <span class="gradient-text">Typing Speed</span><br>
+                    for Government Exams
+                </h1>
+                <p class="lead">
+                    Practice English &amp; Hindi Mangal typing with real-time WPM, accuracy and
+                    error analytics. Built for SSC, Railway, UP Police, CPCT and more.
+                </p>
 
-<body>
+                <div class="d-flex flex-wrap gap-3">
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-brand btn-lg">
+                        <i class="fa-solid fa-rocket me-2"></i> Start Practicing Free
+                    </a>
+                    <a href="#demo" class="btn btn-ghost btn-lg">
+                        <i class="fa-regular fa-circle-play me-2"></i> See Live Demo
+                    </a>
+                </div>
 
-    <!-- Navbar -->
+                <div class="hero-badges">
+                    <span class="hero-badge"><i class="fa-solid fa-check"></i> No credit card</span>
+                    <span class="hero-badge"><i class="fa-solid fa-check"></i> English + Hindi Mangal</span>
+                    <span class="hero-badge"><i class="fa-solid fa-check"></i> Exam-pattern tests</span>
+                </div>
+            </div>
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark py-3">
-        <div class="container">
+            <div class="col-lg-6" id="demo">
+                <div class="glass demo-card">
+                    <div class="demo-head">
+                        <div class="demo-dots"><span></span><span></span><span></span></div>
+                        <span class="text-muted-2" style="font-size:13px"><i class="fa-solid fa-circle text-accent me-1" style="font-size:8px"></i> Live preview</span>
+                    </div>
 
-            <a class="navbar-brand fw-bold fs-3" href="/">
-                TypeMaster India
-            </a>
+                    <div class="demo-text" id="demoText"></div>
 
-            <div>
-
-                <a href="/login" class="btn btn-outline-light me-2">
-                    Login
-                </a>
-
-                <a href="/register" class="btn btn-primary">
-                    Register
-                </a>
-
+                    <div class="demo-stats">
+                        <div class="demo-stat"><b id="demoWpm">0</b><small>WPM</small></div>
+                        <div class="demo-stat"><b id="demoAcc">100%</b><small>Accuracy</small></div>
+                        <div class="demo-stat"><b id="demoTime">0s</b><small>Time</small></div>
+                    </div>
+                </div>
             </div>
 
         </div>
-    </nav>
-
-    <!-- Hero -->
-
-    <section class="hero">
-
-        <div class="container text-center">
-
-            <h1>
-                India's Most Advanced
-                <br>
-                Typing Practice Platform
-            </h1>
-
-            <p class="mt-4">
-
-                Practice English & Hindi Mangal Typing
-                <br>
-                Prepare for SSC, Railway, UP Police and other Competitive Exams.
-
-            </p>
-
-            <div class="mt-5">
-
-                <a href="/register" class="btn btn-primary btn-lg me-3">
-                    Start Practice
-                </a>
-
-                <a href="#features" class="btn btn-outline-light btn-lg">
-                    Explore
-                </a>
-
-            </div>
-
-        </div>
-
-    </section>
-
-    <!-- Statistics -->
-
-    <section class="py-5 bg-dark">
-
-        <div class="container">
-
-            <div class="row text-center">
-
-                <div class="col-md-3">
-
-                    <h2>15000+</h2>
-
-                    <p>Students</p>
-
-                </div>
-
-                <div class="col-md-3">
-
-                    <h2>5 Lakh+</h2>
-
-                    <p>Typing Tests</p>
-
-                </div>
-
-                <div class="col-md-3">
-
-                    <h2>1000+</h2>
-
-                    <p>Mock Tests</p>
-
-                </div>
-
-                <div class="col-md-3">
-
-                    <h2>99%</h2>
-
-                    <p>Satisfaction</p>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-    <!-- Features -->
-
-    <section id="features" class="py-5">
-
-        <div class="container">
-
-            <h2 class="text-center mb-5">
-                Why Choose TypeMaster India?
-            </h2>
-
-            <div class="row g-4">
-
-                <div class="features-wrapper">
-    <div class="glass-card">
-        <h3>Hindi Mangal</h3>
-        <p>Advanced mapping for Mangal font. Practice with real-time speed and accuracy analytics.</p>
     </div>
+</section>
 
-    <div class="glass-card">
-        <h3>Mock Exams</h3>
-        <p>Simulate real exam conditions with our curated test series for various government exams.</p>
+<!-- ===================== STATS BAND ===================== -->
+<section class="stat-band section-sm">
+    <div class="container">
+        <div class="row">
+            <div class="col-6 col-md-3 stat-item"><h3 class="gradient-text">15K+</h3><p>Active Students</p></div>
+            <div class="col-6 col-md-3 stat-item"><h3 class="gradient-text">5L+</h3><p>Tests Completed</p></div>
+            <div class="col-6 col-md-3 stat-item"><h3 class="gradient-text">1000+</h3><p>Practice Passages</p></div>
+            <div class="col-6 col-md-3 stat-item"><h3 class="gradient-text">99%</h3><p>Satisfaction Rate</p></div>
+        </div>
     </div>
+</section>
 
-    <div class="glass-card">
-        <h3>Smart Reports</h3>
-        <p>Identify your weak keys and error patterns with our intelligent performance tracking engine.</p>
-    </div>
-</div>
-            </div>
-
+<!-- ===================== FEATURES ===================== -->
+<section class="section" id="features">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="eyebrow"><i class="fa-solid fa-star"></i> Features</span>
+            <h2 class="section-title">Everything you need to type faster</h2>
+            <p class="section-subtitle mx-auto">A complete toolkit engineered for Indian competitive exam aspirants.</p>
         </div>
 
-    </section>
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-4">
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fa-solid fa-language"></i></div>
+                    <h4>Hindi Mangal Engine</h4>
+                    <p>Accurate Unicode Mangal font mapping with Remington &amp; Inscript layouts and real-time validation.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="feature-card">
+                    <div class="feature-icon accent"><i class="fa-solid fa-file-pen"></i></div>
+                    <h4>Exam-Pattern Mock Tests</h4>
+                    <p>Simulate real SSC, Railway and UP Police conditions with timed passages and official scoring.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="feature-card">
+                    <div class="feature-icon success"><i class="fa-solid fa-chart-line"></i></div>
+                    <h4>Smart Analytics</h4>
+                    <p>Track WPM, accuracy, and pinpoint your weak keys and recurring error patterns over time.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fa-solid fa-trophy"></i></div>
+                    <h4>Live Leaderboards</h4>
+                    <p>Compete on daily, weekly and monthly boards. Climb the ranks and stay motivated.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="feature-card">
+                    <div class="feature-icon accent"><i class="fa-solid fa-fire"></i></div>
+                    <h4>Streaks &amp; XP</h4>
+                    <p>Earn XP, level up and maintain daily streaks with achievements that keep practice addictive.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="feature-card">
+                    <div class="feature-icon success"><i class="fa-solid fa-certificate"></i></div>
+                    <h4>Certificates &amp; Reports</h4>
+                    <p>Download performance certificates and export your full typing history as PDF or Excel.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
-    <!-- Footer -->
+<!-- ===================== EXAM CATEGORIES ===================== -->
+<section class="section" id="exams" style="padding-top:0">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="eyebrow"><i class="fa-solid fa-graduation-cap"></i> Exam Ready</span>
+            <h2 class="section-title">Prepare for every major exam</h2>
+            <p class="section-subtitle mx-auto">Passages and test patterns mapped to official exam requirements.</p>
+        </div>
 
-    <footer class="bg-dark text-center text-white py-4">
+        <div class="row g-3">
+            <div class="col-md-6 col-lg-4"><div class="exam-card"><span class="badge-icon"><i class="fa-solid fa-building-columns"></i></span><div><b>SSC CGL / CHSL</b><span>35 WPM English · 30 WPM Hindi</span></div></div></div>
+            <div class="col-md-6 col-lg-4"><div class="exam-card"><span class="badge-icon"><i class="fa-solid fa-train"></i></span><div><b>Railway / RRB</b><span>Typing skill test passages</span></div></div></div>
+            <div class="col-md-6 col-lg-4"><div class="exam-card"><span class="badge-icon"><i class="fa-solid fa-shield-halved"></i></span><div><b>UP Police</b><span>Computer typing test prep</span></div></div></div>
+            <div class="col-md-6 col-lg-4"><div class="exam-card"><span class="badge-icon"><i class="fa-solid fa-computer"></i></span><div><b>CPCT (MP)</b><span>Hindi &amp; English Mangal</span></div></div></div>
+            <div class="col-md-6 col-lg-4"><div class="exam-card"><span class="badge-icon"><i class="fa-solid fa-scale-balanced"></i></span><div><b>High Court / Courts</b><span>Stenographer &amp; clerk typing</span></div></div></div>
+            <div class="col-md-6 col-lg-4"><div class="exam-card"><span class="badge-icon"><i class="fa-solid fa-landmark"></i></span><div><b>Banking / Other</b><span>General typing practice</span></div></div></div>
+        </div>
+    </div>
+</section>
 
-        © 2026 TypeMaster India | Sumit Goswami | All Rights Reserved
+<!-- ===================== LANGUAGE SHOWCASE ===================== -->
+<section class="section" id="languages" style="padding-top:0">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="eyebrow"><i class="fa-solid fa-keyboard"></i> Two Languages</span>
+            <h2 class="section-title">English &amp; Hindi Mangal, done right</h2>
+        </div>
 
-    </footer>
+        <div class="row g-4">
+            <div class="col-lg-6">
+                <div class="glass lang-card">
+                    <div class="lang-flag" style="background:linear-gradient(135deg,var(--primary),var(--primary-700))"><i class="fa-solid fa-a"></i></div>
+                    <h4>English Typing</h4>
+                    <p class="text-muted-2">Curated passages across Easy, Medium and Hard difficulty.</p>
+                    <div class="lang-sample">The quick brown fox jumps over the lazy dog while typing tests measure your speed and accuracy.</div>
+                    <a href="/typing" class="btn btn-brand"><i class="fa-solid fa-play me-2"></i>Practice English</a>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="glass lang-card">
+                    <div class="lang-flag" style="background:linear-gradient(135deg,var(--accent),var(--accent-600))"><i class="fa-solid fa-om"></i></div>
+                    <h4>Hindi Mangal Typing</h4>
+                    <p class="text-muted-2">Unicode Mangal font with authentic exam-style passages.</p>
+                    <div class="lang-sample font-hindi">भारत एक विशाल और विविधताओं से भरा देश है जहाँ अनेक भाषाएँ और संस्कृतियाँ एक साथ फलती-फूलती हैं।</div>
+                    <a href="{{ url_for('hindi.hindi_page') if current_user.is_authenticated else url_for('auth.login') }}" class="btn btn-accent"><i class="fa-solid fa-play me-2"></i>Practice Hindi</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
-</body>
+<!-- ===================== TESTIMONIALS ===================== -->
+<section class="section" style="padding-top:0">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="eyebrow"><i class="fa-solid fa-quote-right"></i> Loved by aspirants</span>
+            <h2 class="section-title">Students are clearing exams</h2>
+        </div>
 
-</html>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="glass testi-card">
+                    <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                    <p>"Went from 22 to 41 WPM in Hindi Mangal in 6 weeks. Cleared my SSC typing test on the first attempt!"</p>
+                    <div class="testi-user"><span class="testi-avatar">PK</span><div><b>Priya Kushwaha</b><small>SSC CHSL · Lucknow</small></div></div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="glass testi-card">
+                    <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                    <p>"The weak-key analytics are gold. I finally fixed the keys slowing me down. UP Police test felt easy."</p>
+                    <div class="testi-user"><span class="testi-avatar">AS</span><div><b>Amit Singh</b><small>UP Police · Kanpur</small></div></div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="glass testi-card">
+                    <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                    <p>"Daily streaks kept me consistent. The mock tests match the real CPCT pattern almost exactly."</p>
+                    <div class="testi-user"><span class="testi-avatar">RV</span><div><b>Rahul Verma</b><small>CPCT · Bhopal</small></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section class="section" id="faq" style="padding-top:0">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="text-center mb-5">
+                    <span class="eyebrow"><i class="fa-solid fa-circle-question"></i> FAQ</span>
+                    <h2 class="section-title">Frequently asked questions</h2>
+                </div>
+
+                <div class="accordion tm-accordion" id="faqAcc">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header"><button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#q1">Is TypeMaster India free to use?</button></h2>
+                        <div id="q1" class="accordion-collapse collapse show" data-bs-parent="#faqAcc"><div class="accordion-body">Yes. You can create a free account and start practicing English and Hindi Mangal typing immediately, with full access to passages and progress tracking.</div></div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#q2">Does it support the Mangal font for Hindi exams?</button></h2>
+                        <div id="q2" class="accordion-collapse collapse" data-bs-parent="#faqAcc"><div class="accordion-body">Absolutely. Our Hindi engine uses Unicode Mangal mapping that mirrors government typing test requirements for SSC, CPCT and more.</div></div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#q3">Which exams can I prepare for?</button></h2>
+                        <div id="q3" class="accordion-collapse collapse" data-bs-parent="#faqAcc"><div class="accordion-body">SSC CGL/CHSL, Railway/RRB, UP Police, CPCT, High Court and most government typing skill tests with exam-pattern passages.</div></div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#q4">Can I track my progress over time?</button></h2>
+                        <div id="q4" class="accordion-collapse collapse" data-bs-parent="#faqAcc"><div class="accordion-body">Yes. Your dashboard shows WPM trends, accuracy, weak keys, streaks and XP, and you can export your full history as PDF or Excel.</div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===================== CTA ===================== -->
+<section class="section" style="padding-top:0">
+    <div class="container">
+        <div class="cta-band">
+            <h2>Ready to boost your typing speed?</h2>
+            <p class="mb-4">Join thousands of aspirants practicing smarter every day.</p>
+            <a href="{{ url_for('auth.register') }}" class="btn btn-accent btn-lg"><i class="fa-solid fa-rocket me-2"></i> Create Your Free Account</a>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function () {
+    var sample = "India's most advanced typing platform helps you prepare for government exams with confidence.";
+    var el = document.getElementById('demoText');
+    var wpmEl = document.getElementById('demoWpm');
+    var accEl = document.getElementById('demoAcc');
+    var timeEl = document.getElementById('demoTime');
+    if (!el) return;
+
+    var i = 0, start = null;
+
+    function render() {
+        var typed = sample.slice(0, i);
+        var current = sample.charAt(i) || '';
+        var pending = sample.slice(i + 1);
+        el.innerHTML =
+            '<span class="typed">' + escapeHtml(typed) + '</span>' +
+            '<span class="cursor">' + (escapeHtml(current) || '&nbsp;') + '</span>' +
+            '<span class="pending">' + escapeHtml(pending) + '</span>';
+    }
+
+    function escapeHtml(s) {
+        return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function tick() {
+        if (start === null) start = Date.now();
+        i++;
+        render();
+        var elapsed = (Date.now() - start) / 1000;
+        // Eased, believable WPM that settles around the mid-50s.
+        var progress = i / sample.length;
+        var wpm = Math.round(38 + progress * 18);
+        wpmEl.textContent = wpm;
+        accEl.textContent = '100%';
+        timeEl.textContent = Math.round(elapsed) + 's';
+
+        if (i >= sample.length) {
+            setTimeout(function () { i = 0; start = null; render(); setTimeout(loop, 600); }, 1800);
+            return;
+        }
+        setTimeout(tick, 55 + Math.random() * 70);
+    }
+
+    function loop() { tick(); }
+    render();
+    setTimeout(loop, 700);
+})();
+</script>
+{% endblock %}

@@ -1,8 +1,10 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-
+<nav class="navbar navbar-expand-lg tm-navbar py-2">
     <div class="container">
 
-        <a class="navbar-brand fw-bold" href="/">TypeMaster India</a>
+        <a class="navbar-brand" href="/">
+            <span class="brand-mark"><i class="fa-solid fa-keyboard"></i></span>
+            TypeMaster <span class="text-accent">India</span>
+        </a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#mainNav" aria-controls="mainNav"
@@ -12,52 +14,38 @@
 
         <div class="collapse navbar-collapse" id="mainNav">
 
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-
+            <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
                 {% if current_user.is_authenticated %}
-
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('dashboard.dashboard_page') }}">Dashboard</a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" href="/typing">English</a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('hindi.hindi_page') }}">Hindi</a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('history.history_page') }}">History</a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('leaderboard.leaderboard_page') }}">Leaderboard</a>
-                </li>
-
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('dashboard.dashboard_page') }}">Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link" href="/typing">English</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('hindi.hindi_page') }}">Hindi</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('history.history_page') }}">History</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('leaderboard.leaderboard_page') }}">Leaderboard</a></li>
                 {% if current_user.is_admin %}
-                <li class="nav-item">
-                    <a class="nav-link text-warning" href="{{ url_for('admin.dashboard') }}">Admin</a>
-                </li>
+                <li class="nav-item"><a class="nav-link text-accent" href="{{ url_for('admin.dashboard') }}">Admin</a></li>
                 {% endif %}
-
+                {% else %}
+                <li class="nav-item"><a class="nav-link" href="/#features">Features</a></li>
+                <li class="nav-item"><a class="nav-link" href="/#exams">Exams</a></li>
+                <li class="nav-item"><a class="nav-link" href="/#languages">Languages</a></li>
+                <li class="nav-item"><a class="nav-link" href="/#faq">FAQ</a></li>
                 {% endif %}
-
             </ul>
 
-            <div class="d-flex">
+            <div class="d-flex align-items-center gap-2">
+
+                <button class="theme-toggle" type="button" onclick="toggleTheme()" aria-label="Toggle theme">
+                    <i class="fa-solid fa-moon" data-theme-icon></i>
+                </button>
 
                 {% if current_user.is_authenticated %}
-
-                <a href="{{ url_for('profile.profile_page') }}" class="btn btn-outline-light me-2">Profile</a>
-                <a href="{{ url_for('auth.logout') }}" class="btn btn-danger">Logout</a>
-
+                <a href="{{ url_for('profile.profile_page') }}" class="btn btn-ghost">
+                    <i class="fa-regular fa-user me-1"></i> Profile
+                </a>
+                <a href="{{ url_for('auth.logout') }}" class="btn btn-brand">Logout</a>
                 {% else %}
-
-                <a href="{{ url_for('auth.login') }}" class="btn btn-outline-light me-2">Login</a>
-                <a href="{{ url_for('auth.register') }}" class="btn btn-primary">Register</a>
-
+                <a href="{{ url_for('auth.login') }}" class="btn btn-ghost">Login</a>
+                <a href="{{ url_for('auth.register') }}" class="btn btn-brand">Get Started</a>
                 {% endif %}
 
             </div>
@@ -65,7 +53,4 @@
         </div>
 
     </div>
-
 </nav>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>

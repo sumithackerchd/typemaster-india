@@ -1,41 +1,52 @@
 <!DOCTYPE html>
-<html lang="en">
-<link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+<html lang="en" data-theme="dark">
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0a0f1e">
+    <meta name="description"
+          content="TypeMaster India - India's most advanced typing practice platform for English and Hindi Mangal. Prepare for SSC, Railway, UP Police, CPCT and other government exams.">
+    <title>{% block title %}TypeMaster India{% endblock %}</title>
 
-<meta charset="UTF-8">
+    <!-- Prevent theme flash -->
+    <script>
+        (function () {
+            try {
+                var t = localStorage.getItem('tm-theme') || 'dark';
+                document.documentElement.setAttribute('data-theme', t);
+            } catch (e) {}
+        })();
+    </script>
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
-<title>{% block title %}TypeMaster India{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Sora:wght@500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap"
+          rel="stylesheet">
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
-
-<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet"
-href="{{ url_for('static',filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    {% block head %}{% endblock %}
 </head>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <body>
 
-{% include 'partials/navbar.html' %}
+    {% include 'partials/navbar.html' %}
 
-{% block content %}
+    <main>
+        {% block content %}{% endblock %}
+    </main>
 
-{% endblock %}
+    {% include 'partials/footer.html' %}
 
-{% include 'partials/footer.html' %}
-
-<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    {% block scripts %}{% endblock %}
 
 </body>
 
