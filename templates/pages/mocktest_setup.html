@@ -1,0 +1,128 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Mock Test{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/mocktest.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="mock-wrap">
+
+    <div class="mock-header">
+        <span class="eyebrow"><i class="fa-solid fa-stopwatch"></i> Mock Test System</span>
+        <h1>Build Your <span class="text-accent">Typing Mock Test</span></h1>
+        <p>Pick a language, mode, category, difficulty and duration. Practice for SSC, Railway, UP Police, CPCT and more.</p>
+    </div>
+
+    <!-- Step 1: Language -->
+    <div class="mock-step">
+        <div class="mock-step-head">
+            <span class="mock-step-num">1</span>
+            <div><h3>Choose Language</h3><small>Type in English or Hindi Mangal Unicode.</small></div>
+        </div>
+        <div class="mock-grid cols-2" data-group="language">
+            {% for lang in languages %}
+            <button type="button" class="opt-card {% if loop.first %}selected{% endif %}" data-value="{{ lang.slug }}">
+                <span class="opt-icon"><i class="fa-solid fa-language"></i></span>
+                <span class="opt-text"><span class="opt-title">{{ lang.label }}</span></span>
+                <i class="fa-solid fa-circle-check opt-check"></i>
+            </button>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Step 2: Mode -->
+    <div class="mock-step">
+        <div class="mock-step-head">
+            <span class="mock-step-num">2</span>
+            <div><h3>Select Mode</h3><small>Practice freely or simulate a strict exam.</small></div>
+        </div>
+        <div class="mock-grid cols-2" data-group="mode">
+            {% for mode in modes %}
+            <button type="button" class="opt-card {% if mode.slug == 'practice' %}selected{% endif %}" data-value="{{ mode.slug }}">
+                <span class="opt-icon"><i class="fa-solid {% if mode.slug == 'exam' %}fa-file-pen{% else %}fa-dumbbell{% endif %}"></i></span>
+                <span class="opt-text"><span class="opt-title">{{ mode.label }}</span><span class="opt-sub">{{ mode.desc }}</span></span>
+                <i class="fa-solid fa-circle-check opt-check"></i>
+            </button>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Step 3: Category -->
+    <div class="mock-step">
+        <div class="mock-step-head">
+            <span class="mock-step-num">3</span>
+            <div><h3>Choose Category</h3><small>Exam-specific content, paragraphs or random words.</small></div>
+        </div>
+        <div class="mock-grid cols-auto" data-group="category">
+            {% for cat in categories %}
+            <button type="button" class="opt-card {% if loop.first %}selected{% endif %}" data-value="{{ cat.slug }}" data-kind="{{ cat.kind }}">
+                <span class="opt-icon"><i class="fa-solid {{ cat.icon }}"></i></span>
+                <span class="opt-text"><span class="opt-title">{{ cat.label }}</span>
+                    <span class="opt-sub">{% if cat.kind == 'words' %}Random words{% else %}Paragraphs{% endif %}</span></span>
+                <i class="fa-solid fa-circle-check opt-check"></i>
+            </button>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Step 4: Difficulty -->
+    <div class="mock-step">
+        <div class="mock-step-head">
+            <span class="mock-step-num">4</span>
+            <div><h3>Difficulty</h3><small>Easy, medium or hard content length.</small></div>
+        </div>
+        <div class="mock-grid cols-3" data-group="difficulty">
+            {% for diff in difficulties %}
+            <button type="button" class="opt-card {% if loop.first %}selected{% endif %}" data-value="{{ diff.slug }}">
+                <span class="opt-icon"><i class="fa-solid fa-signal"></i></span>
+                <span class="opt-text"><span class="opt-title">{{ diff.label }}</span></span>
+                <i class="fa-solid fa-circle-check opt-check"></i>
+            </button>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Step 5: Duration -->
+    <div class="mock-step">
+        <div class="mock-step-head">
+            <span class="mock-step-num">5</span>
+            <div><h3>Duration</h3><small>Choose a preset or set a custom timer.</small></div>
+        </div>
+        <div class="mock-grid cols-3" data-group="duration">
+            {% for d in durations %}
+            <button type="button" class="opt-card {% if d.seconds == 60 %}selected{% endif %}" data-value="{{ d.seconds }}">
+                <span class="opt-icon"><i class="fa-solid fa-clock"></i></span>
+                <span class="opt-text"><span class="opt-title">{{ d.label }}</span></span>
+                <i class="fa-solid fa-circle-check opt-check"></i>
+            </button>
+            {% endfor %}
+            <button type="button" class="opt-card" data-value="custom">
+                <span class="opt-icon"><i class="fa-solid fa-sliders"></i></span>
+                <span class="opt-text"><span class="opt-title">Custom</span></span>
+                <i class="fa-solid fa-circle-check opt-check"></i>
+            </button>
+        </div>
+        <div class="custom-duration" id="customDuration">
+            <label for="customSeconds">Custom duration (seconds):</label>
+            <input type="number" id="customSeconds" min="10" max="3600" step="5" value="90">
+            <span class="opt-sub">Between 10 and 3600 seconds.</span>
+        </div>
+    </div>
+
+    <!-- Launch -->
+    <div class="mock-launch">
+        <div class="mock-summary" id="mockSummary"></div>
+        <button type="button" class="btn btn-brand btn-lg" id="startMockBtn">
+            <i class="fa-solid fa-play me-2"></i> Start Mock Test
+        </button>
+    </div>
+
+</div>
+
+<script>
+    window.MOCK_RUN_URL = "{{ url_for('mocktest.run') }}";
+</script>
+<script src="{{ url_for('static', filename='js/mocktest_setup.js') }}"></script>
+{% endblock %}

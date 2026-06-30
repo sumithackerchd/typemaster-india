@@ -7,6 +7,7 @@ from sqlalchemy import inspect, text
 from config import Config, DATABASE_DIR
 from models import db
 from models.user import User
+from models.paragraph import Paragraph  # noqa: F401  (registers the table)
 
 from extensions import mail, login_manager
 from flask_login import login_required
@@ -18,6 +19,8 @@ from routes.history import history
 from routes.profile import profile
 from routes.leaderboard import leaderboard
 from routes.hindi import hindi
+from routes.mocktest import mocktest
+from routes.api import api
 
 
 # -------------------------------------
@@ -47,6 +50,8 @@ app.register_blueprint(history)
 app.register_blueprint(profile)
 app.register_blueprint(leaderboard)
 app.register_blueprint(hindi)
+app.register_blueprint(mocktest)
+app.register_blueprint(api)
 
 
 def init_db():
@@ -55,21 +60,90 @@ def init_db():
     with app.app_context():
         db.create_all()
 
-    inspector = inspect(db.engine)
-    columns = [col["name"] for col in inspector.get_columns("users")]
+    # ------------------------------------------------------------------
+    # Lightweight auto-migration.
+    #
+    # Older databases were created before several columns existed
+    # (is_admin, gamification fields, created_at, etc.). Rendering the
+    # admin/dashboard pages then crashed with "no such column" errors.
+    # Here we add any missing columns defined on the models so existing
+    # databases keep working without a manual migration.
+    # ------------------------------------------------------------------
 
-    if "is_admin" not in columns:
-        with db.engine.connect() as conn:
+    # column name -> SQL definition (with sensible default for existing rows)
+    expected_columns = {
+        "users": {
+            "is_admin": "BOOLEAN DEFAULT 0 NOT NULL",
+            "xp": "INTEGER DEFAULT 0 NOT NULL",
+            "level": "INTEGER DEFAULT 1 NOT NULL",
+            "current_streak": "INTEGER DEFAULT 0 NOT NULL",
+            "best_streak": "INTEGER DEFAULT 0 NOT NULL",
+            "last_test_date": "DATE",
+            "created_at": "DATETIME",
+            "avatar": "VARCHAR(255)",
+        },
+        "results": {
+            "language": "VARCHAR(20) DEFAULT 'English' NOT NULL",
+            "difficulty": "VARCHAR(20) DEFAULT 'Easy' NOT NULL",
+            "duration": "INTEGER DEFAULT 60 NOT NULL",
+            "gross_wpm": "INTEGER DEFAULT 0",
+            "net_wpm": "INTEGER DEFAULT 0",
+            "cpm": "INTEGER DEFAULT 0",
+            "accuracy": "FLOAT DEFAULT 0",
+            "errors": "INTEGER DEFAULT 0",
+            "created_at": "DATETIME",
+        },
+    }
+
+    inspector = inspect(db.engine)
+    existing_tables = inspector.get_table_names()
+
+    with db.engine.connect() as conn:
+        for table, columns in expected_columns.items():
+            if table not in existing_tables:
+                continue
+
+            present = {col["name"] for col in inspector.get_columns(table)}
+
+            for name, definition in columns.items():
+                if name not in present:
+                    conn.execute(
+                        text(f"ALTER TABLE {table} ADD COLUMN {name} {definition}")
+                    )
+
+        conn.commit()
+
+    # Backfill created_at for any rows still missing a value.
+    with db.engine.connect() as conn:
+        try:
             conn.execute(
-                text("ALTER TABLE users ADD COLUMN is_admin BOOLEAN DEFAULT 0 NOT NULL")
+                text(
+                    "UPDATE results SET created_at = CURRENT_TIMESTAMP "
+                    "WHERE created_at IS NULL"
+                )
+            )
+            conn.execute(
+                text(
+                    "UPDATE users SET created_at = CURRENT_TIMESTAMP "
+                    "WHERE created_at IS NULL"
+                )
             )
             conn.commit()
+        except Exception:
+            pass
 
     if User.query.filter_by(is_admin=True).count() == 0:
         first_user = User.query.order_by(User.id.asc()).first()
         if first_user:
             first_user.is_admin = True
             db.session.commit()
+
+    # Seed the paragraph database (and refresh the JSON fallback mirror).
+    try:
+        from utils.seed_paragraphs import seed_paragraphs
+        seed_paragraphs()
+    except Exception:
+        traceback.print_exc()
 
 
 @app.route("/")

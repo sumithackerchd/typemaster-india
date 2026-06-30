@@ -49,9 +49,9 @@
     let activeLanguage = config.defaultLanguage;
     let activeLangConfig = config.languages[activeLanguage] || config.languages.english;
 
-    let currentDifficulty = "easy";
-    let currentTimer = 60;
-    let timer = 60;
+    let currentDifficulty = config.initialDifficulty || "easy";
+    let currentTimer = config.initialTimer || 60;
+    let timer = currentTimer;
     let timerStarted = false;
     let timerInterval = null;
     let testStartTime = null;
@@ -60,10 +60,84 @@
     let wrongTyped = 0;
     let finished = false;
     let currentParagraph = "";
+    let paragraphSpans = [];
+    let prevTypedLen = 0;
+    let prevCurrentIndex = -1;
 
     function getLangConfig(lang) {
 
         return config.languages[lang] || config.languages.english;
+
+    }
+
+    // ------------------------------------------------------------------
+    // Duration-aware text builder.
+    //
+    // The seeded paragraphs are short (1-6 sentences). On their own they
+    // only provide a few seconds of typing, so we concatenate several
+    // random, non-repeating paragraphs until the text is long enough to
+    // cover the selected duration. Approximate target word counts:
+    //   30s -> ~140, 60s -> ~280, 120s -> ~560, 300s -> ~1400, 600s -> ~2800
+    // ------------------------------------------------------------------
+    function targetWordCount(seconds) {
+
+        const secs = Number(seconds) || 60;
+        // ~280 words per minute keeps fast typists busy for the full run.
+        return Math.max(60, Math.ceil((secs / 60) * 280));
+
+    }
+
+    function shuffleCopy(arr) {
+
+        const copy = arr.slice();
+
+        for (let i = copy.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            const tmp = copy[i];
+            copy[i] = copy[j];
+            copy[j] = tmp;
+        }
+
+        return copy;
+
+    }
+
+    function buildText(list, seconds) {
+
+        if (!list || !list.length) {
+            return "";
+        }
+
+        const target = targetWordCount(seconds);
+        const parts = [];
+        let words = 0;
+        let pool = shuffleCopy(list);
+        let idx = 0;
+
+        // Keep adding paragraphs until we reach the target word count.
+        // When the pool is exhausted we reshuffle so the same paragraph is
+        // never repeated back-to-back and order stays varied.
+        let guard = 0;
+        while (words < target && guard < 10000) {
+            guard++;
+
+            if (idx >= pool.length) {
+                pool = shuffleCopy(list);
+                idx = 0;
+            }
+
+            const piece = (pool[idx] || "").trim();
+            idx++;
+
+            if (!piece) {
+                continue;
+            }
+
+            parts.push(piece);
+            words += piece.split(/\s+/).length;
+        }
+
+        return parts.join(" ");
 
     }
 
@@ -207,21 +281,33 @@
         if (!languageData || !languageData[currentDifficulty] || !languageData[currentDifficulty].length) {
             paragraphElement.innerText = "No paragraph available for this level.";
             currentParagraph = "";
+            paragraphSpans = [];
             return;
         }
 
         const list = languageData[currentDifficulty];
-        currentParagraph = list[Math.floor(Math.random() * list.length)];
+        currentParagraph = buildText(list, currentTimer);
 
         paragraphElement.innerHTML = "";
+        prevTypedLen = 0;
+        prevCurrentIndex = -1;
 
-        Array.from(currentParagraph).forEach(function (char) {
+        const fragment = document.createDocumentFragment();
+        const chars = Array.from(currentParagraph);
 
+        chars.forEach(function (char) {
             const span = document.createElement("span");
             span.textContent = char;
-            paragraphElement.appendChild(span);
-
+            fragment.appendChild(span);
         });
+
+        paragraphElement.appendChild(fragment);
+        paragraphSpans = paragraphElement.querySelectorAll("span");
+
+        if (paragraphSpans[0]) {
+            paragraphSpans[0].classList.add("current");
+            prevCurrentIndex = 0;
+        }
 
     }
 
@@ -269,35 +355,64 @@
 
     function highlightCharacters(typedText) {
 
-        const characters = paragraphElement.querySelectorAll("span");
+        // Cache the span list once per paragraph render so we don't query
+        // the DOM (and avoid clearing every span) on every keystroke. This
+        // keeps long, multi-paragraph tests responsive.
+        const characters = paragraphSpans;
 
         totalTyped = typedText.length;
         correctTyped = 0;
         wrongTyped = 0;
 
-        characters.forEach(function (span) {
-            span.className = "";
-        });
+        const scanLen = Math.max(typedText.length, prevTypedLen);
 
-        for (let i = 0; i < typedText.length; i++) {
+        for (let i = 0; i < scanLen; i++) {
 
-            if (!characters[i]) {
+            const span = characters[i];
+
+            if (!span) {
                 break;
             }
 
-            if (typedText[i] === currentParagraph[i]) {
-                characters[i].classList.add("correct");
-                correctTyped++;
+            if (i < typedText.length) {
+                if (typedText[i] === currentParagraph[i]) {
+                    span.className = "correct";
+                } else {
+                    span.className = "wrong";
+                }
             } else {
-                characters[i].classList.add("wrong");
-                wrongTyped++;
+                // Was typed before, now cleared (e.g. backspace).
+                span.className = "";
             }
 
+        }
+
+        // Recount correct/wrong across the whole typed portion.
+        for (let i = 0; i < typedText.length; i++) {
+            if (!characters[i]) {
+                break;
+            }
+            if (typedText[i] === currentParagraph[i]) {
+                correctTyped++;
+            } else {
+                wrongTyped++;
+            }
+        }
+
+        // Move the "current" caret marker.
+        if (prevCurrentIndex >= 0 && characters[prevCurrentIndex] &&
+            prevCurrentIndex >= typedText.length) {
+            characters[prevCurrentIndex].classList.remove("current");
         }
 
         if (characters[typedText.length]) {
             characters[typedText.length].classList.add("current");
+            prevCurrentIndex = typedText.length;
+        } else {
+            prevCurrentIndex = -1;
         }
+
+        prevTypedLen = typedText.length;
 
     }
 

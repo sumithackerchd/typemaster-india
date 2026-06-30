@@ -1,0 +1,82 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Mock Test — {{ category_label }}{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/typing.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/mocktest.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="typing-wrapper" id="typingWrapper">
+
+    <div class="mock-run-meta">
+        <span class="pill"><i class="fa-solid fa-language"></i> {{ language_label }}</span>
+        <span class="pill"><i class="fa-solid fa-layer-group"></i> {{ category_label }}</span>
+        <span class="pill"><i class="fa-solid fa-signal"></i> {{ difficulty|capitalize }}</span>
+        <span class="pill"><i class="fa-solid fa-clock"></i> {{ duration }}s</span>
+        {% if mode == 'exam' %}
+        <span class="pill exam-badge"><i class="fa-solid fa-file-pen"></i> Exam Mode</span>
+        {% else %}
+        <span class="pill"><i class="fa-solid fa-dumbbell"></i> Practice Mode</span>
+        {% endif %}
+    </div>
+
+    <div class="typing-top">
+
+        <div class="logo-title">
+            <h2 id="typingTitle">Mock Test</h2>
+        </div>
+
+        <div class="d-flex gap-2 align-items-center">
+            <a href="{{ url_for('mocktest.setup') }}" class="mode" style="text-decoration:none;">&larr; New Test</a>
+            <button id="restartBtn" class="mode" type="button">&#8634; Restart</button>
+            <div class="timer-card">&#9201;&#65039; <span id="timer">{{ duration }}</span>s</div>
+        </div>
+
+    </div>
+
+    <div class="typing-card">
+
+        <div id="paragraph"></div>
+
+        <input type="text" id="typingInput" autocomplete="off"
+               autocorrect="off" autocapitalize="off" spellcheck="false">
+
+    </div>
+
+    <div class="stats stats-six">
+
+        <div class="box"><h5>Net WPM</h5><h2 id="netWpm">0</h2></div>
+        <div class="box"><h5>Gross WPM</h5><h2 id="grossWpm">0</h2></div>
+        <div class="box"><h5>CPM</h5><h2 id="cpm">0</h2></div>
+        <div class="box"><h5>Accuracy</h5><h2 id="accuracy">100%</h2></div>
+        <div class="box"><h5>Errors</h5><h2 id="errors">0</h2></div>
+        <div class="box"><h5>Live WPM</h5><h2 id="liveWpm">0</h2></div>
+
+    </div>
+
+</div>
+
+<script>
+    window.TYPING_CONFIG = {
+        defaultLanguage: "{{ language }}",
+        initialDifficulty: "{{ difficulty }}",
+        initialTimer: {{ duration }},
+        redirectUrl: "{{ url_for('result.result_page') }}",
+        saveResultUrl: "{{ url_for('result.save_result') }}",
+        languages: {
+            "{{ language }}": {
+                languageKey: "{{ language }}",
+                dataUrl: "{{ url_for('api.paragraphs', language=language, category=category) }}",
+                saveLanguage: "{{ save_language }}",
+                title: "{{ category_label }} — {{ language_label }}",
+                paragraphClass: "{% if language == 'hindi' %}hindi-paragraph{% endif %}"
+            }
+        }
+    };
+</script>
+<script src="{{ url_for('static', filename='js/engine.js') }}"></script>
+
+{% endblock %}

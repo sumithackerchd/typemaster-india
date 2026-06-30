@@ -1,97 +1,64 @@
 {% extends 'layouts/base.html' %}
 
-{% block title %}Admin Results{% endblock %}
+{% block title %}Results — Admin{% endblock %}
 
 {% block content %}
 
-<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+<div class="app-page">
+    <div class="container">
 
-<div class="container py-5">
+        <div class="page-head fade-up">
+            <div>
+                <span class="eyebrow"><i class="fa-solid fa-chart-column"></i> Admin</span>
+                <h1 class="ph-title">All Typing Results</h1>
+                <p class="ph-sub">Every completed typing test across the platform.</p>
+            </div>
+        </div>
 
-    <h2 class="mb-4">📊 All Typing Results</h2>
+        {% include 'admin/_nav.html' with context %}
 
-    <div class="card shadow">
-
-        <div class="table-responsive">
-
-            <table class="table table-dark table-hover align-middle mb-0">
-
-                <thead>
-
-                    <tr>
-
-                        <th>ID</th>
-
-                        <th>User</th>
-
-                        <th>Language</th>
-
-                        <th>Difficulty</th>
-
-                        <th>Duration</th>
-
-                        <th>Gross WPM</th>
-
-                        <th>Net WPM</th>
-
-                        <th>Accuracy</th>
-
-                        <th>Errors</th>
-
-                        <th>Date</th>
-
-                    </tr>
-
-                </thead>
-
-                <tbody>
-
-                    {% for row in results %}
-
-                    <tr>
-
-                        <td>{{ row.id }}</td>
-
-                        <td>{{ row.user.username }}</td>
-
-                        <td>{{ row.language }}</td>
-
-                        <td>{{ row.difficulty }}</td>
-
-                        <td>{{ row.duration }}s</td>
-
-                        <td>{{ row.gross_wpm }}</td>
-
-                        <td>{{ row.net_wpm }}</td>
-
-                        <td>{{ row.accuracy }}%</td>
-
-                        <td>{{ row.errors }}</td>
-
-                        <td>{{ row.created_at.strftime("%d-%m-%Y %H:%M") }}</td>
-
-                    </tr>
-
-                    {% else %}
-
-                    <tr>
-
-                        <td colspan="10" class="text-center text-muted">No results yet.</td>
-
-                    </tr>
-
-                    {% endfor %}
-
-                </tbody>
-
-            </table>
-
+        <div class="tm-table-wrap fade-up">
+            <div class="table-responsive">
+                <table class="tm-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>User</th>
+                            <th>Language</th>
+                            <th>Difficulty</th>
+                            <th>Duration</th>
+                            <th>Gross</th>
+                            <th>Net WPM</th>
+                            <th>Accuracy</th>
+                            <th>Errors</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in results %}
+                        <tr>
+                            <td data-label="ID" class="td-muted">#{{ row.id }}</td>
+                            <td data-label="User">{{ row.user.username if row.user else '—' }}</td>
+                            <td data-label="Language"><span class="tm-pill primary">{{ row.language }}</span></td>
+                            <td data-label="Difficulty"><span class="tm-pill accent">{{ row.difficulty }}</span></td>
+                            <td data-label="Duration" class="td-muted">{{ row.duration }}s</td>
+                            <td data-label="Gross" class="td-muted">{{ row.gross_wpm }}</td>
+                            <td data-label="Net WPM"><b>{{ row.net_wpm }}</b></td>
+                            <td data-label="Accuracy">{{ row.accuracy }}%</td>
+                            <td data-label="Errors">{{ row.errors }}</td>
+                            <td data-label="Date" class="td-muted">
+                                {{ row.created_at.strftime("%d %b %Y · %H:%M") if row.created_at else '—' }}
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="10" class="td-muted text-center">No results yet.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
 
     </div>
-
-    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-light mt-4">← Admin Home</a>
-
 </div>
 
 {% endblock %}

@@ -1,68 +1,130 @@
 {% extends 'layouts/base.html' %}
 
-{% block title %}Admin Dashboard{% endblock %}
+{% block title %}Admin Dashboard — TypeMaster India{% endblock %}
 
 {% block content %}
 
-<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+<div class="app-page">
+    <div class="container">
 
-<div class="container py-5">
-
-    <h2 class="mb-4">⚙️ Admin Dashboard</h2>
-
-    <div class="row g-4 mb-5">
-
-        <div class="col-md-4">
-            <div class="result-card">
-                <h6>Total Users</h6>
-                <h2>{{ total_users }}</h2>
+        <div class="page-head fade-up">
+            <div>
+                <span class="eyebrow"><i class="fa-solid fa-shield-halved"></i> Admin Panel</span>
+                <h1 class="ph-title">Control Center</h1>
+                <p class="ph-sub">Manage users, monitor typing results and curate practice content.</p>
+            </div>
+            <div class="ph-actions">
+                <a href="{{ url_for('dashboard.dashboard_page') }}" class="btn btn-ghost"><i class="fa-solid fa-arrow-left me-2"></i>Back to App</a>
             </div>
         </div>
 
-        <div class="col-md-4">
-            <div class="result-card">
-                <h6>Total Tests</h6>
-                <h2>{{ total_tests }}</h2>
+        {% include 'admin/_nav.html' with context %}
+
+        <!-- Stats -->
+        <div class="stat-grid">
+            <div class="tm-stat fade-up d1">
+                <div class="si"><i class="fa-solid fa-users"></i></div>
+                <div class="sv">{{ total_users }}</div>
+                <div class="sl">Total Users</div>
+            </div>
+            <div class="tm-stat fade-up d2">
+                <div class="si accent"><i class="fa-solid fa-file-lines"></i></div>
+                <div class="sv">{{ total_tests }}</div>
+                <div class="sl">Total Tests</div>
+            </div>
+            <div class="tm-stat fade-up d3">
+                <div class="si success"><i class="fa-solid fa-calendar-day"></i></div>
+                <div class="sv">{{ today_tests }}</div>
+                <div class="sl">Tests Today</div>
+            </div>
+            <div class="tm-stat fade-up d4">
+                <div class="si danger"><i class="fa-solid fa-user-shield"></i></div>
+                <div class="sv">{{ admin_count }}</div>
+                <div class="sl">Administrators</div>
             </div>
         </div>
 
-        <div class="col-md-4">
-            <div class="result-card">
-                <h6>Today's Tests</h6>
-                <h2>{{ today_tests }}</h2>
+        <!-- Quick actions -->
+        <h3 class="app-section-title"><i class="fa-solid fa-bolt"></i> Quick Actions</h3>
+        <div class="quick-grid">
+            <a href="{{ url_for('admin.users') }}" class="quick-action fade-up d1">
+                <span class="qa-icon"><i class="fa-solid fa-users"></i></span>
+                <span><b>Manage Users</b><span>Roles &amp; access</span></span>
+            </a>
+            <a href="{{ url_for('admin.results') }}" class="quick-action fade-up d2">
+                <span class="qa-icon"><i class="fa-solid fa-chart-column"></i></span>
+                <span><b>View Results</b><span>All test data</span></span>
+            </a>
+            <a href="{{ url_for('admin.english_paragraphs') }}" class="quick-action fade-up d3">
+                <span class="qa-icon"><i class="fa-solid fa-a"></i></span>
+                <span><b>English Content</b><span>Manage passages</span></span>
+            </a>
+            <a href="{{ url_for('admin.hindi_paragraphs') }}" class="quick-action fade-up d4">
+                <span class="qa-icon"><i class="fa-solid fa-om"></i></span>
+                <span><b>Hindi Content</b><span>Mangal passages</span></span>
+            </a>
+        </div>
+
+        <!-- Recent users + results -->
+        <div class="row g-4 mt-1">
+            <div class="col-lg-5">
+                <div class="panel fade-up d1">
+                    <div class="panel-head">
+                        <h4><i class="fa-solid fa-user-plus"></i> Recent Users</h4>
+                        <a href="{{ url_for('admin.users') }}" class="tm-pill primary">View all</a>
+                    </div>
+                    {% if recent_users %}
+                        {% for u in recent_users %}
+                        <div class="info-row">
+                            <span class="d-flex align-items-center">
+                                <span class="avatar-sm">{{ u.full_name[0]|upper }}</span>
+                                <span>
+                                    <b style="display:block">{{ u.full_name }}</b>
+                                    <span class="text-muted-2" style="font-size:13px">@{{ u.username }}</span>
+                                </span>
+                            </span>
+                            {% if u.is_admin %}<span class="tm-pill accent">Admin</span>{% else %}<span class="tm-pill">User</span>{% endif %}
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted-2 mb-0">No users yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="col-lg-7">
+                <div class="panel fade-up d2">
+                    <div class="panel-head">
+                        <h4><i class="fa-solid fa-clock-rotate-left"></i> Recent Results</h4>
+                        <a href="{{ url_for('admin.results') }}" class="tm-pill primary">View all</a>
+                    </div>
+                    {% if recent_results %}
+                    <div class="table-responsive">
+                        <table class="tm-table" style="background:transparent">
+                            <thead>
+                                <tr><th>User</th><th>Lang</th><th>WPM</th><th>Acc</th><th>Date</th></tr>
+                            </thead>
+                            <tbody>
+                                {% for r in recent_results %}
+                                <tr>
+                                    <td data-label="User">{{ r.user.username if r.user else '—' }}</td>
+                                    <td data-label="Lang"><span class="tm-pill primary">{{ r.language }}</span></td>
+                                    <td data-label="WPM"><b>{{ r.net_wpm }}</b></td>
+                                    <td data-label="Acc">{{ r.accuracy }}%</td>
+                                    <td data-label="Date" class="td-muted">{{ r.created_at.strftime('%d %b') if r.created_at else '—' }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                        <p class="text-muted-2 mb-0">No results yet.</p>
+                    {% endif %}
+                </div>
             </div>
         </div>
 
     </div>
-
-    <div class="row g-3">
-
-        <div class="col-md-3">
-            <a href="{{ url_for('admin.users') }}" class="btn btn-primary w-100 py-3">👥 Users</a>
-        </div>
-
-        <div class="col-md-3">
-            <a href="{{ url_for('admin.results') }}" class="btn btn-success w-100 py-3">📊 Results</a>
-        </div>
-
-        <div class="col-md-3">
-            <a href="{{ url_for('admin.english_paragraphs') }}" class="btn btn-info w-100 py-3">📝 English Paragraphs</a>
-        </div>
-
-        <div class="col-md-3">
-            <a href="{{ url_for('admin.hindi_paragraphs') }}" class="btn btn-warning w-100 py-3">🇮🇳 Hindi Paragraphs</a>
-        </div>
-
-        <div class="col-md-3 mt-3">
-            <a href="{{ url_for('admin.settings') }}" class="btn btn-secondary w-100 py-3">🔧 Settings</a>
-        </div>
-
-        <div class="col-md-3 mt-3">
-            <a href="{{ url_for('dashboard.dashboard_page') }}" class="btn btn-outline-light w-100 py-3">← Back to App</a>
-        </div>
-
-    </div>
-
 </div>
 
 {% endblock %}

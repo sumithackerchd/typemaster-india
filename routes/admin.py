@@ -70,11 +70,24 @@ def dashboard():
         Result.created_at >= today_start
     ).count()
 
+    admin_count = User.query.filter_by(is_admin=True).count()
+
+    recent_users = (
+        User.query.order_by(User.id.desc()).limit(5).all()
+    )
+
+    recent_results = (
+        Result.query.order_by(Result.created_at.desc()).limit(6).all()
+    )
+
     return render_template(
         "admin/dashboard.html",
         total_users=total_users,
         total_tests=total_tests,
-        today_tests=today_tests
+        today_tests=today_tests,
+        admin_count=admin_count,
+        recent_users=recent_users,
+        recent_results=recent_results,
     )
 
 

@@ -1,122 +1,93 @@
 {% extends 'layouts/base.html' %}
 
-{% block title %}Users{% endblock %}
+{% block title %}Users — Admin{% endblock %}
 
 {% block content %}
 
-<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+<div class="app-page">
+    <div class="container">
 
-<div class="container py-5">
-
-    <h2 class="mb-4">👥 User Management</h2>
-
-    <form method="GET" class="mb-4">
-
-        <div class="input-group">
-
-            <input type="text" class="form-control" name="search"
-                   placeholder="Search username or email" value="{{ search }}">
-
-            <button class="btn btn-primary">Search</button>
-
+        <div class="page-head fade-up">
+            <div>
+                <span class="eyebrow"><i class="fa-solid fa-users"></i> Admin</span>
+                <h1 class="ph-title">User Management</h1>
+                <p class="ph-sub">View, promote and remove registered users.</p>
+            </div>
         </div>
 
-    </form>
+        {% include 'admin/_nav.html' with context %}
 
-    <div class="card shadow">
+        <form method="GET" class="tm-search fade-up" style="margin-bottom:22px">
+            <input type="text" class="form-control" name="search"
+                   placeholder="Search username or email" value="{{ search }}">
+            <button class="btn btn-brand"><i class="fa-solid fa-magnifying-glass"></i></button>
+        </form>
 
-        <div class="table-responsive">
-
-            <table class="table table-dark table-hover align-middle mb-0">
-
-                <thead>
-
-                    <tr>
-
-                        <th>ID</th>
-
-                        <th>Name</th>
-
-                        <th>Username</th>
-
-                        <th>Email</th>
-
-                        <th>Mobile</th>
-
-                        <th>Admin</th>
-
-                        <th>Joined</th>
-
-                        <th>Action</th>
-
-                    </tr>
-
-                </thead>
-
-                <tbody>
-
-                    {% for user in users %}
-
-                    <tr>
-
-                        <td>{{ user.id }}</td>
-
-                        <td>{{ user.full_name }}</td>
-
-                        <td>{{ user.username }}</td>
-
-                        <td>{{ user.email }}</td>
-
-                        <td>{{ user.mobile }}</td>
-
-                        <td>
-                            {% if user.is_admin %}
-                                <span class="badge bg-success">Yes</span>
-                            {% else %}
-                                <span class="badge bg-secondary">No</span>
-                            {% endif %}
-                        </td>
-
-                        <td>{{ user.created_at.strftime("%d-%m-%Y") }}</td>
-
-                        <td>
-
-                            {% if user.id != current_user.id %}
-
-                            <a href="{{ url_for('admin.toggle_admin', user_id=user.id) }}"
-                               class="btn btn-sm btn-warning me-1"
-                               onclick="return confirm('Toggle admin role?')">
-                                Toggle Admin
-                            </a>
-
-                            <a href="{{ url_for('admin.delete_user', user_id=user.id) }}"
-                               class="btn btn-sm btn-danger"
-                               onclick="return confirm('Delete this user?')">
-                                Delete
-                            </a>
-
-                            {% else %}
-
-                            <span class="text-muted">You</span>
-
-                            {% endif %}
-
-                        </td>
-
-                    </tr>
-
-                    {% endfor %}
-
-                </tbody>
-
-            </table>
-
+        <div class="tm-table-wrap fade-up">
+            <div class="table-responsive">
+                <table class="tm-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>User</th>
+                            <th>Email</th>
+                            <th>Mobile</th>
+                            <th>Role</th>
+                            <th>Joined</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <td data-label="ID" class="td-muted">#{{ user.id }}</td>
+                            <td data-label="User">
+                                <span class="d-inline-flex align-items-center">
+                                    <span class="avatar-sm">{{ user.full_name[0]|upper }}</span>
+                                    <span>
+                                        <b style="display:block">{{ user.full_name }}</b>
+                                        <span class="text-muted-2" style="font-size:13px">@{{ user.username }}</span>
+                                    </span>
+                                </span>
+                            </td>
+                            <td data-label="Email" class="td-muted">{{ user.email }}</td>
+                            <td data-label="Mobile" class="td-muted">{{ user.mobile }}</td>
+                            <td data-label="Role">
+                                {% if user.is_admin %}
+                                    <span class="tm-pill accent">Admin</span>
+                                {% else %}
+                                    <span class="tm-pill">User</span>
+                                {% endif %}
+                            </td>
+                            <td data-label="Joined" class="td-muted">
+                                {{ user.created_at.strftime("%d %b %Y") if user.created_at else '—' }}
+                            </td>
+                            <td data-label="Actions">
+                                {% if user.id != current_user.id %}
+                                <a href="{{ url_for('admin.toggle_admin', user_id=user.id) }}"
+                                   class="btn btn-warn-tm btn-sm-tm me-1"
+                                   onclick="return confirm('Toggle admin role?')">
+                                    <i class="fa-solid fa-user-shield"></i>
+                                </a>
+                                <a href="{{ url_for('admin.delete_user', user_id=user.id) }}"
+                                   class="btn btn-danger-tm btn-sm-tm"
+                                   onclick="return confirm('Delete this user?')">
+                                    <i class="fa-solid fa-trash"></i>
+                                </a>
+                                {% else %}
+                                <span class="tm-pill primary">You</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="7" class="td-muted text-center">No users found.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
 
     </div>
-
-    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-light mt-4">← Admin Home</a>
-
 </div>
 
 {% endblock %}

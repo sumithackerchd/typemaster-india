@@ -17,6 +17,7 @@
             <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
                 {% if current_user.is_authenticated %}
                 <li class="nav-item"><a class="nav-link" href="{{ url_for('dashboard.dashboard_page') }}">Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('mocktest.setup') }}">Mock Test</a></li>
                 <li class="nav-item"><a class="nav-link" href="/typing">English</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ url_for('hindi.hindi_page') }}">Hindi</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ url_for('history.history_page') }}">History</a></li>

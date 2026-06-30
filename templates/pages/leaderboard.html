@@ -1,85 +1,72 @@
 {% extends 'layouts/base.html' %}
 
-{% block title %}Leaderboard{% endblock %}
+{% block title %}Leaderboard — TypeMaster India{% endblock %}
 
 {% block content %}
 
-<div class="container py-4 py-md-5">
+<div class="app-page">
+    <div class="container">
 
-    <div class="text-center mb-4 mb-md-5">
-        <h1 class="display-6 fw-bold">🏆 Global Leaderboard</h1>
-        <p class="text-secondary mb-0">Ranked by best Net WPM, then accuracy</p>
-    </div>
+        <div class="page-head fade-up">
+            <div>
+                <span class="eyebrow"><i class="fa-solid fa-ranking-star"></i> Compete</span>
+                <h1 class="ph-title">Global Leaderboard</h1>
+                <p class="ph-sub">Ranked by best Net WPM, then accuracy. Climb to the top!</p>
+            </div>
+        </div>
 
-    {% if leaderboard %}
-
-    <div class="d-none d-md-block card shadow border-0">
-        <div class="card-body p-0">
+        {% if leaderboard %}
+        <div class="tm-table-wrap fade-up">
             <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="table-dark">
+                <table class="tm-table">
+                    <thead>
                         <tr>
-                            <th scope="col" class="ps-4" style="width:80px;">Rank</th>
-                            <th scope="col">Username</th>
-                            <th scope="col" class="text-end">Best WPM</th>
-                            <th scope="col" class="text-end">Accuracy</th>
-                            <th scope="col" class="text-end pe-4">Total Tests</th>
+                            <th style="width:80px">Rank</th>
+                            <th>Typist</th>
+                            <th>Best WPM</th>
+                            <th>Accuracy</th>
+                            <th>Total Tests</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for row in leaderboard %}
                         <tr>
-                            <td class="ps-4 fw-semibold">{{ loop.index }}</td>
-                            <td>{{ row.username }}</td>
-                            <td class="text-end fw-bold text-primary">{{ row.best_wpm }}</td>
-                            <td class="text-end">{{ row.accuracy|round(1) }}%</td>
-                            <td class="text-end pe-4">{{ row.total_tests }}</td>
+                            <td data-label="Rank">
+                                {% if loop.index == 1 %}
+                                    <span class="rank-badge gold">1</span>
+                                {% elif loop.index == 2 %}
+                                    <span class="rank-badge silver">2</span>
+                                {% elif loop.index == 3 %}
+                                    <span class="rank-badge bronze">3</span>
+                                {% else %}
+                                    <span class="rank-badge">{{ loop.index }}</span>
+                                {% endif %}
+                            </td>
+                            <td data-label="Typist">
+                                <span class="d-inline-flex align-items-center">
+                                    <span class="avatar-sm">{{ row.username[0]|upper }}</span>
+                                    <b>{{ row.username }}</b>
+                                </span>
+                            </td>
+                            <td data-label="Best WPM"><b style="color:var(--primary)">{{ row.best_wpm }}</b></td>
+                            <td data-label="Accuracy">{{ row.accuracy|round(1) }}%</td>
+                            <td data-label="Total Tests" class="td-muted">{{ row.total_tests }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
         </div>
-    </div>
-
-    <div class="d-md-none">
-        {% for row in leaderboard %}
-        <div class="card shadow-sm border-0 mb-3">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-start mb-2">
-                    <span class="badge bg-primary rounded-pill">#{{ loop.index }}</span>
-                    <span class="text-secondary small">{{ row.total_tests }} tests</span>
-                </div>
-                <h5 class="mb-3">{{ row.username }}</h5>
-                <div class="row g-2 text-center">
-                    <div class="col-6">
-                        <div class="border rounded py-2">
-                            <div class="small text-secondary">Best WPM</div>
-                            <div class="fw-bold fs-5 text-primary">{{ row.best_wpm }}</div>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="border rounded py-2">
-                            <div class="small text-secondary">Accuracy</div>
-                            <div class="fw-bold fs-5">{{ row.accuracy|round(1) }}%</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        {% else %}
+        <div class="empty-state fade-up">
+            <div class="es-icon"><i class="fa-solid fa-ranking-star"></i></div>
+            <h3>No entries yet</h3>
+            <p>Complete a typing test to claim your spot on the leaderboard.</p>
+            <a href="/typing" class="btn btn-brand"><i class="fa-solid fa-rocket me-2"></i>Start Typing</a>
         </div>
-        {% endfor %}
+        {% endif %}
+
     </div>
-
-    {% else %}
-
-    <div class="card shadow border-0">
-        <div class="card-body text-center py-5 text-muted">
-            No leaderboard entries yet. Complete a typing test to appear here.
-        </div>
-    </div>
-
-    {% endif %}
-
 </div>
 
 {% endblock %}

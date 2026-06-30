@@ -1,81 +1,62 @@
 {% extends 'layouts/base.html' %}
 
-{% block title %}Result History{% endblock %}
+{% block title %}History — TypeMaster India{% endblock %}
 
 {% block content %}
 
-<div class="container py-5">
+<div class="app-page">
+    <div class="container">
 
-<h2 class="mb-4">
-📜 Typing History
-</h2>
+        <div class="page-head fade-up">
+            <div>
+                <span class="eyebrow"><i class="fa-solid fa-clock-rotate-left"></i> Records</span>
+                <h1 class="ph-title">Typing History</h1>
+                <p class="ph-sub">A complete log of every typing test you have completed.</p>
+            </div>
+            <div class="ph-actions">
+                <a href="/typing" class="btn btn-brand"><i class="fa-solid fa-keyboard me-2"></i>New Test</a>
+            </div>
+        </div>
 
-<div class="card shadow">
+        {% if results %}
+        <div class="tm-table-wrap fade-up">
+            <div class="table-responsive">
+                <table class="tm-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Language</th>
+                            <th>Difficulty</th>
+                            <th>Net WPM</th>
+                            <th>Accuracy</th>
+                            <th>Errors</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in results %}
+                        <tr>
+                            <td data-label="Date" class="td-muted">{{ row.created_at.strftime("%d %b %Y · %H:%M") if row.created_at else '—' }}</td>
+                            <td data-label="Language"><span class="tm-pill primary">{{ row.language }}</span></td>
+                            <td data-label="Difficulty"><span class="tm-pill accent">{{ row.difficulty }}</span></td>
+                            <td data-label="Net WPM"><b>{{ row.net_wpm }}</b></td>
+                            <td data-label="Accuracy">{{ row.accuracy }}%</td>
+                            <td data-label="Errors">{{ row.errors }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% else %}
+        <div class="empty-state fade-up">
+            <div class="es-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
+            <h3>No tests completed yet</h3>
+            <p>Your typing history will appear here once you finish your first test.</p>
+            <a href="/typing" class="btn btn-brand"><i class="fa-solid fa-rocket me-2"></i>Start Typing</a>
+        </div>
+        {% endif %}
 
-<div class="card-body">
-
-<table class="table table-striped">
-
-<thead>
-
-<tr>
-
-<th>Date</th>
-
-<th>Language</th>
-
-<th>Difficulty</th>
-
-<th>Net WPM</th>
-
-<th>Accuracy</th>
-
-<th>Errors</th>
-
-</tr>
-
-</thead>
-
-<tbody>
-
-{% if results %}
-
-{% for row in results %}
-
-<tr>
-
-<td>{{ row.created_at.strftime("%d-%m-%Y %H:%M") }}</td>
-
-<td>{{ row.language }}</td>
-
-<td>{{ row.difficulty }}</td>
-
-<td>{{ row.net_wpm }}</td>
-
-<td>{{ row.accuracy }}%</td>
-
-<td>{{ row.errors }}</td>
-
-</tr>
-
-{% endfor %}
-
-{% else %}
-
-<tr>
-    <td colspan="6" class="text-center text-muted">No tests completed yet.</td>
-</tr>
-
-{% endif %}
-
-</tbody>
-
-</table>
-
-</div>
-
-</div>
-
+    </div>
 </div>
 
 {% endblock %}

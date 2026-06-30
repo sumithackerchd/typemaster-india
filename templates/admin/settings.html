@@ -1,58 +1,79 @@
 {% extends 'layouts/base.html' %}
 
-{% block title %}Admin Settings{% endblock %}
+{% block title %}Settings — Admin{% endblock %}
 
 {% block content %}
 
-<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+<div class="app-page">
+    <div class="container">
 
-<div class="container py-5">
+        <div class="page-head fade-up">
+            <div>
+                <span class="eyebrow"><i class="fa-solid fa-sliders"></i> Admin</span>
+                <h1 class="ph-title">Site Settings</h1>
+                <p class="ph-sub">Configure global platform preferences.</p>
+            </div>
+        </div>
 
-    <h2 class="mb-4">🔧 Site Settings</h2>
+        {% include 'admin/_nav.html' with context %}
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <div class="alert alert-{{ category }}">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="tm-alert {{ category }} fade-up">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
 
-    <div class="card shadow">
+        <div class="row g-4">
+            <div class="col-lg-7">
+                <div class="panel panel-pad-lg fade-up">
+                    <div class="panel-head">
+                        <h4><i class="fa-solid fa-gear"></i> General</h4>
+                    </div>
+                    <form method="POST">
+                        <div class="mb-4">
+                            <label class="form-label">Site Name</label>
+                            <input type="text" class="form-control" name="site_name"
+                                   value="{{ settings.site_name }}">
+                        </div>
 
-        <div class="card-body p-4">
+                        <div class="mb-4">
+                            <label class="form-label">Default Timer (seconds)</label>
+                            <select class="form-select" name="default_timer">
+                                <option value="60" {% if settings.default_timer == 60 %}selected{% endif %}>60 seconds</option>
+                                <option value="120" {% if settings.default_timer == 120 %}selected{% endif %}>120 seconds</option>
+                                <option value="300" {% if settings.default_timer == 300 %}selected{% endif %}>300 seconds</option>
+                            </select>
+                        </div>
 
-            <form method="POST">
-
-                <div class="mb-3">
-                    <label class="form-label">Site Name</label>
-                    <input type="text" class="form-control" name="site_name"
-                           value="{{ settings.site_name }}">
+                        <button type="submit" class="btn btn-brand"><i class="fa-solid fa-floppy-disk me-2"></i>Save Settings</button>
+                    </form>
                 </div>
+            </div>
 
-                <div class="mb-4">
-                    <label class="form-label">Default Timer (seconds)</label>
-                    <select class="form-select" name="default_timer">
-                        <option value="60" {% if settings.default_timer == 60 %}selected{% endif %}>60</option>
-                        <option value="120" {% if settings.default_timer == 120 %}selected{% endif %}>120</option>
-                        <option value="300" {% if settings.default_timer == 300 %}selected{% endif %}>300</option>
-                    </select>
+            <div class="col-lg-5">
+                <div class="panel panel-pad-lg fade-up d1">
+                    <div class="panel-head">
+                        <h4><i class="fa-solid fa-circle-info"></i> Info</h4>
+                    </div>
+                    <div class="info-row">
+                        <span class="ir-label">Current site name</span>
+                        <span class="ir-value">{{ settings.site_name }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="ir-label">Default timer</span>
+                        <span class="ir-value">{{ settings.default_timer }}s</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="ir-label">Last updated</span>
+                        <span class="ir-value">{{ settings.updated_at }}</span>
+                    </div>
                 </div>
-
-                <button type="submit" class="btn btn-primary">Save Settings</button>
-
-            </form>
-
-            <p class="text-muted mt-3 mb-0">
-                Last updated: {{ settings.updated_at }}
-            </p>
-
+            </div>
         </div>
 
     </div>
-
-    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-light mt-4">← Admin Home</a>
-
 </div>
 
 {% endblock %}

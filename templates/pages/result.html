@@ -1,702 +1,156 @@
 {% extends 'layouts/base.html' %}
 
-{% block title %}Typing Result{% endblock %}
+{% block title %}Test Result — TypeMaster India{% endblock %}
 
 {% block content %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/result.css') }}">
-<div class="container py-5">
 
-    <div class="text-center mb-5">
-
-        <h1 class="fw-bold">🎉 Typing Test Result</h1>
-
-        <p class="text-secondary">Your typing performance summary</p>
-
-    </div>
+<div class="app-page">
+    <div class="container">
 
     {% if result %}
 
-<!-- ===================================== -->
-<!-- RESULT HERO -->
-<!-- ===================================== -->
-
-<div class="result-hero">
-
-    <div class="row align-items-center">
-
-        <div class="col-lg-8">
-
-            <span class="result-badge">
-
-                🎉 Test Completed Successfully
-
-            </span>
-
-            <h1 class="result-title">
-
-                Congratulations {{ current_user.full_name.split(' ')[0] }}
-
-            </h1>
-
-            <p class="result-subtitle">
-
-                Your typing test has been completed successfully.
-                Here is your performance summary.
-
-            </p>
-
-        </div>
-
-        <div class="col-lg-4">
-
-            <div class="big-score">
-
-                {{ result.net_wpm }}
-
-                <span>
-
-                    WPM
-
-                </span>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-
-<!-- ===================================== -->
-<!-- SCORE CARDS -->
-<!-- ===================================== -->
-
-<div class="row mt-5 g-4">
-
-    <div class="col-lg-3 col-md-6">
-
-        <div class="score-card">
-
-            <div class="score-icon">
-
-                ⚡
-
-            </div>
-
-            <h6>
-
-                Net Speed
-
-            </h6>
-
-            <h2>
-
-                {{ result.net_wpm }}
-
-            </h2>
-
-            <p>
-
-                Words Per Minute
-
-            </p>
-
-        </div>
-
-    </div>
-
-    <div class="col-lg-3 col-md-6">
-
-        <div class="score-card">
-
-            <div class="score-icon">
-
-                🚀
-
-            </div>
-
-            <h6>
-
-                Gross Speed
-
-            </h6>
-
-            <h2>
-
-                {{ result.gross_wpm }}
-
-            </h2>
-
-            <p>
-
-                Before Errors
-
-            </p>
-
-        </div>
-
-    </div>
-
-    <div class="col-lg-3 col-md-6">
-
-        <div class="score-card">
-
-            <div class="score-icon">
-
-                🎯
-
-            </div>
-
-            <h6>
-
-                Accuracy
-
-            </h6>
-
-            <h2>
-
-                {{ result.accuracy }}%
-
-            </h2>
-
-            <p>
-
-                Typing Accuracy
-
-            </p>
-
-        </div>
-
-    </div>
-
-    <div class="col-lg-3 col-md-6">
-
-        <div class="score-card">
-
-            <div class="score-icon">
-
-                ❌
-
-            </div>
-
-            <h6>
-
-                Errors
-
-            </h6>
-
-            <h2>
-
-                {{ result.errors }}
-
-            </h2>
-
-            <p>
-
-                Mistakes
-
-            </p>
-
-        </div>
-
-    </div>
-
-</div>
-<!-- ===================================== -->
-<!-- PERFORMANCE SECTION -->
-<!-- ===================================== -->
-
-<div class="row mt-5 g-4">
-
-    <!-- Performance Chart -->
-
-    <div class="col-lg-8">
-
-        <div class="performance-card">
-
-            <h3>
-
-                📈 Performance Overview
-
-            </h3>
-
-            <p class="text-secondary mb-4">
-
-                Your typing performance at a glance.
-
-            </p>
-
-            <canvas id="resultChart" height="120"></canvas>
-
-        </div>
-
-    </div>
-
-    <!-- Grade Card -->
-
-    <div class="col-lg-4">
-
-        <div class="grade-card">
-
-            <h5>
-
-                Performance Grade
-
-            </h5>
-
-            {% if result.accuracy >= 98 and result.net_wpm >= 70 %}
-
-                <div class="grade-circle grade-a-plus">
-
-                    A+
-
+        <!-- Result hero -->
+        <div class="welcome-band fade-up">
+            <div class="wb-left">
+                <span class="wb-badge"><i class="fa-solid fa-circle-check"></i> Test Completed</span>
+                <h1>Great job, {{ current_user.full_name.split(' ')[0] }}!</h1>
+                <p>Here's a full breakdown of your typing performance.</p>
+                <div class="wb-actions">
+                    <a href="/typing" class="btn-on-band"><i class="fa-solid fa-rotate-right me-2"></i>Try Again</a>
+                    <a href="{{ url_for('result.certificate', result_id=result.id) }}" class="btn-on-band ghost"><i class="fa-solid fa-award me-2"></i>Certificate</a>
                 </div>
-
-                <p>
-
-                    Outstanding Performance
-
-                </p>
-
-            {% elif result.accuracy >= 95 %}
-
-                <div class="grade-circle grade-a">
-
-                    A
-
+            </div>
+            <div class="goal-ring" style="--val: {{ result.accuracy }};">
+                <div>
+                    <b>{{ result.net_wpm }}</b>
+                    <small>Net WPM</small>
                 </div>
-
-                <p>
-
-                    Excellent Work
-
-                </p>
-
-            {% elif result.accuracy >= 90 %}
-
-                <div class="grade-circle grade-b">
-
-                    B
-
-                </div>
-
-                <p>
-
-                    Good Performance
-
-                </p>
-
-            {% else %}
-
-                <div class="grade-circle grade-c">
-
-                    C
-
-                </div>
-
-                <p>
-
-                    Keep Practicing
-
-                </p>
-
-            {% endif %}
-
+            </div>
         </div>
 
-    </div>
-
-</div>
-
-<!-- ===================================== -->
-<!-- TEST DETAILS -->
-<!-- ===================================== -->
-
-<div class="row mt-5 g-4">
-
-    <div class="col-lg-6">
-
-        <div class="info-card">
-
-            <h4>
-
-                📝 Test Details
-
-            </h4>
-
-            <hr>
-
-            <div class="info-row">
-
-                <span>
-
-                    Language
-
-                </span>
-
-                <strong>
-
-                    {{ result.language }}
-
-                </strong>
-
+        <!-- Score cards -->
+        <div class="stat-grid" style="margin-top:28px">
+            <div class="tm-stat fade-up d1">
+                <div class="si"><i class="fa-solid fa-bolt"></i></div>
+                <div class="sv">{{ result.net_wpm }}</div>
+                <div class="sl">Net WPM</div>
             </div>
-
-            <div class="info-row">
-
-                <span>
-
-                    Difficulty
-
-                </span>
-
-                <strong>
-
-                    {{ result.difficulty }}
-
-                </strong>
-
+            <div class="tm-stat fade-up d2">
+                <div class="si accent"><i class="fa-solid fa-gauge-high"></i></div>
+                <div class="sv">{{ result.gross_wpm }}</div>
+                <div class="sl">Gross WPM</div>
             </div>
-
-            <div class="info-row">
-
-                <span>
-
-                    Duration
-
-                </span>
-
-                <strong>
-
-                    {{ result.duration }} Seconds
-
-                </strong>
-
+            <div class="tm-stat fade-up d3">
+                <div class="si success"><i class="fa-solid fa-bullseye"></i></div>
+                <div class="sv">{{ result.accuracy }}<small>%</small></div>
+                <div class="sl">Accuracy</div>
             </div>
-
-            <div class="info-row">
-
-                <span>
-
-                    CPM
-
-                </span>
-
-                <strong>
-
-                    {{ result.cpm }}
-
-                </strong>
-
+            <div class="tm-stat fade-up d4">
+                <div class="si danger"><i class="fa-solid fa-circle-xmark"></i></div>
+                <div class="sv">{{ result.errors }}</div>
+                <div class="sl">Errors</div>
             </div>
-
         </div>
 
-    </div>
-
-    <div class="col-lg-6">
-
-        <div class="info-card">
-
-            <h4>
-
-                👤 User Information
-
-            </h4>
-
-            <hr>
-
-            <div class="info-row">
-
-                <span>
-
-                    Name
-
-                </span>
-
-                <strong>
-
-                    {{ current_user.full_name }}
-
-                </strong>
-
+        <!-- Performance + grade -->
+        <div class="row g-4 mt-1">
+            <div class="col-lg-8">
+                <div class="panel panel-pad-lg fade-up d1">
+                    <div class="panel-head"><h4><i class="fa-solid fa-chart-line"></i> Performance Overview</h4></div>
+                    <canvas id="resultChart" height="120"></canvas>
+                </div>
             </div>
-
-            <div class="info-row">
-
-                <span>
-
-                    Email
-
-                </span>
-
-                <strong>
-
-                    {{ current_user.email }}
-
-                </strong>
-
+            <div class="col-lg-4">
+                <div class="panel panel-pad-lg fade-up d2 text-center">
+                    <div class="panel-head"><h4><i class="fa-solid fa-medal"></i> Grade</h4></div>
+                    {% if result.accuracy >= 98 and result.net_wpm >= 70 %}
+                        <div class="goal-ring" style="--val:100;margin:8px auto"><div><b>A+</b><small>Outstanding</small></div></div>
+                    {% elif result.accuracy >= 95 %}
+                        <div class="goal-ring" style="--val:90;margin:8px auto"><div><b>A</b><small>Excellent</small></div></div>
+                    {% elif result.accuracy >= 90 %}
+                        <div class="goal-ring" style="--val:75;margin:8px auto"><div><b>B</b><small>Good</small></div></div>
+                    {% else %}
+                        <div class="goal-ring" style="--val:55;margin:8px auto"><div><b>C</b><small>Keep going</small></div></div>
+                    {% endif %}
+                </div>
             </div>
-
-            <div class="info-row">
-
-                <span>
-
-                    Test Date
-
-                </span>
-
-                <strong>
-
-                    {{ result.created_at.strftime('%d-%m-%Y') }}
-
-                </strong>
-
-            </div>
-
-            <div class="info-row">
-
-                <span>
-
-                    Time
-
-                </span>
-
-                <strong>
-
-                    {{ result.created_at.strftime('%I:%M %p') }}
-
-                </strong>
-
-            </div>
-
         </div>
 
-    </div>
+        <!-- Details -->
+        <div class="row g-4 mt-1">
+            <div class="col-lg-6">
+                <div class="panel fade-up d1">
+                    <div class="panel-head"><h4><i class="fa-solid fa-list-check"></i> Test Details</h4></div>
+                    <div class="info-row"><span class="ir-label">Language</span><span class="ir-value">{{ result.language }}</span></div>
+                    <div class="info-row"><span class="ir-label">Difficulty</span><span class="ir-value">{{ result.difficulty }}</span></div>
+                    <div class="info-row"><span class="ir-label">Duration</span><span class="ir-value">{{ result.duration }} sec</span></div>
+                    <div class="info-row"><span class="ir-label">CPM</span><span class="ir-value">{{ result.cpm }}</span></div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="panel fade-up d2">
+                    <div class="panel-head"><h4><i class="fa-regular fa-user"></i> User Information</h4></div>
+                    <div class="info-row"><span class="ir-label">Name</span><span class="ir-value">{{ current_user.full_name }}</span></div>
+                    <div class="info-row"><span class="ir-label">Email</span><span class="ir-value">{{ current_user.email }}</span></div>
+                    <div class="info-row"><span class="ir-label">Date</span><span class="ir-value">{{ result.created_at.strftime('%d %b %Y') }}</span></div>
+                    <div class="info-row"><span class="ir-label">Time</span><span class="ir-value">{{ result.created_at.strftime('%I:%M %p') }}</span></div>
+                </div>
+            </div>
+        </div>
 
-</div>
-<!-- ===================================== -->
-<!-- ACHIEVEMENTS -->
-<!-- ===================================== -->
-
-<div class="row mt-5">
-
-    <div class="col-12">
-
-        <div class="performance-card">
-
-            <h3>
-
-                🏅 Achievements
-
-            </h3>
-
-            <div class="row mt-4 g-4">
-
-                <div class="col-lg-3 col-md-6">
-
-                    <div class="achievement-card {% if result.net_wpm >= 30 %}unlocked{% else %}locked{% endif %}">
-
-                        <div class="achievement-icon">
-
-                            🥉
-
-                        </div>
-
-                        <h5>
-
-                            30 WPM Club
-
-                        </h5>
-
+        <!-- Achievements -->
+        <h3 class="app-section-title"><i class="fa-solid fa-trophy"></i> Achievements</h3>
+        <div class="row g-4">
+            {% set ach = [
+                ('30 WPM Club', 'fa-medal', result.net_wpm >= 30),
+                ('50 WPM Club', 'fa-award', result.net_wpm >= 50),
+                ('70 WPM Club', 'fa-crown', result.net_wpm >= 70),
+                ('Accuracy Master', 'fa-bullseye', result.accuracy >= 98)
+            ] %}
+            {% for label, icon, unlocked in ach %}
+            <div class="col-lg-3 col-md-6">
+                <div class="panel text-center fade-up" style="{{ '' if unlocked else 'opacity:.5' }}">
+                    <div class="si {{ 'accent' if unlocked }}" style="margin:0 auto 12px;width:54px;height:54px;border-radius:14px;display:grid;place-items:center;font-size:22px;{% if not unlocked %}background:var(--surface-2);color:var(--text-muted){% endif %}">
+                        <i class="fa-solid {{ icon }}"></i>
                     </div>
-
+                    <b>{{ label }}</b>
+                    <p class="text-muted-2 mb-0" style="font-size:13px">{{ 'Unlocked' if unlocked else 'Locked' }}</p>
                 </div>
-
-                <div class="col-lg-3 col-md-6">
-
-                    <div class="achievement-card {% if result.net_wpm >= 50 %}unlocked{% else %}locked{% endif %}">
-
-                        <div class="achievement-icon">
-
-                            🥈
-
-                        </div>
-
-                        <h5>
-
-                            50 WPM Club
-
-                        </h5>
-
-                    </div>
-
-                </div>
-
-                <div class="col-lg-3 col-md-6">
-
-                    <div class="achievement-card {% if result.net_wpm >= 70 %}unlocked{% else %}locked{% endif %}">
-
-                        <div class="achievement-icon">
-
-                            🥇
-
-                        </div>
-
-                        <h5>
-
-                            70 WPM Club
-
-                        </h5>
-
-                    </div>
-
-                </div>
-
-                <div class="col-lg-3 col-md-6">
-
-                    <div class="achievement-card {% if result.accuracy >= 98 %}unlocked{% else %}locked{% endif %}">
-
-                        <div class="achievement-icon">
-
-                            🎯
-
-                        </div>
-
-                        <h5>
-
-                            Accuracy Master
-
-                        </h5>
-
-                    </div>
-
-                </div>
-
             </div>
-
+            {% endfor %}
         </div>
 
-    </div>
-
-</div>
-
-<!-- ===================================== -->
-<!-- PERFORMANCE TIPS -->
-<!-- ===================================== -->
-
-<div class="row mt-5">
-
-    <div class="col-12">
-
-        <div class="info-card">
-
-            <h4>
-
-                💡 Performance Tips
-
-            </h4>
-
-            <hr>
-
-            <ul class="mb-0">
-
-                {% if result.accuracy < 95 %}
-
-                <li>
-
-                    Focus on improving typing accuracy before increasing speed.
-
-                </li>
-
-                {% endif %}
-
-                {% if result.net_wpm < 40 %}
-
-                <li>
-
-                    Practice daily for 15–20 minutes to improve speed.
-
-                </li>
-
-                {% endif %}
-
-                {% if result.errors > 10 %}
-
-                <li>
-
-                    Reduce typing errors by slowing down slightly.
-
-                </li>
-
-                {% endif %}
-
-                <li>
-
-                    Maintain a proper sitting posture while typing.
-
-                </li>
-
+        <!-- Tips -->
+        <div class="panel panel-pad-lg fade-up mt-4">
+            <div class="panel-head"><h4><i class="fa-solid fa-lightbulb"></i> Performance Tips</h4></div>
+            <ul class="mb-0" style="color:var(--text-muted);line-height:1.9">
+                {% if result.accuracy < 95 %}<li>Focus on improving typing accuracy before increasing speed.</li>{% endif %}
+                {% if result.net_wpm < 40 %}<li>Practice daily for 15–20 minutes to improve speed.</li>{% endif %}
+                {% if result.errors > 10 %}<li>Reduce typing errors by slowing down slightly.</li>{% endif %}
+                <li>Maintain a proper sitting posture while typing.</li>
             </ul>
-
         </div>
 
+        <!-- Actions -->
+        <div class="d-flex flex-wrap gap-2 justify-content-center mt-5">
+            <a href="/typing" class="btn btn-brand btn-lg"><i class="fa-solid fa-keyboard me-2"></i>Try Again</a>
+            <a href="{{ url_for('hindi.hindi_page') }}" class="btn btn-accent btn-lg"><i class="fa-solid fa-om me-2"></i>Hindi Test</a>
+            <a href="{{ url_for('history.history_page') }}" class="btn btn-ghost btn-lg"><i class="fa-solid fa-clock-rotate-left me-2"></i>History</a>
+            <a href="{{ url_for('dashboard.dashboard_page') }}" class="btn btn-ghost btn-lg"><i class="fa-solid fa-gauge me-2"></i>Dashboard</a>
+        </div>
+
+    {% else %}
+        <div class="empty-state fade-up">
+            <div class="es-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            <h3>No result found</h3>
+            <p>Complete a typing test first to see your performance summary.</p>
+            <a href="/typing" class="btn btn-brand"><i class="fa-solid fa-rocket me-2"></i>Start Typing</a>
+        </div>
+    {% endif %}
+
     </div>
-
 </div>
 
-<!-- ===================================== -->
-<!-- ACTION BUTTONS -->
-<!-- ===================================== -->
-
-<div class="text-center mt-5">
-
-    <a href="/typing" class="btn btn-primary btn-lg me-2">
-
-        ⌨️ Try Again
-
-    </a>
-
-    <a href="/hindi" class="btn btn-info btn-lg me-2">
-
-        🇮🇳 Hindi Test
-
-    </a>
-
-    <a href="{{ url_for('history.history_page') }}" class="btn btn-warning btn-lg me-2">
-
-        📜 History
-
-    </a>
-
-    <a href="{{ url_for('dashboard.dashboard_page') }}" class="btn btn-success btn-lg me-2">
-
-        🏠 Dashboard
-
-    </a>
-
-    <a href="{{ url_for('result.certificate', result_id=result.id) }}"
-   class="btn btn-secondary btn-lg">
-
-    📄 Download Certificate
-
-</a>
-
-</div>
-
-{% else %}
-
-<div class="alert alert-warning text-center">
-
-    No typing result found. Complete a typing test first.
-
-</div>
-
-{% endif %}
-
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="{{ url_for('static', filename='js/result.js') }}"></script>
 
 {% endblock %}

@@ -47,49 +47,56 @@ class User(UserMixin, db.Model):
         nullable=False
     )
 
+    avatar = db.Column(
+        db.String(255),
+        nullable=True
+    )
 
     # -----------------------------
-# Gamification
-# -----------------------------
+    # Gamification
+    # -----------------------------
 
-xp = db.Column(
-    db.Integer,
-    default=0
-)
+    xp = db.Column(
+        db.Integer,
+        default=0,
+        nullable=False
+    )
 
-level = db.Column(
-    db.Integer,
-    default=1
-)
+    level = db.Column(
+        db.Integer,
+        default=1,
+        nullable=False
+    )
 
-current_streak = db.Column(
-    db.Integer,
-    default=0
-)
+    current_streak = db.Column(
+        db.Integer,
+        default=0,
+        nullable=False
+    )
 
-best_streak = db.Column(
-    db.Integer,
-    default=0
-)
+    best_streak = db.Column(
+        db.Integer,
+        default=0,
+        nullable=False
+    )
 
-last_test_date = db.Column(
-    db.Date,
-    nullable=True
-)
+    last_test_date = db.Column(
+        db.Date,
+        nullable=True
+    )
 
-created_at = db.Column(
+    created_at = db.Column(
         db.DateTime,
         default=datetime.utcnow
     )
 
     # One User -> Many Results
-results = db.relationship(
+    results = db.relationship(
         "Result",
         backref="user",
         lazy=True,
         cascade="all, delete-orphan"
     )
 
-def __repr__(self):
-
+    def __repr__(self):
         return f"<User {self.username}>"

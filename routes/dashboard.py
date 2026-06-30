@@ -216,4 +216,11 @@ def dashboard_page():
         performance_level=performance_level,
         accuracy_status=accuracy_status,
         achievements=achievements,
+
+        average_wpm=average_wpm,
+        highest_accuracy=highest_accuracy,
+        improvement=improvement,
+        chart_labels=chart_labels,
+        chart_wpm=chart_wpm,
+        chart_accuracy=chart_accuracy,
     )

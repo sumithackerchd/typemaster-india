@@ -1,70 +1,186 @@
 {% extends 'layouts/base.html' %}
 
-{% block title %}Profile{% endblock %}
+{% block title %}Profile — TypeMaster India{% endblock %}
 
 {% block content %}
 
-<div class="container py-5">
+<div class="app-page">
+    <div class="container">
 
-<div class="text-center">
+        <div class="page-head fade-up">
+            <div>
+                <span class="eyebrow"><i class="fa-regular fa-user"></i> Account</span>
+                <h1 class="ph-title">Your Profile</h1>
+                <p class="ph-sub">Your account details and typing performance.</p>
+            </div>
+            <div class="ph-actions">
+                <a href="{{ url_for('auth.logout') }}" class="btn btn-ghost"><i class="fa-solid fa-right-from-bracket me-2"></i>Logout</a>
+            </div>
+        </div>
 
-<img src="https://ui-avatars.com/api/?name={{ current_user.full_name }}&size=180"
-class="rounded-circle shadow">
+        <div class="panel panel-pad-lg fade-up">
+            <div class="profile-hero">
+                {% if current_user.avatar %}
+                <div class="profile-avatar" style="padding:0;overflow:hidden">
+                    <img src="{{ url_for('static', filename=current_user.avatar) }}" alt="Profile picture of {{ current_user.full_name }}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit">
+                </div>
+                {% else %}
+                <div class="profile-avatar">{{ current_user.full_name[0]|upper }}</div>
+                {% endif %}
+                <div>
+                    <h2 style="margin:0 0 4px;font-weight:800">{{ current_user.full_name }}</h2>
+                    <p class="text-muted-2" style="margin:0">@{{ current_user.username }} &middot; {{ current_user.email }}</p>
+                    <div class="mt-3 d-flex flex-wrap gap-2">
+                        <span class="tm-pill primary"><i class="fa-solid fa-layer-group"></i> Level {{ current_user.level }}</span>
+                        <span class="tm-pill accent"><i class="fa-solid fa-star"></i> {{ current_user.xp }} XP</span>
+                        <span class="tm-pill danger"><i class="fa-solid fa-fire"></i> {{ current_user.current_streak }} day streak</span>
+                        {% if current_user.is_admin %}<span class="tm-pill success"><i class="fa-solid fa-shield-halved"></i> Admin</span>{% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
 
-<h2 class="mt-3">
+        <div class="stat-grid cols-3" style="margin-top:24px">
+            <div class="tm-stat fade-up d1">
+                <div class="si"><i class="fa-solid fa-file-lines"></i></div>
+                <div class="sv">{{ total_tests }}</div>
+                <div class="sl">Total Tests</div>
+            </div>
+            <div class="tm-stat fade-up d2">
+                <div class="si accent"><i class="fa-solid fa-bolt"></i></div>
+                <div class="sv">{{ best_wpm }} <small>WPM</small></div>
+                <div class="sl">Best Speed</div>
+            </div>
+            <div class="tm-stat fade-up d3">
+                <div class="si success"><i class="fa-solid fa-bullseye"></i></div>
+                <div class="sv">{{ avg_accuracy }}<small>%</small></div>
+                <div class="sl">Avg Accuracy</div>
+            </div>
+        </div>
 
-{{ current_user.full_name }}
+        <div class="row g-4 mt-1">
+            <div class="col-lg-6">
+                <div class="panel fade-up d1">
+                    <div class="panel-head"><h4><i class="fa-solid fa-id-card"></i> Account Details</h4></div>
+                    <div class="info-row"><span class="ir-label">Full Name</span><span class="ir-value">{{ current_user.full_name }}</span></div>
+                    <div class="info-row"><span class="ir-label">Username</span><span class="ir-value">@{{ current_user.username }}</span></div>
+                    <div class="info-row"><span class="ir-label">Email</span><span class="ir-value">{{ current_user.email }}</span></div>
+                    <div class="info-row"><span class="ir-label">Mobile</span><span class="ir-value">{{ current_user.mobile }}</span></div>
+                    <div class="info-row"><span class="ir-label">Member Since</span><span class="ir-value">{{ current_user.created_at.strftime('%d %b %Y') if current_user.created_at else '—' }}</span></div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="panel fade-up d2">
+                    <div class="panel-head"><h4><i class="fa-solid fa-trophy"></i> Gamification</h4></div>
+                    <div class="info-row"><span class="ir-label">Level</span><span class="ir-value">{{ current_user.level }}</span></div>
+                    <div class="info-row"><span class="ir-label">Experience (XP)</span><span class="ir-value">{{ current_user.xp }}</span></div>
+                    <div class="info-row"><span class="ir-label">Current Streak</span><span class="ir-value">{{ current_user.current_streak }} days</span></div>
+                    <div class="info-row"><span class="ir-label">Best Streak</span><span class="ir-value">{{ current_user.best_streak }} days</span></div>
+                    <div class="mt-3">
+                        <a href="/typing" class="btn btn-brand w-100"><i class="fa-solid fa-keyboard me-2"></i>Practice Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-</h2>
+        <!-- Manage Account -->
+        <div class="row g-4 mt-1">
 
-<p>
+            <div class="col-lg-6">
+                <div class="panel fade-up d1">
+                    <div class="panel-head"><h4><i class="fa-solid fa-pen-to-square"></i> Edit Profile</h4></div>
+                    <form method="POST" action="{{ url_for('profile.update_profile') }}">
+                        <div class="mb-3">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" name="full_name" class="form-control" value="{{ current_user.full_name }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Username</label>
+                            <input type="text" name="username" class="form-control" value="{{ current_user.username }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" name="email" class="form-control" value="{{ current_user.email }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Mobile</label>
+                            <input type="text" name="mobile" class="form-control" value="{{ current_user.mobile }}" pattern="\d{7,15}" title="7 to 15 digits">
+                        </div>
+                        <button type="submit" class="btn btn-brand w-100"><i class="fa-solid fa-floppy-disk me-2"></i>Save Changes</button>
+                    </form>
+                </div>
+            </div>
 
-{{ current_user.email }}
+            <div class="col-lg-6">
+                <div class="panel fade-up d2">
+                    <div class="panel-head"><h4><i class="fa-solid fa-image"></i> Profile Picture</h4></div>
+                    <form method="POST" action="{{ url_for('profile.upload_avatar') }}" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label class="form-label">Upload new picture</label>
+                            <input type="file" name="avatar" accept="image/*" class="form-control" required>
+                            <small class="text-muted-2">PNG, JPG, GIF or WEBP.</small>
+                        </div>
+                        <button type="submit" class="btn btn-brand w-100"><i class="fa-solid fa-upload me-2"></i>Upload Picture</button>
+                    </form>
+                    {% if current_user.avatar %}
+                    <form method="POST" action="{{ url_for('profile.remove_avatar') }}" class="mt-2">
+                        <button type="submit" class="btn btn-ghost w-100"><i class="fa-solid fa-trash me-2"></i>Remove Picture</button>
+                    </form>
+                    {% endif %}
 
-</p>
+                    <div class="panel-head mt-4"><h4><i class="fa-solid fa-lock"></i> Change Password</h4></div>
+                    <form method="POST" action="{{ url_for('profile.change_password') }}" id="pwForm">
+                        <div class="mb-3">
+                            <label class="form-label">Current Password</label>
+                            <input type="password" name="current_password" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">New Password</label>
+                            <input type="password" name="new_password" id="newPassword" class="form-control" required minlength="6">
+                            <div class="progress mt-2" style="height:6px">
+                                <div class="progress-bar" id="pwStrengthBar" role="progressbar" style="width:0%"></div>
+                            </div>
+                            <small id="pwStrengthText" class="text-muted-2">Password strength</small>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Confirm New Password</label>
+                            <input type="password" name="confirm_password" class="form-control" required minlength="6">
+                        </div>
+                        <button type="submit" class="btn btn-brand w-100"><i class="fa-solid fa-key me-2"></i>Update Password</button>
+                    </form>
+                </div>
+            </div>
 
+        </div>
+
+    </div>
 </div>
 
-<div class="row mt-5">
+<script>
+    (function () {
+        var input = document.getElementById("newPassword");
+        var bar = document.getElementById("pwStrengthBar");
+        var text = document.getElementById("pwStrengthText");
+        if (!input || !bar) return;
 
-<div class="col-md-4">
+        input.addEventListener("input", function () {
+            var v = input.value;
+            var score = 0;
+            if (v.length >= 6) score++;
+            if (v.length >= 10) score++;
+            if (/[A-Z]/.test(v) && /[a-z]/.test(v)) score++;
+            if (/\d/.test(v)) score++;
+            if (/[^A-Za-z0-9]/.test(v)) score++;
 
-<div class="result-card">
+            var pct = (score / 5) * 100;
+            bar.style.width = pct + "%";
 
-<h6>Total Tests</h6>
-
-<h2>{{ total_tests }}</h2>
-
-</div>
-
-</div>
-
-<div class="col-md-4">
-
-<div class="result-card">
-
-<h6>Best WPM</h6>
-
-<h2>{{ best_wpm }}</h2>
-
-</div>
-
-</div>
-
-<div class="col-md-4">
-
-<div class="result-card">
-
-<h6>Average Accuracy</h6>
-
-<h2>{{ avg_accuracy }}%</h2>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
+            var labels = ["Very weak", "Weak", "Fair", "Good", "Strong", "Very strong"];
+            var colors = ["#ef4444", "#ef4444", "#f59e0b", "#f59e0b", "#22c55e", "#22c55e"];
+            bar.style.backgroundColor = colors[score];
+            text.textContent = v ? labels[score] : "Password strength";
+        });
+    })();
+</script>
 
 {% endblock %}
