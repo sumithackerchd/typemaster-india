@@ -92,6 +92,8 @@ def init_db():
             "accuracy": "FLOAT DEFAULT 0",
             "errors": "INTEGER DEFAULT 0",
             "created_at": "DATETIME",
+            "certificate_id": "VARCHAR(40)",
+            "verify_token": "VARCHAR(64)",
         },
     }
 

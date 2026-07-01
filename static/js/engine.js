@@ -72,10 +72,12 @@
         lastLineTop = lineTop;
 
         const lineHeight = caret.offsetHeight || 0;
+        const viewportHeight = typingViewport.clientHeight || 0;
 
-        // Keep the active line one line down from the top of the viewport so
-        // the user always sees a little of what comes next.
-        let offset = lineTop - lineHeight;
+        // Keep the active line vertically centered inside the fixed-height
+        // viewport (Monkeytype / TypingBaba style). The window never scrolls —
+        // only #paragraph is translated inside its overflow-hidden container.
+        let offset = lineTop - Math.max(0, (viewportHeight - lineHeight) / 2);
 
         if (offset < 0) {
             offset = 0;

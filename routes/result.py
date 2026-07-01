@@ -7,8 +7,14 @@ from utils.pdf_generator import create_certificate
 
 from flask import Blueprint, request, jsonify, render_template
 from flask_login import login_required, current_user
-from utils.certificate import generate_certificate_id
+from utils.certificate import (
+    ensure_certificate_identity,
+    verification_url,
+    build_qr_svg_data_uri,
+)
 from flask import Blueprint, render_template, abort
+
+from models.user import User
 
 from models import db
 from models.result import Result
@@ -225,9 +231,10 @@ def certificate(result_id):
     if not result_data:
         abort(404)
 
-    certificate_id = generate_certificate_id(
-        result_data.id
-    )
+    certificate_id, _token = ensure_certificate_identity(result_data)
+
+    verify_url = verification_url(request.host_url, certificate_id)
+    qr_code = build_qr_svg_data_uri(verify_url)
 
     return render_template(
 
@@ -235,7 +242,35 @@ def certificate(result_id):
 
         result=result_data,
 
+        certificate_id=certificate_id,
+
+        qr_code=qr_code,
+
+        verify_url=verify_url
+    )
+
+
+# ==========================================
+# Public Certificate Verification
+# ==========================================
+
+@result.route("/verify/<certificate_id>")
+def verify_certificate(certificate_id):
+
+    result_data = Result.query.filter_by(
         certificate_id=certificate_id
+    ).first()
+
+    holder = None
+    if result_data:
+        holder = db.session.get(User, result_data.user_id)
+
+    return render_template(
+        "pages/verify.html",
+        result=result_data,
+        holder=holder,
+        certificate_id=certificate_id,
+        verified=bool(result_data),
     )
 
 # ccccc
@@ -248,9 +283,9 @@ def download_certificate(result_id):
         user_id=current_user.id
     ).first_or_404()
 
-    certificate_id = generate_certificate_id(
-        result_data.id
-    )
+    certificate_id, _token = ensure_certificate_identity(result_data)
+
+    verify_url = verification_url(request.host_url, certificate_id)
 
     pdf_path = os.path.join(
         tempfile.gettempdir(),
@@ -261,7 +296,8 @@ def download_certificate(result_id):
         pdf_path,
         result_data,
         certificate_id,
-        current_user
+        current_user,
+        verify_url=verify_url
     )
 
     return send_file(

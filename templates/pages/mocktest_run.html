@@ -39,7 +39,9 @@
 
     <div class="typing-card">
 
-        <div id="paragraph"></div>
+        <div class="typing-viewport" id="typingViewport">
+            <div id="paragraph" class="{% if language == 'hindi' %}hindi-paragraph{% endif %}"></div>
+        </div>
 
         <input type="text" id="typingInput" autocomplete="off"
                autocorrect="off" autocapitalize="off" spellcheck="false">

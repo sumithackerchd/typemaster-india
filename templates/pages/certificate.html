@@ -113,94 +113,43 @@ href="{{ url_for('static', filename='css/certificate.css') }}">
     <section class="stats-row">
 
         <div class="stat-box">
-
-            <div class="icon">
-
-                ⚡
-
-            </div>
-
-            <span>
-
-                NET WPM
-
-            </span>
-
-            <h4>
-
-                {{ result.net_wpm }}
-
-            </h4>
-
+            <div class="icon">🏁</div>
+            <span>GROSS WPM</span>
+            <h4>{{ result.gross_wpm }}</h4>
         </div>
 
         <div class="stat-box">
-
-            <div class="icon">
-
-                🎯
-
-            </div>
-
-            <span>
-
-                ACCURACY
-
-            </span>
-
-            <h4>
-
-                {{ result.accuracy }}%
-
-            </h4>
-
+            <div class="icon">⚡</div>
+            <span>NET WPM</span>
+            <h4>{{ result.net_wpm }}</h4>
         </div>
 
         <div class="stat-box">
-
-            <div class="icon">
-
-                🌐
-
-            </div>
-
-            <span>
-
-                LANGUAGE
-
-            </span>
-
-            <h4>
-
-                {{ result.language }}
-
-            </h4>
-
+            <div class="icon">⌨️</div>
+            <span>CPM</span>
+            <h4>{{ result.cpm }}</h4>
         </div>
 
         <div class="stat-box">
+            <div class="icon">🎯</div>
+            <span>ACCURACY</span>
+            <h4>{{ result.accuracy }}%</h4>
+        </div>
 
-            <div class="icon">
-
-                📊
-
-            </div>
-
-            <span>
-
-                DIFFICULTY
-
-            </span>
-
-            <h4>
-
-                {{ result.difficulty }}
-
-            </h4>
-
+        <div class="stat-box">
+            <div class="icon">❗</div>
+            <span>ERRORS</span>
+            <h4>{{ result.errors }}</h4>
         </div>
 
     </section>
+
+    <div class="certificate-metaline">
+        <span>Language: <b>{{ result.language }}</b></span>
+        <span>Difficulty: <b>{{ result.difficulty }}</b></span>
+        <span>Duration: <b>{{ result.duration }}s</b></span>
+        <span>Keyboard Layout: <b>QWERTY</b></span>
+    </div>
         <!-- ================= FOOTER ================= -->
 
     <section class="certificate-footer">
@@ -324,7 +273,7 @@ href="{{ url_for('static', filename='css/certificate.css') }}">
 
             <strong>
 
-                /verify/{{ certificate_id }}
+                <a href="{{ verify_url or ('/verify/' ~ certificate_id) }}" style="color:#0d3b8e;text-decoration:none;">/verify/{{ certificate_id }}</a>
 
             </strong>
 

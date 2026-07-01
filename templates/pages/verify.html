@@ -1,0 +1,65 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Verify Certificate{% endblock %}
+
+{% block content %}
+
+<div class="container" style="max-width:720px;margin:48px auto;">
+
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:36px;box-shadow:var(--shadow-md);">
+
+    {% if verified %}
+
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:24px;">
+      <div style="width:56px;height:56px;border-radius:50%;background:rgba(34,197,94,.15);display:flex;align-items:center;justify-content:center;">
+        <i class="fa-solid fa-circle-check" style="color:#22c55e;font-size:30px;"></i>
+      </div>
+      <div>
+        <h2 style="margin:0;color:var(--text);font-weight:800;">Certificate Verified</h2>
+        <p style="margin:2px 0 0;color:var(--text-muted);">This is an authentic TypeMaster India certificate.</p>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+      <div class="verify-item"><small>CANDIDATE NAME</small><h5>{{ holder.full_name if holder else 'N/A' }}</h5></div>
+      <div class="verify-item"><small>CERTIFICATE ID</small><h5>{{ certificate_id }}</h5></div>
+      <div class="verify-item"><small>ISSUE DATE</small><h5>{{ result.created_at.strftime('%d %B %Y') if result.created_at else 'N/A' }}</h5></div>
+      <div class="verify-item"><small>LANGUAGE</small><h5>{{ result.language }}</h5></div>
+      <div class="verify-item"><small>DIFFICULTY</small><h5>{{ result.difficulty }}</h5></div>
+      <div class="verify-item"><small>DURATION</small><h5>{{ result.duration }}s</h5></div>
+      <div class="verify-item"><small>NET WPM</small><h5>{{ result.net_wpm }}</h5></div>
+      <div class="verify-item"><small>ACCURACY</small><h5>{{ result.accuracy }}%</h5></div>
+    </div>
+
+    <div style="margin-top:24px;padding:16px 18px;border-radius:12px;background:rgba(34,197,94,.10);color:#16a34a;font-weight:700;display:flex;align-items:center;gap:10px;">
+      <i class="fa-solid fa-shield-halved"></i> Certificate Status: VALID
+    </div>
+
+    {% else %}
+
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
+      <div style="width:56px;height:56px;border-radius:50%;background:rgba(239,68,68,.15);display:flex;align-items:center;justify-content:center;">
+        <i class="fa-solid fa-circle-xmark" style="color:#ef4444;font-size:30px;"></i>
+      </div>
+      <div>
+        <h2 style="margin:0;color:var(--text);font-weight:800;">Not Verified</h2>
+        <p style="margin:2px 0 0;color:var(--text-muted);">No certificate matches the ID <strong>{{ certificate_id }}</strong>.</p>
+      </div>
+    </div>
+
+    <div style="margin-top:12px;padding:16px 18px;border-radius:12px;background:rgba(239,68,68,.10);color:#ef4444;font-weight:700;display:flex;align-items:center;gap:10px;">
+      <i class="fa-solid fa-triangle-exclamation"></i> Certificate Status: INVALID
+    </div>
+
+    {% endif %}
+
+  </div>
+
+</div>
+
+<style>
+  .verify-item small{display:block;font-size:12px;letter-spacing:1.5px;color:var(--text-muted);margin-bottom:6px;}
+  .verify-item h5{margin:0;color:var(--text);font-weight:700;font-size:18px;word-break:break-word;}
+</style>
+
+{% endblock %}

@@ -60,6 +60,22 @@ class Result(db.Model):
         default=0
     )
 
+    # -----------------------------
+    # Certificate identity (unique per result)
+    # -----------------------------
+
+    certificate_id = db.Column(
+        db.String(40),
+        unique=True,
+        nullable=True
+    )
+
+    verify_token = db.Column(
+        db.String(64),
+        unique=True,
+        nullable=True
+    )
+
     created_at = db.Column(
         db.DateTime,
         default=datetime.utcnow,
