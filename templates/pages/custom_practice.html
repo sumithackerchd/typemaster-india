@@ -1,0 +1,69 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}{{ title }} — Custom Practice{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/typing.css') }}">
+
+<div class="typing-wrapper" id="typingWrapper">
+
+    <div class="typing-top">
+        <div class="logo-title">
+            <h2 id="typingTitle">{{ title }}</h2>
+        </div>
+        <div class="d-flex gap-2 align-items-center flex-wrap justify-content-end">
+            <a href="{{ url_for('custom.page') }}" class="mode" style="text-decoration:none">← Back</a>
+            <button id="pauseBtn" class="mode" type="button"><i class="fa-solid fa-pause"></i> Pause</button>
+            <button id="submitBtn" class="mode mode-primary" type="button"><i class="fa-solid fa-flag-checkered"></i> Submit</button>
+            <button id="restartBtn" class="mode" type="button"><i class="fa-solid fa-rotate-left"></i> Restart</button>
+            <div class="timer-card"><i class="fa-regular fa-clock"></i> <span id="timer">60</span>s</div>
+        </div>
+    </div>
+
+    <div class="toolbar">
+        <button class="mode timer-btn active" type="button" data-seconds="60">60s</button>
+        <button class="mode timer-btn" type="button" data-seconds="120">120s</button>
+        <button class="mode timer-btn" type="button" data-seconds="300">300s</button>
+        <button class="mode timer-btn" type="button" data-seconds="600">600s</button>
+    </div>
+
+    <div class="typing-card">
+        <div class="typing-viewport" id="typingViewport">
+            <div id="paragraph"></div>
+        </div>
+        <input type="text" id="typingInput" autocomplete="off"
+               autocorrect="off" autocapitalize="off" spellcheck="false">
+    </div>
+
+    <div class="stats stats-six">
+        <div class="box"><h5>Net WPM</h5><h2 id="netWpm">0</h2></div>
+        <div class="box"><h5>Gross WPM</h5><h2 id="grossWpm">0</h2></div>
+        <div class="box"><h5>CPM</h5><h2 id="cpm">0</h2></div>
+        <div class="box"><h5>Accuracy</h5><h2 id="accuracy">100%</h2></div>
+        <div class="box"><h5>Errors</h5><h2 id="errors">0</h2></div>
+        <div class="box"><h5>Live WPM</h5><h2 id="liveWpm">0</h2></div>
+    </div>
+
+</div>
+
+<script>
+    window.TYPING_CONFIG = {
+        defaultLanguage: "custom",
+        redirectUrl: "{{ url_for('result.result_page') }}",
+        saveResultUrl: "{{ url_for('result.save_result') }}",
+        initialTimer: 60,
+        languages: {
+            custom: {
+                languageKey: "custom",
+                dataUrl: "{{ feed_url }}",
+                saveLanguage: "{{ 'Hindi' if language == 'hindi' else 'English' }}",
+                title: "{{ title }}",
+                paragraphClass: "{{ 'hindi-paragraph' if language == 'hindi' else '' }}"
+            }
+        }
+    };
+</script>
+<script src="{{ url_for('static', filename='js/engine.js') }}"></script>
+
+{% endblock %}

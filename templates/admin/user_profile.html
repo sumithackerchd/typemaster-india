@@ -1,0 +1,179 @@
+{% extends 'admin/layout.html' %}
+
+{% block title %}{{ user.full_name }} — Admin{% endblock %}
+{% block admin_title %}User Profile{% endblock %}
+{% block admin_subtitle %}Complete account details, statistics and management actions.{% endblock %}
+{% block admin_breadcrumbs %}
+<span class="sep">/</span><a href="{{ url_for('admin.users') }}">Users</a>
+<span class="sep">/</span><span class="current">{{ user.full_name }}</span>
+{% endblock %}
+
+{% block admin_content %}
+
+<div class="admin-fade-in" style="margin-bottom:20px">
+    <a href="{{ url_for('admin.users') }}" class="admin-btn sm"><i class="fa-solid fa-arrow-left"></i> Back to Users</a>
+</div>
+
+<div class="admin-grid-3-2 admin-fade-in">
+    <!-- Identity + details -->
+    <div class="panel panel-pad-lg">
+        <div class="up-header">
+            {% if user.avatar %}
+            <span class="up-avatar"><img src="{{ url_for('static', filename=user.avatar) }}" alt="{{ user.full_name }}"></span>
+            {% else %}
+            <span class="up-avatar">{{ user.full_name[0]|upper }}</span>
+            {% endif %}
+            <div>
+                <h2 class="up-name">{{ user.full_name }}</h2>
+                <p class="up-username">@{{ user.username }}</p>
+                <div class="up-badges">
+                    {% if user.is_admin %}
+                        <span class="admin-badge accent"><i class="fa-solid fa-shield-halved"></i> Administrator</span>
+                    {% else %}
+                        <span class="admin-badge muted">Standard User</span>
+                    {% endif %}
+                    {% if user.is_active %}
+                        <span class="admin-badge success"><i class="fa-solid fa-circle-check"></i> Active</span>
+                    {% else %}
+                        <span class="admin-badge danger"><i class="fa-solid fa-ban"></i> Suspended</span>
+                    {% endif %}
+                    <span class="admin-badge primary">Level {{ user.level }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="up-details">
+            <div class="up-detail"><span class="up-detail-label"><i class="fa-solid fa-hashtag"></i> User ID</span><span class="up-detail-value">#{{ user.id }}</span></div>
+            <div class="up-detail"><span class="up-detail-label"><i class="fa-solid fa-envelope"></i> Email</span><span class="up-detail-value">{{ user.email }}</span></div>
+            <div class="up-detail"><span class="up-detail-label"><i class="fa-solid fa-phone"></i> Mobile</span><span class="up-detail-value">{{ user.mobile or 'Not provided' }}</span></div>
+            <div class="up-detail"><span class="up-detail-label"><i class="fa-solid fa-calendar-plus"></i> Registered</span><span class="up-detail-value">{{ user.created_at.strftime("%d %b %Y, %H:%M") if user.created_at else '—' }}</span></div>
+            <div class="up-detail"><span class="up-detail-label"><i class="fa-solid fa-right-to-bracket"></i> Last Login</span><span class="up-detail-value">{{ user.last_login.strftime("%d %b %Y, %H:%M") if user.last_login else 'Never' }}</span></div>
+            <div class="up-detail"><span class="up-detail-label"><i class="fa-solid fa-fire"></i> Current Streak</span><span class="up-detail-value">{{ user.current_streak }} days (best {{ user.best_streak }})</span></div>
+            <div class="up-detail"><span class="up-detail-label"><i class="fa-solid fa-star"></i> XP</span><span class="up-detail-value">{{ user.xp }} XP</span></div>
+        </div>
+    </div>
+
+    <!-- Management actions -->
+    <div class="panel panel-pad-lg">
+        <div class="panel-head"><h4><i class="fa-solid fa-sliders"></i> Management</h4></div>
+
+        <div class="up-actions">
+            {% if user.id != current_user.id %}
+            <form method="POST" action="{{ url_for('admin.toggle_user_status', user_id=user.id) }}">
+                <button type="submit" class="admin-btn {{ 'success' if not user.is_active else 'warning' }} up-action-btn"
+                        onclick="return confirm('{{ 'Activate' if not user.is_active else 'Suspend' }} this account?')">
+                    <i class="fa-solid {{ 'fa-play' if not user.is_active else 'fa-ban' }}"></i>
+                    {{ 'Activate Account' if not user.is_active else 'Suspend Account' }}
+                </button>
+            </form>
+
+            <button type="button" class="admin-btn up-action-btn" onclick="openResetPw()">
+                <i class="fa-solid fa-key"></i> Reset Password
+            </button>
+
+            <a href="{{ url_for('admin.toggle_admin', user_id=user.id) }}" class="admin-btn up-action-btn"
+               onclick="return confirm('Toggle admin role?')">
+                <i class="fa-solid fa-user-shield"></i>
+                {{ 'Revoke Admin' if user.is_admin else 'Make Admin' }}
+            </a>
+
+            <a href="{{ url_for('admin.delete_user', user_id=user.id) }}" class="admin-btn danger up-action-btn"
+               onclick="return confirm('Delete this user? This permanently removes all their data.')">
+                <i class="fa-solid fa-trash"></i> Delete Account
+            </a>
+            {% else %}
+            <p class="td-muted">This is your own account. Manage your profile from the user profile page.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Stats -->
+<div class="stat-grid stat-grid-secondary admin-fade-in d2" style="margin-top:20px">
+    <div class="admin-stat-card compact">
+        <div class="ic"><i class="fa-solid fa-keyboard"></i></div>
+        <div><h3 class="counter" data-target="{{ total_tests }}">0</h3><p>Total Tests</p></div>
+    </div>
+    <div class="admin-stat-card compact">
+        <div class="ic accent"><i class="fa-solid fa-gauge-high"></i></div>
+        <div><h3 class="counter" data-target="{{ best_wpm }}">0</h3><p>Best Net WPM</p></div>
+    </div>
+    <div class="admin-stat-card compact">
+        <div class="ic success"><i class="fa-solid fa-bullseye"></i></div>
+        <div><h3>{{ avg_accuracy }}%</h3><p>Avg Accuracy</p></div>
+    </div>
+    <div class="admin-stat-card compact">
+        <div class="ic warning"><i class="fa-solid fa-certificate"></i></div>
+        <div><h3 class="counter" data-target="{{ certificates }}">0</h3><p>Certificates</p></div>
+    </div>
+</div>
+
+<!-- Recent activity -->
+<div class="panel panel-pad-lg admin-fade-in d3" style="margin-top:20px">
+    <div class="panel-head"><h4><i class="fa-solid fa-clock-rotate-left"></i> Recent Test Results</h4></div>
+    <div class="admin-table-scroll">
+        <table class="admin-table">
+            <thead>
+                <tr><th>Date</th><th>Language</th><th>Difficulty</th><th>Net WPM</th><th>Accuracy</th><th>Errors</th><th>Certificate</th></tr>
+            </thead>
+            <tbody>
+                {% for r in recent_results %}
+                <tr>
+                    <td data-label="Date" class="td-muted">{{ r.created_at.strftime("%d %b %Y, %H:%M") if r.created_at else '—' }}</td>
+                    <td data-label="Language">{{ r.language }}</td>
+                    <td data-label="Difficulty">{{ r.difficulty }}</td>
+                    <td data-label="Net WPM"><b>{{ r.net_wpm }}</b></td>
+                    <td data-label="Accuracy">{{ r.accuracy }}%</td>
+                    <td data-label="Errors">{{ r.errors }}</td>
+                    <td data-label="Certificate">
+                        {% if r.certificate_id %}
+                        <span class="admin-badge success">{{ r.certificate_id }}</span>
+                        {% else %}<span class="td-muted">—</span>{% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="7" class="td-muted text-center">No test results yet.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Reset password modal -->
+<div class="admin-modal-overlay" id="resetPwModal" onclick="if(event.target===this)closeResetPw()">
+    <div class="admin-modal" role="dialog" aria-modal="true" aria-labelledby="resetPwTitle">
+        <div class="admin-modal-head">
+            <h3 id="resetPwTitle"><i class="fa-solid fa-key"></i> Reset Password</h3>
+            <button type="button" class="admin-modal-close" onclick="closeResetPw()" aria-label="Close">&times;</button>
+        </div>
+        <form method="POST" action="{{ url_for('admin.reset_user_password', user_id=user.id) }}">
+            <div class="admin-modal-body">
+                <p class="td-muted" style="margin-top:0">Set a new password for <b>{{ user.full_name }}</b>.</p>
+                <label class="admin-form-label" for="resetPwInput">New password</label>
+                <input type="text" class="admin-form-control" id="resetPwInput" name="new_password"
+                       minlength="6" required placeholder="At least 6 characters" autocomplete="off">
+            </div>
+            <div class="admin-modal-foot">
+                <button type="button" class="admin-btn" onclick="closeResetPw()">Cancel</button>
+                <button type="submit" class="admin-btn primary"><i class="fa-solid fa-check"></i> Reset Password</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block admin_scripts %}
+<script>
+    window.ADMIN_COUNTERS = true;
+    function openResetPw() {
+        var m = document.getElementById('resetPwModal');
+        m.classList.add('is-open');
+        setTimeout(function () { document.getElementById('resetPwInput').focus(); }, 60);
+    }
+    function closeResetPw() {
+        document.getElementById('resetPwModal').classList.remove('is-open');
+    }
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeResetPw(); });
+</script>
+{% endblock %}

@@ -14,36 +14,129 @@
 
         <div class="collapse navbar-collapse" id="mainNav">
 
+            {% set ep = request.endpoint or '' %}
+
             <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
                 {% if current_user.is_authenticated %}
-                <li class="nav-item"><a class="nav-link" href="{{ url_for('dashboard.dashboard_page') }}">Dashboard</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ url_for('mocktest.setup') }}">Mock Test</a></li>
-                <li class="nav-item"><a class="nav-link" href="/typing">English</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ url_for('hindi.hindi_page') }}">Hindi</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ url_for('history.history_page') }}">History</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ url_for('leaderboard.leaderboard_page') }}">Leaderboard</a></li>
+                <li class="nav-item">
+                    <a class="nav-link {{ 'active' if ep == 'dashboard.dashboard_page' }}"
+                       href="{{ url_for('dashboard.dashboard_page') }}">
+                        <i class="fa-solid fa-gauge-high nav-ico"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ 'active' if ep.startswith('mocktest.') }}"
+                       href="{{ url_for('mocktest.setup') }}">
+                        <i class="fa-solid fa-file-pen nav-ico"></i> Mock Test
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ 'active' if ep == 'typing' }}" href="/typing">
+                        <i class="fa-solid fa-font nav-ico"></i> English
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ 'active' if ep.startswith('hindi.') }}"
+                       href="{{ url_for('hindi.hindi_page') }}">
+                        <i class="fa-solid fa-language nav-ico"></i> Hindi
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ 'active' if ep.startswith('custom.') }}"
+                       href="{{ url_for('custom.page') }}">
+                        <i class="fa-solid fa-pen-ruler nav-ico"></i> Custom
+                    </a>
+                </li>
+
+                {% set more_active = ep.startswith('downloads.') or ep.startswith('history.') or ep.startswith('leaderboard.') %}
+                <li class="nav-item dropdown tm-more">
+                    <a class="nav-link dropdown-toggle {{ 'active' if more_active }}" href="#" id="moreMenu"
+                       role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa-solid fa-ellipsis nav-ico"></i> More
+                    </a>
+                    <ul class="dropdown-menu tm-dropdown" aria-labelledby="moreMenu">
+                        <li>
+                            <a class="dropdown-item {{ 'active' if ep.startswith('downloads.') }}"
+                               href="{{ url_for('downloads.center') }}">
+                                <i class="fa-solid fa-download"></i> Downloads
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item {{ 'active' if ep.startswith('history.') }}"
+                               href="{{ url_for('history.history_page') }}">
+                                <i class="fa-solid fa-clock-rotate-left"></i> History
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item {{ 'active' if ep.startswith('leaderboard.') }}"
+                               href="{{ url_for('leaderboard.leaderboard_page') }}">
+                                <i class="fa-solid fa-ranking-star"></i> Leaderboard
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
                 {% if current_user.is_admin %}
-                <li class="nav-item"><a class="nav-link text-accent" href="{{ url_for('admin.dashboard') }}">Admin</a></li>
+                <li class="nav-item">
+                    <a class="nav-link nav-admin {{ 'active' if ep.startswith('admin.') }}"
+                       href="{{ url_for('admin.dashboard') }}">
+                        <i class="fa-solid fa-shield-halved nav-ico"></i> Admin
+                    </a>
+                </li>
                 {% endif %}
                 {% else %}
                 <li class="nav-item"><a class="nav-link" href="/#features">Features</a></li>
                 <li class="nav-item"><a class="nav-link" href="/#exams">Exams</a></li>
                 <li class="nav-item"><a class="nav-link" href="/#languages">Languages</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('downloads.center') }}">Downloads</a></li>
                 <li class="nav-item"><a class="nav-link" href="/#faq">FAQ</a></li>
                 {% endif %}
             </ul>
 
-            <div class="d-flex align-items-center gap-2">
+            <div class="d-flex align-items-center gap-2 tm-nav-actions">
 
                 <button class="theme-toggle" type="button" onclick="toggleTheme()" aria-label="Toggle theme">
                     <i class="fa-solid fa-moon" data-theme-icon></i>
                 </button>
 
                 {% if current_user.is_authenticated %}
-                <a href="{{ url_for('profile.profile_page') }}" class="btn btn-ghost">
-                    <i class="fa-regular fa-user me-1"></i> Profile
-                </a>
-                <a href="{{ url_for('auth.logout') }}" class="btn btn-brand">Logout</a>
+                <div class="nav-item dropdown tm-user">
+                    <a href="#" class="btn btn-ghost dropdown-toggle" id="userMenu" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        {% if current_user.avatar %}
+                        <img src="{{ url_for('static', filename='uploads/avatars/' ~ current_user.avatar) }}"
+                             alt="" class="nav-avatar">
+                        {% else %}
+                        <i class="fa-regular fa-user me-1"></i>
+                        {% endif %}
+                        {{ current_user.username }}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end tm-dropdown" aria-labelledby="userMenu">
+                        <li>
+                            <a class="dropdown-item" href="{{ url_for('profile.profile_page') }}">
+                                <i class="fa-regular fa-user"></i> My Profile
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{{ url_for('history.history_page') }}">
+                                <i class="fa-solid fa-clock-rotate-left"></i> My History
+                            </a>
+                        </li>
+                        {% if current_user.is_admin %}
+                        <li>
+                            <a class="dropdown-item" href="{{ url_for('admin.dashboard') }}">
+                                <i class="fa-solid fa-shield-halved"></i> Admin Panel
+                            </a>
+                        </li>
+                        {% endif %}
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item text-danger" href="{{ url_for('auth.logout') }}">
+                                <i class="fa-solid fa-right-from-bracket"></i> Logout
+                            </a>
+                        </li>
+                    </ul>
+                </div>
                 {% else %}
                 <a href="{{ url_for('auth.login') }}" class="btn btn-ghost">Login</a>
                 <a href="{{ url_for('auth.register') }}" class="btn btn-brand">Get Started</a>

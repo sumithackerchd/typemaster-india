@@ -47,9 +47,15 @@ CATEGORIES = [
     {"slug": "railway", "label": "Railway", "kind": "paragraph", "icon": "fa-train"},
     {"slug": "up_police", "label": "UP Police", "kind": "paragraph", "icon": "fa-shield-halved"},
     {"slug": "cpct", "label": "CPCT", "kind": "paragraph", "icon": "fa-laptop-code"},
+    {"slug": "court", "label": "Court", "kind": "paragraph", "icon": "fa-gavel"},
+    {"slug": "computer_operator", "label": "Computer Operator", "kind": "paragraph", "icon": "fa-computer"},
+    {"slug": "typing_exam", "label": "Typing Exam", "kind": "paragraph", "icon": "fa-file-signature"},
+    {"slug": "bank", "label": "Bank", "kind": "paragraph", "icon": "fa-indian-rupee-sign"},
+    {"slug": "office", "label": "Office", "kind": "paragraph", "icon": "fa-briefcase"},
     {"slug": "government", "label": "Government Exams", "kind": "paragraph", "icon": "fa-landmark"},
     {"slug": "programming", "label": "Programming", "kind": "paragraph", "icon": "fa-code"},
     {"slug": "general_knowledge", "label": "General Knowledge", "kind": "paragraph", "icon": "fa-book-open"},
+    {"slug": "current_affairs", "label": "Current Affairs", "kind": "paragraph", "icon": "fa-newspaper"},
     {"slug": "typing_practice", "label": "Typing Practice", "kind": "paragraph", "icon": "fa-keyboard"},
 ]
 

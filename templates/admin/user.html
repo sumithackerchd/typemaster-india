@@ -1,93 +1,192 @@
-{% extends 'layouts/base.html' %}
+{% extends 'admin/layout.html' %}
 
 {% block title %}Users — Admin{% endblock %}
+{% block admin_title %}User Management{% endblock %}
+{% block admin_subtitle %}Search, filter and manage registered accounts.{% endblock %}
+{% block admin_breadcrumbs %}<span class="sep">/</span><span class="current">Users</span>{% endblock %}
 
-{% block content %}
+{% block admin_content %}
 
-<div class="app-page">
-    <div class="container">
-
-        <div class="page-head fade-up">
-            <div>
-                <span class="eyebrow"><i class="fa-solid fa-users"></i> Admin</span>
-                <h1 class="ph-title">User Management</h1>
-                <p class="ph-sub">View, promote and remove registered users.</p>
-            </div>
+<div class="admin-table-wrap admin-fade-in">
+    <div class="admin-table-toolbar">
+        <div class="admin-search">
+            <i class="fa-solid fa-magnifying-glass" style="color:var(--admin-muted);margin-left:4px"></i>
+            <input type="text" id="usersSearch" class="admin-form-control" placeholder="Search name, email, mobile..." value="{{ search }}">
         </div>
+        <select id="usersRoleFilter" class="admin-form-control" style="width:auto;min-width:140px">
+            <option value="all">All roles</option>
+            <option value="admin">Administrators</option>
+            <option value="user">Standard users</option>
+        </select>
+        <select id="usersStatusFilter" class="admin-form-control" style="width:auto;min-width:140px">
+            <option value="all">All statuses</option>
+            <option value="active">Active</option>
+            <option value="suspended">Suspended</option>
+        </select>
+        <div class="bulk-actions" id="usersBulkActions">
+            <button type="button" class="admin-btn sm danger" id="usersBulkDelete" disabled><i class="fa-solid fa-trash"></i> Delete</button>
+            <a href="{{ url_for('admin.export_users', format='csv') }}" class="admin-btn sm"><i class="fa-solid fa-file-csv"></i> CSV</a>
+            <a href="{{ url_for('admin.export_users', format='xlsx') }}" class="admin-btn sm"><i class="fa-solid fa-file-excel"></i> Excel</a>
+        </div>
+        <span class="admin-badge muted">{{ users|length }} total</span>
+    </div>
 
-        {% include 'admin/_nav.html' with context %}
-
-        <form method="GET" class="tm-search fade-up" style="margin-bottom:22px">
-            <input type="text" class="form-control" name="search"
-                   placeholder="Search username or email" value="{{ search }}">
-            <button class="btn btn-brand"><i class="fa-solid fa-magnifying-glass"></i></button>
-        </form>
-
-        <div class="tm-table-wrap fade-up">
-            <div class="table-responsive">
-                <table class="tm-table">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>User</th>
-                            <th>Email</th>
-                            <th>Mobile</th>
-                            <th>Role</th>
-                            <th>Joined</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for user in users %}
-                        <tr>
-                            <td data-label="ID" class="td-muted">#{{ user.id }}</td>
-                            <td data-label="User">
-                                <span class="d-inline-flex align-items-center">
-                                    <span class="avatar-sm">{{ user.full_name[0]|upper }}</span>
-                                    <span>
-                                        <b style="display:block">{{ user.full_name }}</b>
-                                        <span class="text-muted-2" style="font-size:13px">@{{ user.username }}</span>
-                                    </span>
-                                </span>
-                            </td>
-                            <td data-label="Email" class="td-muted">{{ user.email }}</td>
-                            <td data-label="Mobile" class="td-muted">{{ user.mobile }}</td>
-                            <td data-label="Role">
-                                {% if user.is_admin %}
-                                    <span class="tm-pill accent">Admin</span>
-                                {% else %}
-                                    <span class="tm-pill">User</span>
-                                {% endif %}
-                            </td>
-                            <td data-label="Joined" class="td-muted">
-                                {{ user.created_at.strftime("%d %b %Y") if user.created_at else '—' }}
-                            </td>
-                            <td data-label="Actions">
-                                {% if user.id != current_user.id %}
-                                <a href="{{ url_for('admin.toggle_admin', user_id=user.id) }}"
-                                   class="btn btn-warn-tm btn-sm-tm me-1"
-                                   onclick="return confirm('Toggle admin role?')">
-                                    <i class="fa-solid fa-user-shield"></i>
-                                </a>
-                                <a href="{{ url_for('admin.delete_user', user_id=user.id) }}"
-                                   class="btn btn-danger-tm btn-sm-tm"
-                                   onclick="return confirm('Delete this user?')">
-                                    <i class="fa-solid fa-trash"></i>
-                                </a>
-                                {% else %}
-                                <span class="tm-pill primary">You</span>
-                                {% endif %}
-                            </td>
-                        </tr>
+    <form method="POST" action="{{ url_for('admin.bulk_delete_users') }}" id="usersBulkForm">
+    <div class="admin-table-scroll">
+        <table class="admin-table" id="usersTable">
+            <thead>
+                <tr>
+                    <th class="col-check"><input type="checkbox" id="usersSelectAll" aria-label="Select all"></th>
+                    <th data-sort>ID</th>
+                    <th data-sort>User</th>
+                    <th data-sort>Contact</th>
+                    <th data-sort>Role</th>
+                    <th data-sort>Status</th>
+                    <th data-sort>Tests</th>
+                    <th data-sort>Best WPM</th>
+                    <th data-sort>Certs</th>
+                    <th data-sort>Joined</th>
+                    <th data-sort>Last Login</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                {% set s = stats.get(user.id, {}) %}
+                <tr data-admin="{{ '1' if user.is_admin else '' }}"
+                    data-status="{{ 'active' if user.is_active else 'suspended' }}"
+                    data-id="{{ user.id }}">
+                    <td data-label="Select" class="col-check">
+                        {% if user.id != current_user.id %}
+                        <input type="checkbox" name="ids[]" value="{{ user.id }}" class="row-check">
+                        {% endif %}
+                    </td>
+                    <td data-label="ID" class="td-muted">#{{ user.id }}</td>
+                    <td data-label="User">
+                        <a href="{{ url_for('admin.user_profile', user_id=user.id) }}" class="d-inline-flex align-items-center" style="text-decoration:none;color:inherit">
+                            {% if user.avatar %}
+                            <span class="avatar-sm"><img src="{{ url_for('static', filename=user.avatar) }}" alt=""></span>
+                            {% else %}
+                            <span class="avatar-sm">{{ user.full_name[0]|upper }}</span>
+                            {% endif %}
+                            <span>
+                                <b style="display:block">{{ user.full_name }}</b>
+                                <span class="td-muted" style="font-size:12px">@{{ user.username }}</span>
+                            </span>
+                        </a>
+                    </td>
+                    <td data-label="Contact" class="td-muted">
+                        <span style="display:block"><i class="fa-solid fa-envelope" style="width:16px;opacity:.6"></i> {{ user.email }}</span>
+                        <span style="display:block;font-size:12px"><i class="fa-solid fa-phone" style="width:16px;opacity:.6"></i> {{ user.mobile or '—' }}</span>
+                    </td>
+                    <td data-label="Role">
+                        {% if user.is_admin %}
+                            <span class="admin-badge accent"><i class="fa-solid fa-shield-halved"></i> Admin</span>
                         {% else %}
-                        <tr><td colspan="7" class="td-muted text-center">No users found.</td></tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+                            <span class="admin-badge muted">User</span>
+                        {% endif %}
+                    </td>
+                    <td data-label="Status">
+                        {% if user.is_active %}
+                            <span class="admin-badge success"><i class="fa-solid fa-circle-check"></i> Active</span>
+                        {% else %}
+                            <span class="admin-badge danger"><i class="fa-solid fa-ban"></i> Suspended</span>
+                        {% endif %}
+                    </td>
+                    <td data-label="Tests"><b>{{ s.tests or 0 }}</b></td>
+                    <td data-label="Best WPM"><span class="admin-badge primary">{{ s.best_wpm or 0 }}</span></td>
+                    <td data-label="Certs">{{ s.certificates or 0 }}</td>
+                    <td data-label="Joined" class="td-muted">{{ user.created_at.strftime("%d %b %Y") if user.created_at else '—' }}</td>
+                    <td data-label="Last Login" class="td-muted">{{ user.last_login.strftime("%d %b %Y, %H:%M") if user.last_login else 'Never' }}</td>
+                    <td data-label="Actions">
+                        <div class="admin-row-actions">
+                            <a href="{{ url_for('admin.user_profile', user_id=user.id) }}"
+                               class="admin-btn sm" title="View profile">
+                                <i class="fa-solid fa-eye"></i>
+                            </a>
+                            {% if user.id != current_user.id %}
+                            <button type="button" class="admin-btn sm" title="Reset password"
+                                    onclick="openResetPw({{ user.id }}, '{{ user.full_name|e }}')">
+                                <i class="fa-solid fa-key"></i>
+                            </button>
+                            <button type="submit" formaction="{{ url_for('admin.toggle_user_status', user_id=user.id) }}"
+                                    formmethod="post"
+                                    class="admin-btn sm {{ 'success' if not user.is_active else 'warning' }}"
+                                    title="{{ 'Activate' if not user.is_active else 'Suspend' }}"
+                                    onclick="return confirm('{{ 'Activate' if not user.is_active else 'Suspend' }} this account?')">
+                                <i class="fa-solid {{ 'fa-play' if not user.is_active else 'fa-ban' }}"></i>
+                            </button>
+                            <a href="{{ url_for('admin.toggle_admin', user_id=user.id) }}"
+                               class="admin-btn sm" title="Toggle admin"
+                               onclick="return confirm('Toggle admin role?')">
+                                <i class="fa-solid fa-user-shield"></i>
+                            </a>
+                            <a href="{{ url_for('admin.delete_user', user_id=user.id) }}"
+                               class="admin-btn sm danger" title="Delete"
+                               onclick="return confirm('Delete this user? This cannot be undone.')">
+                                <i class="fa-solid fa-trash"></i>
+                            </a>
+                            {% else %}
+                            <span class="admin-badge primary">You</span>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="12" class="td-muted text-center">No users found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    </form>
 
+    <div class="admin-pager">
+        <span id="usersPagerInfo"></span>
+        <div class="admin-pager-btns" id="usersPagerBtns"></div>
     </div>
 </div>
 
+<!-- Reset password modal -->
+<div class="admin-modal-overlay" id="resetPwModal" onclick="if(event.target===this)closeResetPw()">
+    <div class="admin-modal" role="dialog" aria-modal="true" aria-labelledby="resetPwTitle">
+        <div class="admin-modal-head">
+            <h3 id="resetPwTitle"><i class="fa-solid fa-key"></i> Reset Password</h3>
+            <button type="button" class="admin-modal-close" onclick="closeResetPw()" aria-label="Close">&times;</button>
+        </div>
+        <form method="POST" id="resetPwForm">
+            <div class="admin-modal-body">
+                <p class="td-muted" style="margin-top:0">Set a new password for <b id="resetPwName"></b>.</p>
+                <label class="admin-form-label" for="resetPwInput">New password</label>
+                <input type="text" class="admin-form-control" id="resetPwInput" name="new_password"
+                       minlength="6" required placeholder="At least 6 characters" autocomplete="off">
+                <p class="td-muted" style="font-size:12px;margin-bottom:0">The user can change this later from their profile.</p>
+            </div>
+            <div class="admin-modal-foot">
+                <button type="button" class="admin-btn" onclick="closeResetPw()">Cancel</button>
+                <button type="submit" class="admin-btn primary"><i class="fa-solid fa-check"></i> Reset Password</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block admin_scripts %}
+<script>window.ADMIN_USERS_TABLE = { bulk: true };</script>
+<script>
+    function openResetPw(userId, name) {
+        var modal = document.getElementById('resetPwModal');
+        document.getElementById('resetPwForm').action = "{{ url_for('admin.reset_user_password', user_id=0) }}".replace('/0', '/' + userId);
+        document.getElementById('resetPwName').textContent = name;
+        document.getElementById('resetPwInput').value = '';
+        modal.classList.add('is-open');
+        setTimeout(function () { document.getElementById('resetPwInput').focus(); }, 60);
+    }
+    function closeResetPw() {
+        document.getElementById('resetPwModal').classList.remove('is-open');
+    }
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') closeResetPw();
+    });
+</script>
 {% endblock %}

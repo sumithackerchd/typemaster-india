@@ -1,0 +1,134 @@
+{% extends 'layouts/base.html' %}
+{% block body_class %}admin-mode{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+{% block admin_head %}{% endblock %}
+{% endblock %}
+
+{# Admin renders its own flash region inside .admin-scroll #}
+{% block flash %}{% endblock %}
+
+{% block content %}
+<div class="admin-app">
+<div class="admin-shell" id="adminShell">
+
+    {% include 'admin/_sidebar.html' %}
+    <div class="admin-backdrop" id="adminBackdrop" onclick="closeAdminSidebar()"></div>
+
+    <div class="admin-workspace">
+
+        <header class="admin-topbar">
+            <button class="admin-toggle" type="button" onclick="toggleAdminSidebar()" aria-label="Toggle sidebar">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+            <div class="admin-topbar-main">
+                <h1 class="topbar-title">{% block admin_title %}Admin{% endblock %}</h1>
+                <p class="topbar-sub">{% block admin_subtitle %}{% endblock %}</p>
+                <nav class="admin-breadcrumbs" aria-label="Breadcrumb">
+                    <a href="{{ url_for('admin.dashboard') }}"><i class="fa-solid fa-house"></i> Admin</a>
+                    {% block admin_breadcrumbs %}{% endblock %}
+                </nav>
+            </div>
+
+            <div class="admin-topbar-actions">
+                <button class="admin-icon-btn" type="button" title="Notifications" aria-label="Notifications">
+                    <i class="fa-regular fa-bell"></i>
+                    <span class="badge-dot"></span>
+                </button>
+
+                <div class="admin-profile" id="adminProfileMenu">
+                    <button class="admin-profile-btn" type="button" onclick="toggleAdminDropdown()" aria-haspopup="true">
+                        <span class="admin-avatar">{{ current_user.full_name[0]|upper }}</span>
+                        <span class="admin-profile-meta">
+                            <b>{{ current_user.full_name }}</b>
+                            <small>Administrator</small>
+                        </span>
+                        <i class="fa-solid fa-chevron-down" style="font-size:11px;color:var(--admin-muted)"></i>
+                    </button>
+                    <div class="admin-dropdown" id="adminProfileDropdown">
+                        <a href="{{ url_for('profile.profile_page') }}"><i class="fa-regular fa-user"></i> Profile</a>
+                        <a href="{{ url_for('dashboard.dashboard_page') }}"><i class="fa-solid fa-arrow-up-right-from-square"></i> View Site</a>
+                        <a href="{{ url_for('admin.settings') }}"><i class="fa-solid fa-sliders"></i> Settings</a>
+                        <a href="{{ url_for('auth.logout') }}" class="danger"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="admin-scroll">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                <div class="admin-flash-stack">
+                    {% for category, message in messages %}
+                    <div class="admin-flash admin-flash-{{ 'danger' if category == 'danger' else 'success' if category == 'success' else 'info' }}" role="alert">
+                        <i class="fa-solid {{ 'fa-circle-exclamation' if category == 'danger' else 'fa-circle-check' if category == 'success' else 'fa-circle-info' }}"></i>
+                        <span>{{ message }}</span>
+                        <button type="button" class="admin-flash-close" onclick="this.parentElement.remove()" aria-label="Dismiss">&times;</button>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endwith %}
+            {% block admin_content %}{% endblock %}
+        </div>
+
+    </div>
+</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/admin-ui.js') }}"></script>
+<script>
+    (function () {
+        var shell = document.getElementById('adminShell');
+        var mq = window.matchMedia('(max-width: 991px)');
+
+        try {
+            if (!mq.matches && localStorage.getItem('tm-admin-collapsed') === '1') {
+                shell.classList.add('collapsed');
+            }
+        } catch (e) {}
+
+        window.toggleAdminSidebar = function () {
+            if (mq.matches) {
+                shell.classList.toggle('mobile-open');
+                document.getElementById('adminBackdrop').classList.toggle('show', shell.classList.contains('mobile-open'));
+            } else {
+                shell.classList.toggle('collapsed');
+                try { localStorage.setItem('tm-admin-collapsed', shell.classList.contains('collapsed') ? '1' : '0'); } catch (e) {}
+            }
+        };
+
+        window.closeAdminSidebar = function () {
+            shell.classList.remove('mobile-open');
+            document.getElementById('adminBackdrop').classList.remove('show');
+        };
+
+        window.toggleAdminSub = function (el) {
+            var li = el.closest('.has-sub');
+            if (shell.classList.contains('collapsed') && !mq.matches) {
+                shell.classList.remove('collapsed');
+                li.classList.add('open');
+                return;
+            }
+            li.classList.toggle('open');
+        };
+
+        window.toggleAdminDropdown = function () {
+            document.getElementById('adminProfileDropdown').classList.toggle('show');
+        };
+
+        document.addEventListener('click', function (e) {
+            var menu = document.getElementById('adminProfileMenu');
+            var dd = document.getElementById('adminProfileDropdown');
+            if (menu && dd && !menu.contains(e.target)) {
+                dd.classList.remove('show');
+            }
+        });
+    })();
+</script>
+{% block admin_scripts %}{% endblock %}
+{% endblock %}

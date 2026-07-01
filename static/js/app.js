@@ -1,7 +1,19 @@
 // TypeMaster India — global app helpers
 document.addEventListener("DOMContentLoaded", function () {
     syncThemeIcon();
+    highlightActiveNav();
 });
+
+function highlightActiveNav() {
+    var path = window.location.pathname;
+    document.querySelectorAll(".tm-navbar .nav-link").forEach(function (link) {
+        var href = link.getAttribute("href");
+        if (!href || href.charAt(0) !== "/") return;
+        if (path === href || (href !== "/" && path.indexOf(href) === 0)) {
+            link.classList.add("active");
+        }
+    });
+}
 
 // ---------------- Theme toggle ----------------
 function toggleTheme() {

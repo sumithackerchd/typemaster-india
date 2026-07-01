@@ -1,0 +1,120 @@
+{% extends 'admin/layout.html' %}
+
+{% block title %}Download Manager — Admin{% endblock %}
+{% block admin_title %}Download Manager{% endblock %}
+{% block admin_subtitle %}Upload and organize files for the public Download Center.{% endblock %}
+{% block admin_breadcrumbs %}<span class="sep">/</span><span class="current">Downloads</span>{% endblock %}
+
+{% block admin_content %}
+
+<div class="d-flex justify-content-between align-items-center mb-3 admin-fade-in" style="gap:12px;flex-wrap:wrap">
+    <div class="admin-search" style="max-width:360px;margin:0">
+        <i class="fa-solid fa-magnifying-glass" style="color:var(--admin-muted);margin-left:4px"></i>
+        <input type="text" id="downloadsSearch" class="admin-form-control" placeholder="Search downloads...">
+    </div>
+    <a href="{{ url_for('downloads.center') }}" class="admin-btn ghost"><i class="fa-solid fa-eye"></i> View Center</a>
+</div>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="admin-alert {{ category }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+<div class="panel panel-pad-lg upload-panel admin-fade-in">
+    <div class="panel-head"><h4><i class="fa-solid fa-cloud-arrow-up"></i> Upload New File</h4></div>
+    <form method="POST" action="{{ url_for('downloads.upload') }}" enctype="multipart/form-data" id="downloadUploadForm">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label">Title</label>
+                <input type="text" class="form-control" name="title" placeholder="Mangal Font" required>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Category</label>
+                <select class="form-select" name="category" required>
+                    {% for slug in category_order %}
+                    <option value="{{ slug }}">{{ categories[slug] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Version</label>
+                <input type="text" class="form-control" name="version" placeholder="1.0">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Preview Image</label>
+                <input type="file" class="form-control" name="image" accept="image/*">
+            </div>
+            <div class="col-12">
+                <label class="form-label">Description</label>
+                <textarea class="form-control" name="description" rows="2" placeholder="Short description for the card..."></textarea>
+            </div>
+            <div class="col-md-8">
+                <label class="form-label">File</label>
+                <input type="file" class="form-control" name="file" id="downloadFileInput" required>
+            </div>
+            <div class="col-md-4 d-flex align-items-end">
+                <button type="submit" class="admin-btn primary w-100"><i class="fa-solid fa-upload"></i> Upload</button>
+            </div>
+        </div>
+        <div class="upload-progress" id="downloadUploadProgress"><span></span></div>
+    </form>
+</div>
+
+{% if rows %}
+<div class="download-grid admin-fade-in d2">
+    {% for d in rows %}
+    <article class="download-card">
+        <div class="dc-head">
+            <div class="dc-icon"><i class="fa-solid fa-file-arrow-down"></i></div>
+            <span class="admin-badge primary">{{ d.category_label }}</span>
+        </div>
+        <h5>{{ d.title }}{% if d.version %} <span class="td-muted" style="font-weight:500">v{{ d.version }}</span>{% endif %}</h5>
+        <p class="td-muted" style="font-size:13px;margin:0">{{ d.description or 'No description' }}</p>
+        <div class="meta">
+            <span><i class="fa-solid fa-file"></i> {{ d.file_ext|replace('.', '')|upper }}</span>
+            <span><i class="fa-solid fa-weight-hanging"></i> {{ d.size_human }}</span>
+            <span><i class="fa-solid fa-download"></i> {{ d.download_count }} downloads</span>
+        </div>
+        <div class="d-flex justify-content-between align-items-center mt-3">
+            <span class="td-muted" style="font-size:12px">{{ d.filename }}</span>
+            <form method="POST" action="{{ url_for('downloads.delete', download_id=d.id) }}" onsubmit="return confirm('Delete this download?')">
+                <button class="admin-btn sm danger" type="submit"><i class="fa-solid fa-trash"></i></button>
+            </form>
+        </div>
+    </article>
+    {% endfor %}
+</div>
+{% else %}
+<div class="panel panel-pad-lg empty-state admin-fade-in">
+    <div class="es-icon"><i class="fa-solid fa-box-open"></i></div>
+    <h3 style="color:var(--admin-text)">No downloads yet</h3>
+    <p>Upload your first file using the form above.</p>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block admin_scripts %}
+<script>
+window.ADMIN_DOWNLOADS_SEARCH = true;
+(function () {
+    var form = document.getElementById('downloadUploadForm');
+    var input = document.getElementById('downloadFileInput');
+    var bar = document.getElementById('downloadUploadProgress');
+    if (!form || !input || !bar) return;
+    form.addEventListener('submit', function () {
+        bar.classList.add('show');
+        bar.querySelector('span').style.width = '100%';
+    });
+    input.addEventListener('change', function () {
+        if (input.files.length) {
+            bar.classList.add('show');
+            bar.querySelector('span').style.width = '35%';
+        }
+    });
+})();
+</script>
+{% endblock %}

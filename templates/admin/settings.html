@@ -1,79 +1,162 @@
-{% extends 'layouts/base.html' %}
+{% extends 'admin/layout.html' %}
 
 {% block title %}Settings — Admin{% endblock %}
+{% block admin_title %}Platform Settings{% endblock %}
+{% block admin_subtitle %}Configure site preferences, branding and integrations.{% endblock %}
+{% block admin_breadcrumbs %}<span class="sep">/</span><span class="current">Settings</span>{% endblock %}
 
-{% block content %}
+{% block admin_content %}
 
-<div class="app-page">
-    <div class="container">
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="admin-alert {{ category }} admin-fade-in">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
 
-        <div class="page-head fade-up">
-            <div>
-                <span class="eyebrow"><i class="fa-solid fa-sliders"></i> Admin</span>
-                <h1 class="ph-title">Site Settings</h1>
-                <p class="ph-sub">Configure global platform preferences.</p>
-            </div>
-        </div>
+<div class="settings-layout admin-fade-in">
+    <nav class="settings-nav">
+        <button type="button" class="active" data-section="sec-general"><i class="fa-solid fa-gear"></i> General</button>
+        <button type="button" data-section="sec-branding"><i class="fa-solid fa-palette"></i> Branding</button>
+        <button type="button" data-section="sec-certificate"><i class="fa-solid fa-certificate"></i> Certificate</button>
+        <button type="button" data-section="sec-email"><i class="fa-solid fa-envelope"></i> Email</button>
+        <button type="button" data-section="sec-ocr"><i class="fa-solid fa-eye"></i> OCR</button>
+        <button type="button" data-section="sec-downloads"><i class="fa-solid fa-cloud-arrow-down"></i> Downloads</button>
+        <button type="button" data-section="sec-security"><i class="fa-solid fa-shield-halved"></i> Security</button>
+    </nav>
 
-        {% include 'admin/_nav.html' with context %}
-
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="tm-alert {{ category }} fade-up">{{ message }}</div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-
-        <div class="row g-4">
-            <div class="col-lg-7">
-                <div class="panel panel-pad-lg fade-up">
-                    <div class="panel-head">
-                        <h4><i class="fa-solid fa-gear"></i> General</h4>
-                    </div>
-                    <form method="POST">
-                        <div class="mb-4">
-                            <label class="form-label">Site Name</label>
-                            <input type="text" class="form-control" name="site_name"
-                                   value="{{ settings.site_name }}">
-                        </div>
-
-                        <div class="mb-4">
-                            <label class="form-label">Default Timer (seconds)</label>
-                            <select class="form-select" name="default_timer">
-                                <option value="60" {% if settings.default_timer == 60 %}selected{% endif %}>60 seconds</option>
-                                <option value="120" {% if settings.default_timer == 120 %}selected{% endif %}>120 seconds</option>
-                                <option value="300" {% if settings.default_timer == 300 %}selected{% endif %}>300 seconds</option>
-                            </select>
-                        </div>
-
-                        <button type="submit" class="btn btn-brand"><i class="fa-solid fa-floppy-disk me-2"></i>Save Settings</button>
-                    </form>
+    <div>
+        <section id="sec-general" class="settings-section active panel panel-pad-lg">
+            <h5>General Settings</h5>
+            <p class="lead">Core platform configuration used across the typing experience.</p>
+            <form method="POST">
+                <input type="hidden" name="section" value="general">
+                <div class="mb-4">
+                    <label class="form-label">Site Name</label>
+                    <input type="text" class="form-control" name="site_name" value="{{ settings.site_name }}">
                 </div>
-            </div>
-
-            <div class="col-lg-5">
-                <div class="panel panel-pad-lg fade-up d1">
-                    <div class="panel-head">
-                        <h4><i class="fa-solid fa-circle-info"></i> Info</h4>
-                    </div>
-                    <div class="info-row">
-                        <span class="ir-label">Current site name</span>
-                        <span class="ir-value">{{ settings.site_name }}</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="ir-label">Default timer</span>
-                        <span class="ir-value">{{ settings.default_timer }}s</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="ir-label">Last updated</span>
-                        <span class="ir-value">{{ settings.updated_at }}</span>
-                    </div>
+                <div class="mb-4">
+                    <label class="form-label">Site Tagline</label>
+                    <input type="text" class="form-control" name="site_tagline" value="{{ settings.site_tagline or '' }}">
                 </div>
-            </div>
-        </div>
+                <div class="mb-4">
+                    <label class="form-label">Default Timer (seconds)</label>
+                    <select class="form-select" name="default_timer">
+                        <option value="60" {% if settings.default_timer == 60 %}selected{% endif %}>60 seconds</option>
+                        <option value="120" {% if settings.default_timer == 120 %}selected{% endif %}>120 seconds</option>
+                        <option value="300" {% if settings.default_timer == 300 %}selected{% endif %}>300 seconds</option>
+                    </select>
+                </div>
+                <div class="mb-4 form-check">
+                    <input type="checkbox" class="form-check-input" name="maintenance_mode" id="maintenance_mode" {% if settings.maintenance_mode %}checked{% endif %}>
+                    <label class="form-check-label" for="maintenance_mode">Maintenance mode</label>
+                </div>
+                <button type="submit" class="admin-btn primary"><i class="fa-solid fa-floppy-disk"></i> Save General</button>
+            </form>
+        </section>
 
+        <section id="sec-branding" class="settings-section panel panel-pad-lg">
+            <h5>Branding</h5>
+            <p class="lead">Visual identity for certificates and public pages.</p>
+            <form method="POST">
+                <input type="hidden" name="section" value="branding">
+                <div class="mb-3"><label class="form-label">Organization Name</label><input type="text" class="form-control" name="org_name" value="{{ settings.org_name or 'TypeMaster India' }}"></div>
+                <div class="mb-3"><label class="form-label">Founder Name</label><input type="text" class="form-control" name="founder_name" value="{{ settings.founder_name or 'Sumit Goswami' }}"></div>
+                <div class="mb-3"><label class="form-label">Founder Title</label><input type="text" class="form-control" name="founder_title" value="{{ settings.founder_title or 'Founder' }}"></div>
+                <div class="row mb-3">
+                    <div class="col-md-6"><label class="form-label">Primary Color</label><input type="color" class="form-control form-control-color" name="primary_color" value="{{ settings.primary_color or '#6366f1' }}"></div>
+                    <div class="col-md-6"><label class="form-label">Accent Color</label><input type="color" class="form-control form-control-color" name="accent_color" value="{{ settings.accent_color or '#22d3ee' }}"></div>
+                </div>
+                <div class="info-row mb-3"><span class="ir-label">Signature image</span><span class="ir-value">{% if has_signature %}<span class="admin-badge success">Uploaded</span>{% else %}<span class="admin-badge muted">Place PNG at static/images/signature.png</span>{% endif %}</span></div>
+                <button type="submit" class="admin-btn primary"><i class="fa-solid fa-floppy-disk"></i> Save Branding</button>
+            </form>
+        </section>
+
+        <section id="sec-certificate" class="settings-section panel panel-pad-lg">
+            <h5>Certificate</h5>
+            <p class="lead">Certificate generation and verification settings.</p>
+            <form method="POST">
+                <input type="hidden" name="section" value="certificate">
+                <div class="mb-3"><label class="form-label">Certificate ID Prefix</label><input type="text" class="form-control" name="certificate_prefix" value="{{ settings.certificate_prefix or 'TMI' }}" maxlength="10"></div>
+                <div class="mb-3"><label class="form-label">Certificate Footer Text</label><textarea class="form-control" name="certificate_footer" rows="2">{{ settings.certificate_footer or 'Digitally generated and verifiable online.' }}</textarea></div>
+                <div class="info-row"><span class="ir-label">Verification</span><span class="ir-value">Public /verify/&lt;id&gt; pages</span></div>
+                <div class="info-row"><span class="ir-label">PDF export</span><span class="ir-value">Landscape A4 matching HTML design</span></div>
+                <button type="submit" class="admin-btn primary mt-3"><i class="fa-solid fa-floppy-disk"></i> Save Certificate</button>
+            </form>
+        </section>
+
+        <section id="sec-email" class="settings-section panel panel-pad-lg">
+            <h5>Email</h5>
+            <p class="lead">Email preferences. SMTP credentials are configured via environment variables.</p>
+            <form method="POST">
+                <input type="hidden" name="section" value="email">
+                <div class="mb-3"><label class="form-label">From Name</label><input type="text" class="form-control" name="mail_from_name" value="{{ settings.mail_from_name or 'TypeMaster India' }}"></div>
+                <div class="mb-3"><label class="form-label">From Email</label><input type="email" class="form-control" name="mail_from_email" value="{{ settings.mail_from_email or '' }}" placeholder="noreply@example.com"></div>
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" name="otp_enabled" id="otp_enabled" {% if settings.otp_enabled %}checked{% endif %}>
+                    <label class="form-check-label" for="otp_enabled">Enable OTP password reset</label>
+                </div>
+                <button type="submit" class="admin-btn primary"><i class="fa-solid fa-floppy-disk"></i> Save Email</button>
+            </form>
+            <hr class="my-4" style="border-color:var(--admin-border)">
+            <div class="info-row"><span class="ir-label">SMTP Server</span><span class="ir-value">{{ mail_server.server }}</span></div>
+            <div class="info-row"><span class="ir-label">Port / TLS</span><span class="ir-value">{{ mail_server.port }} / {{ 'Yes' if mail_server.tls else 'No' }}</span></div>
+            <div class="info-row"><span class="ir-label">Username</span><span class="ir-value">{{ mail_server.username }}</span></div>
+        </section>
+
+        <section id="sec-ocr" class="settings-section panel panel-pad-lg">
+            <h5>OCR</h5>
+            <p class="lead">Image and scanned PDF import settings (Tesseract).</p>
+            <form method="POST">
+                <input type="hidden" name="section" value="ocr">
+                <div class="info-row mb-3"><span class="ir-label">Engine Status</span><span class="ir-value"><span class="admin-badge {{ 'success' if ocr_ok else 'danger' }}">{{ 'Available' if ocr_ok else 'Not installed' }}</span></span></div>
+                <div class="mb-3">
+                    <label class="form-label">Default Language</label>
+                    <select class="form-select" name="ocr_default_lang">
+                        <option value="auto" {% if settings.ocr_default_lang == 'auto' %}selected{% endif %}>Auto detect</option>
+                        <option value="english" {% if settings.ocr_default_lang == 'english' %}selected{% endif %}>English</option>
+                        <option value="hindi" {% if settings.ocr_default_lang == 'hindi' %}selected{% endif %}>Hindi</option>
+                    </select>
+                </div>
+                <div class="mb-3 form-check"><input type="checkbox" class="form-check-input" name="ocr_deskew" id="ocr_deskew" {% if settings.ocr_deskew %}checked{% endif %}><label class="form-check-label" for="ocr_deskew">Enable deskew</label></div>
+                <div class="mb-3 form-check"><input type="checkbox" class="form-check-input" name="ocr_denoise" id="ocr_denoise" {% if settings.ocr_denoise %}checked{% endif %}><label class="form-check-label" for="ocr_denoise">Enable noise removal</label></div>
+                <button type="submit" class="admin-btn primary"><i class="fa-solid fa-floppy-disk"></i> Save OCR</button>
+            </form>
+        </section>
+
+        <section id="sec-downloads" class="settings-section panel panel-pad-lg">
+            <h5>Downloads</h5>
+            <p class="lead">Download center configuration.</p>
+            <form method="POST">
+                <input type="hidden" name="section" value="downloads">
+                <div class="mb-3 form-check"><input type="checkbox" class="form-check-input" name="downloads_enabled" id="downloads_enabled" {% if settings.downloads_enabled %}checked{% endif %}><label class="form-check-label" for="downloads_enabled">Enable public download center</label></div>
+                <div class="mb-3"><label class="form-label">Max upload size (MB)</label><input type="number" class="form-control" name="max_upload_mb" value="{{ settings.max_upload_mb or 50 }}" min="1" max="200"></div>
+                <button type="submit" class="admin-btn primary"><i class="fa-solid fa-floppy-disk"></i> Save Downloads</button>
+            </form>
+            <a href="{{ url_for('downloads.manage') }}" class="admin-btn ghost mt-3"><i class="fa-solid fa-cloud-arrow-down"></i> Open Download Manager</a>
+        </section>
+
+        <section id="sec-security" class="settings-section panel panel-pad-lg">
+            <h5>Security</h5>
+            <p class="lead">Authentication and access control preferences.</p>
+            <form method="POST">
+                <input type="hidden" name="section" value="security">
+                <div class="mb-3 form-check"><input type="checkbox" class="form-check-input" name="require_email_verify" id="require_email_verify" {% if settings.require_email_verify %}checked{% endif %}><label class="form-check-label" for="require_email_verify">Require email verification on register</label></div>
+                <div class="mb-3"><label class="form-label">Session timeout (minutes, 0 = browser session)</label><input type="number" class="form-control" name="session_timeout_minutes" value="{{ settings.session_timeout_minutes or 0 }}" min="0"></div>
+                <button type="submit" class="admin-btn primary"><i class="fa-solid fa-floppy-disk"></i> Save Security</button>
+            </form>
+            <hr class="my-4" style="border-color:var(--admin-border)">
+            <div class="info-row"><span class="ir-label">Password hashing</span><span class="ir-value">Werkzeug PBKDF2</span></div>
+            <div class="info-row"><span class="ir-label">Admin gate</span><span class="ir-value">is_admin role required (backend enforced)</span></div>
+            <div class="info-row"><span class="ir-label">Certificate tokens</span><span class="ir-value">Unique verify_token per result</span></div>
+            {% if settings.updated_at %}<div class="info-row"><span class="ir-label">Last saved</span><span class="ir-value">{{ settings.updated_at }}</span></div>{% endif %}
+        </section>
     </div>
 </div>
 
+{% endblock %}
+
+{% block admin_scripts %}
+<script>window.ADMIN_SETTINGS_TABS = true;</script>
 {% endblock %}

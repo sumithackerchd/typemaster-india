@@ -21,6 +21,7 @@
                 <a href="/typing">English Typing</a>
                 <a href="{{ url_for('hindi.hindi_page') if current_user.is_authenticated else url_for('auth.login') }}">Hindi Mangal</a>
                 <a href="/#exams">Mock Tests</a>
+                <a href="{{ url_for('downloads.center') }}">Downloads</a>
                 <a href="{{ url_for('leaderboard.leaderboard_page') if current_user.is_authenticated else url_for('auth.login') }}">Leaderboard</a>
             </div>
 
@@ -35,16 +36,16 @@
             <div class="col-lg-2 col-6">
                 <h6>Company</h6>
                 <a href="/#features">Features</a>
+                <a href="{{ url_for('pages.about') }}">About</a>
                 <a href="/#faq">FAQ</a>
                 <a href="{{ url_for('auth.register') }}">Sign Up</a>
-                <a href="{{ url_for('auth.login') }}">Login</a>
             </div>
 
             <div class="col-lg-2 col-6">
                 <h6>Legal</h6>
-                <a href="#">Privacy Policy</a>
-                <a href="#">Terms of Use</a>
-                <a href="https://t.me/+FfIHI4_s4aI0NWE1" target="_blank" rel="noopener noreferrer">Contact</a>
+                <a href="{{ url_for('pages.privacy') }}">Privacy Policy</a>
+                <a href="{{ url_for('pages.terms') }}">Terms of Use</a>
+                <a href="{{ url_for('pages.contact') }}">Contact</a>
             </div>
 
         </div>

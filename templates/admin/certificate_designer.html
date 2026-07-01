@@ -1,0 +1,173 @@
+{% extends 'admin/layout.html' %}
+
+{% block title %}Certificate Designer — Admin{% endblock %}
+{% block admin_title %}Certificate Designer{% endblock %}
+{% block admin_subtitle %}Customize the certificate layout with a live preview.{% endblock %}
+{% block admin_breadcrumbs %}<span class="sep">/</span><span class="current">Certificate Designer</span>{% endblock %}
+
+{% block admin_content %}
+<div class="cd-layout admin-fade-in">
+
+    <!-- Controls -->
+    <div class="cd-controls">
+        <form method="POST" action="{{ url_for('admin.save_certificate_design') }}" id="certDesignForm">
+
+            <div class="panel panel-pad-lg cd-panel">
+                <h5 class="cd-h"><i class="fa-solid fa-heading"></i> Text &amp; Content</h5>
+                <label class="admin-form-label">Certificate Title</label>
+                <input type="text" class="form-control cd-live" name="cert_title" data-key="cert_title" value="{{ settings.cert_title }}">
+                <label class="admin-form-label">Subtitle</label>
+                <input type="text" class="form-control cd-live" name="cert_subtitle" data-key="cert_subtitle" value="{{ settings.cert_subtitle }}">
+                <label class="admin-form-label">Footer Text</label>
+                <textarea class="form-control" name="certificate_footer" rows="2">{{ settings.certificate_footer }}</textarea>
+            </div>
+
+            <div class="panel panel-pad-lg cd-panel">
+                <h5 class="cd-h"><i class="fa-solid fa-palette"></i> Colors &amp; Font</h5>
+                <div class="cd-row">
+                    <div>
+                        <label class="admin-form-label">Border Color</label>
+                        <input type="color" class="form-control form-control-color cd-live" name="cert_border_color" data-key="cert_border_color" value="{{ settings.cert_border_color }}">
+                    </div>
+                    <div>
+                        <label class="admin-form-label">Gold / Ribbon Color</label>
+                        <input type="color" class="form-control form-control-color cd-live" name="cert_gold_color" data-key="cert_gold_color" value="{{ settings.cert_gold_color }}">
+                    </div>
+                </div>
+                <label class="admin-form-label">Heading Font</label>
+                <select class="form-select cd-live" name="cert_heading_font" data-key="cert_heading_font">
+                    {% for f in fonts %}
+                    <option value="{{ f }}" {% if settings.cert_heading_font == f %}selected{% endif %}>{{ f }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="panel panel-pad-lg cd-panel">
+                <h5 class="cd-h"><i class="fa-solid fa-ribbon"></i> Ribbon &amp; Watermark</h5>
+                <label class="cd-switch">
+                    <input type="checkbox" class="cd-live" name="cert_ribbon_enabled" data-key="cert_ribbon_enabled" {% if settings.cert_ribbon_enabled %}checked{% endif %}>
+                    <span>Show ribbon banner</span>
+                </label>
+                <input type="text" class="form-control cd-live" name="cert_ribbon_text" data-key="cert_ribbon_text" value="{{ settings.cert_ribbon_text }}">
+                <label class="cd-switch">
+                    <input type="checkbox" class="cd-live" name="cert_watermark_enabled" data-key="cert_watermark_enabled" {% if settings.cert_watermark_enabled %}checked{% endif %}>
+                    <span>Show background watermark</span>
+                </label>
+                <input type="text" class="form-control cd-live" name="cert_watermark_text" data-key="cert_watermark_text" value="{{ settings.cert_watermark_text }}">
+            </div>
+
+            <div class="panel panel-pad-lg cd-panel">
+                <h5 class="cd-h"><i class="fa-solid fa-shapes"></i> Elements</h5>
+                <label class="cd-switch">
+                    <input type="checkbox" class="cd-live" name="cert_logo_enabled" data-key="cert_logo_enabled" {% if settings.cert_logo_enabled %}checked{% endif %}>
+                    <span>Show logo &amp; organization name</span>
+                </label>
+                <label class="cd-switch">
+                    <input type="checkbox" class="cd-live" name="cert_seal_enabled" data-key="cert_seal_enabled" {% if settings.cert_seal_enabled %}checked{% endif %}>
+                    <span>Show gold seal</span>
+                </label>
+                <p class="cd-note"><i class="fa-solid fa-circle-info"></i> Certificate number &amp; QR are fixed bottom-left; the authorized signature is fixed bottom-right (government-standard layout).</p>
+            </div>
+
+            <div class="cd-save-bar">
+                <button type="submit" class="admin-btn primary"><i class="fa-solid fa-floppy-disk"></i> Save Design</button>
+                <a href="{{ url_for('admin.certificate_preview') }}" target="_blank" class="admin-btn ghost"><i class="fa-solid fa-up-right-from-square"></i> Open Preview</a>
+            </div>
+        </form>
+
+        <!-- Signature Manager -->
+        <div class="panel panel-pad-lg cd-panel" id="signature">
+            <h5 class="cd-h"><i class="fa-solid fa-signature"></i> Signature Manager</h5>
+            <p class="lead">Upload the authorized signature. It appears automatically on both the HTML and PDF certificates.</p>
+
+            <div class="cd-sign-preview">
+                {% if has_signature %}
+                <img src="{{ signature_url }}?v={{ settings.updated_at | urlencode }}" alt="Current signature">
+                {% else %}
+                <div class="cd-sign-empty"><i class="fa-solid fa-image"></i><span>No signature uploaded</span></div>
+                {% endif %}
+            </div>
+
+            <form method="POST" action="{{ url_for('admin.upload_signature') }}" enctype="multipart/form-data" class="cd-sign-form">
+                <label class="admin-form-label">Signature image (PNG, JPG or WEBP)</label>
+                <input type="file" class="form-control" name="signature" accept="image/png,image/jpeg,image/webp" required>
+                <label class="cd-switch">
+                    <input type="checkbox" name="make_transparent" checked>
+                    <span>Remove white background (make transparent)</span>
+                </label>
+                <div class="cd-sign-actions">
+                    <button type="submit" class="admin-btn primary"><i class="fa-solid fa-upload"></i> {{ 'Replace' if has_signature else 'Upload' }} Signature</button>
+                </div>
+            </form>
+
+            {% if has_signature %}
+            <form method="POST" action="{{ url_for('admin.delete_signature') }}" onsubmit="return confirm('Remove the signature from all certificates?');">
+                <button type="submit" class="admin-btn danger"><i class="fa-solid fa-trash"></i> Delete Signature</button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Live preview -->
+    <div class="cd-preview-wrap">
+        <div class="cd-preview-head">
+            <span><i class="fa-solid fa-eye"></i> Live Preview</span>
+            <span class="cd-preview-hint">Updates as you edit</span>
+        </div>
+        <div class="cd-preview-stage">
+            <div class="cd-preview-frame-scale" id="certPreviewScale">
+                <iframe id="certPreviewFrame" src="{{ url_for('admin.certificate_preview') }}" title="Certificate preview"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block admin_scripts %}
+<script>
+(function () {
+    var frame = document.getElementById("certPreviewFrame");
+    var form = document.getElementById("certDesignForm");
+    if (!frame || !form) return;
+
+    function collectDesign() {
+        var d = {};
+        form.querySelectorAll(".cd-live").forEach(function (el) {
+            var key = el.dataset.key;
+            if (!key) return;
+            if (el.type === "checkbox") d[key] = el.checked;
+            else d[key] = el.value;
+        });
+        return d;
+    }
+
+    function push() {
+        if (!frame.contentWindow) return;
+        frame.contentWindow.postMessage({ type: "cert-design", design: collectDesign() }, "*");
+    }
+
+    // Scale the fixed 1123px-wide certificate down to fit the responsive stage.
+    var scaleBox = document.getElementById("certPreviewScale");
+    function fitPreview() {
+        if (!scaleBox) return;
+        var scale = scaleBox.clientWidth / 1123;
+        frame.style.transform = "scale(" + scale + ")";
+    }
+    window.addEventListener("resize", fitPreview);
+    fitPreview();
+
+    var debounce;
+    form.addEventListener("input", function () {
+        clearTimeout(debounce);
+        debounce = setTimeout(push, 120);
+    });
+    form.addEventListener("change", push);
+
+    // When the iframe signals it is ready, push the current state.
+    window.addEventListener("message", function (e) {
+        if (e.data && e.data.type === "cert-preview-ready") push();
+    });
+    frame.addEventListener("load", push);
+})();
+</script>
+{% endblock %}

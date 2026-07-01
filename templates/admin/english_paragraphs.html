@@ -1,58 +1,83 @@
-{% extends 'layouts/base.html' %}
+{% extends 'admin/layout.html' %}
 
 {% block title %}English Paragraphs — Admin{% endblock %}
+{% block admin_title %}English Paragraph Manager{% endblock %}
+{% block admin_subtitle %}Add, import, export and manage English practice passages.{% endblock %}
+{% block admin_breadcrumbs %}<span class="sep">/</span><span class="current">English Paragraphs</span>{% endblock %}
 
-{% block content %}
+{% block admin_content %}
 
-<div class="app-page">
-    <div class="container">
-
-        <div class="page-head fade-up">
-            <div>
-                <span class="eyebrow"><i class="fa-solid fa-a"></i> Admin</span>
-                <h1 class="ph-title">English Paragraph Manager</h1>
-                <p class="ph-sub">Add, edit and remove English practice passages by difficulty.</p>
-            </div>
+<div class="pm-toolbar admin-fade-in">
+    <div class="pm-toolbar-row">
+        <div class="pm-group">
+            <button class="pm-btn primary" type="button" data-focus-form><i class="fa-solid fa-plus"></i> Add</button>
+            <button class="pm-btn" type="button" data-import-accept=".txt,.docx,.pdf,.csv,.xlsx,.xls,.json,.png,.jpg,.jpeg,.webp,.tiff,.bmp"><i class="fa-solid fa-file-arrow-up"></i> Import</button>
+            <span class="pm-divider"></span>
+            <button class="pm-btn" type="button" data-import-accept=".png,.jpg,.jpeg,.webp,.tiff,.bmp" {{ '' if ocr_ok else 'disabled title="OCR unavailable"' }}><i class="fa-solid fa-eye"></i> OCR</button>
+            <button class="pm-btn" type="button" data-import-accept=".pdf"><i class="fa-solid fa-file-pdf"></i> PDF</button>
+            <button class="pm-btn" type="button" data-import-accept=".docx"><i class="fa-solid fa-file-word"></i> DOCX</button>
+            <button class="pm-btn" type="button" data-import-accept=".txt"><i class="fa-solid fa-file-lines"></i> TXT</button>
+            <button class="pm-btn" type="button" data-import-accept=".csv"><i class="fa-solid fa-file-csv"></i> CSV</button>
+            <span class="pm-divider"></span>
+            <span class="pm-label">Export</span>
+            <a class="pm-btn" href="{{ url_for('admin.export_paragraphs', language='english', format='json') }}">JSON</a>
+            <a class="pm-btn" href="{{ url_for('admin.export_paragraphs', language='english', format='txt') }}">TXT</a>
+            <a class="pm-btn" href="{{ url_for('admin.export_paragraphs', language='english', format='csv') }}">CSV</a>
         </div>
-
-        {% include 'admin/_nav.html' with context %}
-
-        <div class="row g-4">
-            <div class="col-lg-5">
-                <div class="panel panel-pad-lg fade-up">
-                    <div class="panel-head"><h4><i class="fa-solid fa-plus"></i> Add Passage</h4></div>
-
-                    <label class="form-label">Difficulty</label>
-                    <select id="difficultySelect" class="form-select mb-3">
-                        {% for level in difficulties %}
-                        <option value="{{ level }}">{{ level|capitalize }}</option>
-                        {% endfor %}
-                    </select>
-
-                    <label class="form-label">Paragraph text</label>
-                    <textarea id="newParagraph" class="form-control mb-3" rows="4"
-                              placeholder="Add a new English paragraph..."></textarea>
-                    <button id="addParagraphBtn" class="btn btn-brand w-100" type="button">
-                        <i class="fa-solid fa-plus me-2"></i>Add Paragraph
-                    </button>
-                </div>
-            </div>
-
-            <div class="col-lg-7">
-                <h3 class="app-section-title mt-0"><i class="fa-solid fa-list"></i> Existing Passages</h3>
-                <div id="paragraphList" class="paragraph-list"></div>
-            </div>
+    </div>
+    <div class="pm-toolbar-row">
+        <div class="pm-group">
+            <span class="pm-label">Filter</span>
+            <select id="difficultySelect" class="form-select pm-select">
+                {% for level in difficulties %}
+                <option value="{{ level }}">{{ level|capitalize }}</option>
+                {% endfor %}
+            </select>
+            <input type="text" id="paragraphSearch" class="form-control pm-search" placeholder="Search passages...">
+            <span id="paragraphCount" class="pm-label"></span>
         </div>
-
+        <div class="pm-group ms-auto">
+            <button class="pm-btn danger" type="button" data-clear-difficulty="easy"><i class="fa-solid fa-trash"></i> Easy</button>
+            <button class="pm-btn danger" type="button" data-clear-difficulty="medium"><i class="fa-solid fa-trash"></i> Medium</button>
+            <button class="pm-btn danger" type="button" data-clear-difficulty="hard"><i class="fa-solid fa-trash"></i> Hard</button>
+        </div>
     </div>
 </div>
 
+<input type="file" id="importFile" hidden>
+<div class="cp-status" id="importStatus" hidden></div>
+<div class="cp-progress" id="importProgress" hidden><span></span></div>
+
+<div class="pm-add-panel admin-fade-in d1">
+    <label class="form-label">Add new paragraph</label>
+    <textarea id="newParagraph" class="form-control mb-3" rows="3" placeholder="Type or paste a new English paragraph..."></textarea>
+    <div class="d-flex flex-wrap gap-2 align-items-center">
+        <button id="addParagraphBtn" class="admin-btn primary" type="button"><i class="fa-solid fa-plus"></i> Add to selected difficulty</button>
+        <div class="cp-drop" id="importDrop" style="flex:1;min-width:220px;padding:14px;margin:0">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+            <p style="margin:0;font-size:13px">Drop file to import</p>
+        </div>
+    </div>
+</div>
+
+<div class="pm-list-area admin-fade-in d2">
+    <div id="paragraphList" class="paragraph-list"></div>
+    <div id="paragraphPager" class="pm-pager"></div>
+</div>
+
+{% endblock %}
+
+{% block admin_scripts %}
 <script>
     window.PARAGRAPH_ADMIN = {
         language: "english",
-        initialData: {{ paragraphs|tojson }}
+        initialData: {{ paragraphs|tojson }},
+        urls: {
+            save: "{{ url_for('admin.save_paragraph') }}",
+            import: "{{ url_for('admin.import_paragraphs') }}",
+            clear: "{{ url_for('admin.clear_paragraphs') }}"
+        }
     };
 </script>
 <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
-
 {% endblock %}

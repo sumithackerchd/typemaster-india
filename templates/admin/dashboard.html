@@ -1,130 +1,186 @@
-{% extends 'layouts/base.html' %}
+{% extends 'admin/layout.html' %}
 
 {% block title %}Admin Dashboard — TypeMaster India{% endblock %}
+{% block admin_title %}Dashboard{% endblock %}
+{% block admin_subtitle %}Platform overview, activity trends and quick actions.{% endblock %}
+{% block admin_breadcrumbs %}<span class="sep">/</span><span class="current">Dashboard</span>{% endblock %}
 
-{% block content %}
+{% block admin_content %}
 
-<div class="app-page">
-    <div class="container">
-
-        <div class="page-head fade-up">
-            <div>
-                <span class="eyebrow"><i class="fa-solid fa-shield-halved"></i> Admin Panel</span>
-                <h1 class="ph-title">Control Center</h1>
-                <p class="ph-sub">Manage users, monitor typing results and curate practice content.</p>
-            </div>
-            <div class="ph-actions">
-                <a href="{{ url_for('dashboard.dashboard_page') }}" class="btn btn-ghost"><i class="fa-solid fa-arrow-left me-2"></i>Back to App</a>
-            </div>
+<div class="stat-grid">
+    <div class="admin-stat-card admin-fade-in d1">
+        <div class="ic"><i class="fa-solid fa-users"></i></div>
+        <div>
+            <h3 class="counter" data-target="{{ total_users }}">0</h3>
+            <p>Total Users</p>
+            {% if new_users_week %}<div class="trend"><i class="fa-solid fa-user-plus"></i> +{{ new_users_week }} this week</div>{% endif %}
         </div>
-
-        {% include 'admin/_nav.html' with context %}
-
-        <!-- Stats -->
-        <div class="stat-grid">
-            <div class="tm-stat fade-up d1">
-                <div class="si"><i class="fa-solid fa-users"></i></div>
-                <div class="sv">{{ total_users }}</div>
-                <div class="sl">Total Users</div>
-            </div>
-            <div class="tm-stat fade-up d2">
-                <div class="si accent"><i class="fa-solid fa-file-lines"></i></div>
-                <div class="sv">{{ total_tests }}</div>
-                <div class="sl">Total Tests</div>
-            </div>
-            <div class="tm-stat fade-up d3">
-                <div class="si success"><i class="fa-solid fa-calendar-day"></i></div>
-                <div class="sv">{{ today_tests }}</div>
-                <div class="sl">Tests Today</div>
-            </div>
-            <div class="tm-stat fade-up d4">
-                <div class="si danger"><i class="fa-solid fa-user-shield"></i></div>
-                <div class="sv">{{ admin_count }}</div>
-                <div class="sl">Administrators</div>
-            </div>
+    </div>
+    <div class="admin-stat-card admin-fade-in d2">
+        <div class="ic accent"><i class="fa-solid fa-keyboard"></i></div>
+        <div>
+            <h3 class="counter" data-target="{{ total_tests }}">0</h3>
+            <p>Total Tests</p>
         </div>
-
-        <!-- Quick actions -->
-        <h3 class="app-section-title"><i class="fa-solid fa-bolt"></i> Quick Actions</h3>
-        <div class="quick-grid">
-            <a href="{{ url_for('admin.users') }}" class="quick-action fade-up d1">
-                <span class="qa-icon"><i class="fa-solid fa-users"></i></span>
-                <span><b>Manage Users</b><span>Roles &amp; access</span></span>
-            </a>
-            <a href="{{ url_for('admin.results') }}" class="quick-action fade-up d2">
-                <span class="qa-icon"><i class="fa-solid fa-chart-column"></i></span>
-                <span><b>View Results</b><span>All test data</span></span>
-            </a>
-            <a href="{{ url_for('admin.english_paragraphs') }}" class="quick-action fade-up d3">
-                <span class="qa-icon"><i class="fa-solid fa-a"></i></span>
-                <span><b>English Content</b><span>Manage passages</span></span>
-            </a>
-            <a href="{{ url_for('admin.hindi_paragraphs') }}" class="quick-action fade-up d4">
-                <span class="qa-icon"><i class="fa-solid fa-om"></i></span>
-                <span><b>Hindi Content</b><span>Mangal passages</span></span>
-            </a>
+    </div>
+    <div class="admin-stat-card admin-fade-in d3">
+        <div class="ic success"><i class="fa-solid fa-calendar-day"></i></div>
+        <div>
+            <h3 class="counter" data-target="{{ today_tests }}">0</h3>
+            <p>Tests Today</p>
+            {% if today_tests %}<div class="trend"><i class="fa-solid fa-arrow-trend-up"></i> Active day</div>{% endif %}
         </div>
-
-        <!-- Recent users + results -->
-        <div class="row g-4 mt-1">
-            <div class="col-lg-5">
-                <div class="panel fade-up d1">
-                    <div class="panel-head">
-                        <h4><i class="fa-solid fa-user-plus"></i> Recent Users</h4>
-                        <a href="{{ url_for('admin.users') }}" class="tm-pill primary">View all</a>
-                    </div>
-                    {% if recent_users %}
-                        {% for u in recent_users %}
-                        <div class="info-row">
-                            <span class="d-flex align-items-center">
-                                <span class="avatar-sm">{{ u.full_name[0]|upper }}</span>
-                                <span>
-                                    <b style="display:block">{{ u.full_name }}</b>
-                                    <span class="text-muted-2" style="font-size:13px">@{{ u.username }}</span>
-                                </span>
-                            </span>
-                            {% if u.is_admin %}<span class="tm-pill accent">Admin</span>{% else %}<span class="tm-pill">User</span>{% endif %}
-                        </div>
-                        {% endfor %}
-                    {% else %}
-                        <p class="text-muted-2 mb-0">No users yet.</p>
-                    {% endif %}
-                </div>
-            </div>
-
-            <div class="col-lg-7">
-                <div class="panel fade-up d2">
-                    <div class="panel-head">
-                        <h4><i class="fa-solid fa-clock-rotate-left"></i> Recent Results</h4>
-                        <a href="{{ url_for('admin.results') }}" class="tm-pill primary">View all</a>
-                    </div>
-                    {% if recent_results %}
-                    <div class="table-responsive">
-                        <table class="tm-table" style="background:transparent">
-                            <thead>
-                                <tr><th>User</th><th>Lang</th><th>WPM</th><th>Acc</th><th>Date</th></tr>
-                            </thead>
-                            <tbody>
-                                {% for r in recent_results %}
-                                <tr>
-                                    <td data-label="User">{{ r.user.username if r.user else '—' }}</td>
-                                    <td data-label="Lang"><span class="tm-pill primary">{{ r.language }}</span></td>
-                                    <td data-label="WPM"><b>{{ r.net_wpm }}</b></td>
-                                    <td data-label="Acc">{{ r.accuracy }}%</td>
-                                    <td data-label="Date" class="td-muted">{{ r.created_at.strftime('%d %b') if r.created_at else '—' }}</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                    {% else %}
-                        <p class="text-muted-2 mb-0">No results yet.</p>
-                    {% endif %}
-                </div>
-            </div>
+    </div>
+    <div class="admin-stat-card admin-fade-in d4">
+        <div class="ic warning"><i class="fa-solid fa-certificate"></i></div>
+        <div>
+            <h3 class="counter" data-target="{{ cert_count }}">0</h3>
+            <p>Certificates Issued</p>
         </div>
-
     </div>
 </div>
 
+<div class="stat-grid stat-grid-secondary admin-fade-in d2">
+    <div class="admin-stat-card compact">
+        <div class="ic"><i class="fa-solid fa-file-lines"></i></div>
+        <div><h3 class="counter" data-target="{{ paragraph_count }}">0</h3><p>Paragraphs</p></div>
+    </div>
+    <div class="admin-stat-card compact">
+        <div class="ic accent"><i class="fa-solid fa-cloud-arrow-down"></i></div>
+        <div><h3 class="counter" data-target="{{ download_items }}">0</h3><p>Download Files</p></div>
+    </div>
+    <div class="admin-stat-card compact">
+        <div class="ic success"><i class="fa-solid fa-download"></i></div>
+        <div><h3 class="counter" data-target="{{ download_hits }}">0</h3><p>Total Downloads</p></div>
+    </div>
+    <div class="admin-stat-card compact">
+        <div class="ic"><i class="fa-solid fa-hard-drive"></i></div>
+        <div>
+            <h3>{% if storage_bytes >= 1048576 %}{{ (storage_bytes / 1048576)|round(1) }} MB{% elif storage_bytes >= 1024 %}{{ (storage_bytes / 1024)|round(1) }} KB{% else %}{{ storage_bytes }} B{% endif %}</h3>
+            <p>Storage Used</p>
+        </div>
+    </div>
+</div>
+
+<div class="system-status admin-fade-in d2">
+    <div class="status-pill {{ 'ok' if system_ok else 'warn' }}"><i class="fa-solid fa-circle-check"></i> System Online</div>
+    <div class="status-pill ok"><i class="fa-solid fa-database"></i> Database Connected</div>
+    <div class="status-pill ok"><i class="fa-solid fa-shield-halved"></i> Admin Gate Active</div>
+    <div class="status-pill muted"><i class="fa-solid fa-user-shield"></i> {{ admin_count }} Admin{{ 's' if admin_count != 1 }}</div>
+</div>
+
+<div class="quick-grid admin-fade-in">
+    <a href="{{ url_for('admin.users') }}" class="quick-action">
+        <span class="qa-icon"><i class="fa-solid fa-users"></i></span>
+        <span><b>Manage Users</b><span>Roles, XP &amp; access</span></span>
+    </a>
+    <a href="{{ url_for('admin.results') }}" class="quick-action">
+        <span class="qa-icon"><i class="fa-solid fa-chart-line"></i></span>
+        <span><b>View Results</b><span>Search &amp; export tests</span></span>
+    </a>
+    <a href="{{ url_for('admin.english_paragraphs') }}" class="quick-action">
+        <span class="qa-icon"><i class="fa-solid fa-a"></i></span>
+        <span><b>English Content</b><span>Import &amp; manage passages</span></span>
+    </a>
+    <a href="{{ url_for('downloads.manage') }}" class="quick-action">
+        <span class="qa-icon"><i class="fa-solid fa-cloud-arrow-down"></i></span>
+        <span><b>Downloads</b><span>{{ download_items }} files · {{ download_hits }} hits</span></span>
+    </a>
+</div>
+
+<div class="admin-grid-2 admin-fade-in d2">
+    <div class="panel panel-pad-lg chart-panel">
+        <div class="panel-head"><h4><i class="fa-solid fa-chart-area"></i> Daily Activity</h4></div>
+        <div style="height:260px"><canvas id="chartActivity"></canvas></div>
+    </div>
+    <div class="panel panel-pad-lg chart-panel">
+        <div class="panel-head"><h4><i class="fa-solid fa-ranking-star"></i> Top Users — Avg Net WPM</h4></div>
+        <div style="height:260px"><canvas id="chartWpm"></canvas></div>
+    </div>
+</div>
+
+<div class="admin-grid-3-2 mt-4 admin-fade-in d3">
+    <div class="panel panel-pad-lg">
+        <div class="panel-head">
+            <h4><i class="fa-solid fa-clock-rotate-left"></i> Activity Timeline</h4>
+        </div>
+        <div class="activity-timeline">
+            {% for r in recent_results %}
+            <div class="timeline-item">
+                <span class="tl-dot"></span>
+                <div class="tl-body">
+                    <b>{{ r.user.username if r.user else 'User' }}</b> completed a {{ r.language }} test
+                    <span class="tl-meta">{{ r.net_wpm }} WPM · {{ r.accuracy }}% · {{ r.created_at.strftime("%d %b, %H:%M") if r.created_at else '' }}</span>
+                </div>
+            </div>
+            {% else %}
+            <p class="td-muted mb-0">No recent activity.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="panel panel-pad-lg">
+        <div class="panel-head">
+            <h4><i class="fa-solid fa-fire"></i> Top Active Users</h4>
+        </div>
+        {% for u, count in top_active %}
+        <div class="info-row">
+            <span class="d-flex align-items-center">
+                <span class="avatar-sm">{{ u.full_name[0]|upper }}</span>
+                <span><b style="display:block;color:var(--admin-text)">{{ u.full_name }}</b><span style="font-size:12px;color:var(--admin-muted)">@{{ u.username }}</span></span>
+            </span>
+            <span class="admin-badge primary">{{ count }} tests</span>
+        </div>
+        {% else %}
+        <p class="td-muted mb-0">No activity yet.</p>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="admin-grid-3-2 mt-4 admin-fade-in d4">
+    <div class="panel panel-pad-lg">
+        <div class="panel-head">
+            <h4><i class="fa-solid fa-user-plus"></i> Latest Registrations</h4>
+            <a href="{{ url_for('admin.users') }}" class="admin-btn sm primary">View all</a>
+        </div>
+        {% for u in recent_users %}
+        <div class="info-row">
+            <span class="d-flex align-items-center">
+                <span class="avatar-sm">{{ u.full_name[0]|upper }}</span>
+                <span><b style="display:block;color:var(--admin-text)">{{ u.full_name }}</b><span style="font-size:12px;color:var(--admin-muted)">@{{ u.username }} · Lv {{ u.level }}</span></span>
+            </span>
+            {% if u.is_admin %}<span class="admin-badge accent">Admin</span>{% else %}<span class="admin-badge muted">User</span>{% endif %}
+        </div>
+        {% else %}
+        <p class="td-muted mb-0">No users yet.</p>
+        {% endfor %}
+    </div>
+
+    <div class="panel panel-pad-lg">
+        <div class="panel-head">
+            <h4><i class="fa-solid fa-award"></i> Latest Certificates</h4>
+        </div>
+        {% for c in latest_certs %}
+        <div class="info-row">
+            <span><b style="color:var(--admin-text)">{{ c.certificate_id }}</b><br><span class="td-muted" style="font-size:12px">{{ c.user.username if c.user else '—' }} · {{ c.net_wpm }} WPM</span></span>
+            <span class="admin-badge success">{{ c.created_at.strftime("%d %b") if c.created_at else '—' }}</span>
+        </div>
+        {% else %}
+        <p class="td-muted mb-0">No certificates yet.</p>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}
+
+{% block admin_scripts %}
+<script>
+window.ADMIN_CHARTS = {
+    activityLabels: {{ activity_labels|tojson }},
+    activityCounts: {{ activity_counts|tojson }},
+    wpmLabels: {{ wpm_labels|tojson }},
+    wpmValues: {{ wpm_values|tojson }}
+};
+window.ADMIN_COUNTERS = true;
+</script>
 {% endblock %}

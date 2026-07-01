@@ -1,0 +1,90 @@
+{# Premium admin sidebar #}
+{% set ep = request.endpoint %}
+{% set is_para = ep in ('admin.english_paragraphs', 'admin.hindi_paragraphs') %}
+
+<aside class="admin-sidebar" id="adminSidebar">
+
+    <a class="admin-brand" href="{{ url_for('admin.dashboard') }}">
+        <span class="brand-mark"><i class="fa-solid fa-keyboard"></i></span>
+        <span class="brand-text">
+            <b>TypeMaster</b>
+            <small>Control Center</small>
+        </span>
+    </a>
+
+    <div class="sidebar-search label">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="search" id="sidebarSearch" placeholder="Search menu…" autocomplete="off" aria-label="Search admin menu">
+    </div>
+
+    <div class="admin-menu-label">Overview</div>
+    <ul class="admin-nav" data-menu-group>
+        <li>
+            <a href="{{ url_for('admin.dashboard') }}" class="{{ 'active' if ep == 'admin.dashboard' }}" data-tooltip="Dashboard">
+                <i class="fa-solid fa-gauge-high"></i><span class="label">Dashboard</span>
+            </a>
+        </li>
+        <li>
+            <a href="{{ url_for('admin.users') }}" class="{{ 'active' if ep == 'admin.users' }}" data-tooltip="Users">
+                <i class="fa-solid fa-users"></i><span class="label">Users</span>
+            </a>
+        </li>
+        <li>
+            <a href="{{ url_for('admin.results') }}" class="{{ 'active' if ep == 'admin.results' }}" data-tooltip="Results">
+                <i class="fa-solid fa-chart-line"></i><span class="label">Results</span>
+            </a>
+        </li>
+    </ul>
+
+    <div class="admin-menu-label">Content</div>
+    <ul class="admin-nav" data-menu-group>
+        <li class="has-sub {{ 'open' if is_para }}" id="paraGroup">
+            <a class="sub-toggle" role="button" tabindex="0" onclick="toggleAdminSub(this)" data-tooltip="Paragraph Manager">
+                <span><i class="fa-solid fa-file-lines"></i> <span class="label">Paragraph Manager</span></span>
+                <i class="fa-solid fa-chevron-right caret label"></i>
+            </a>
+            <ul class="admin-submenu">
+                <li><a href="{{ url_for('admin.english_paragraphs') }}" class="{{ 'active' if ep == 'admin.english_paragraphs' }}"><span class="label">English</span></a></li>
+                <li><a href="{{ url_for('admin.hindi_paragraphs') }}" class="{{ 'active' if ep == 'admin.hindi_paragraphs' }}"><span class="label">Hindi</span></a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="{{ url_for('admin.certificate_designer') }}" class="{{ 'active' if ep in ('admin.certificate_designer', 'admin.certificate_preview') }}" data-tooltip="Certificate Designer">
+                <i class="fa-solid fa-certificate"></i><span class="label">Certificate Designer</span>
+            </a>
+        </li>
+        <li>
+            <a href="{{ url_for('downloads.manage') }}" class="{{ 'active' if ep == 'downloads.manage' }}" data-tooltip="Downloads">
+                <i class="fa-solid fa-cloud-arrow-down"></i><span class="label">Downloads</span>
+            </a>
+        </li>
+    </ul>
+
+    <div class="admin-menu-label">System</div>
+    <ul class="admin-nav" data-menu-group>
+        <li>
+            <a href="{{ url_for('admin.settings') }}" class="{{ 'active' if ep == 'admin.settings' }}" data-tooltip="Settings">
+                <i class="fa-solid fa-sliders"></i><span class="label">Settings</span>
+            </a>
+        </li>
+        <li>
+            <a href="{{ url_for('dashboard.dashboard_page') }}" data-tooltip="Back to Site">
+                <i class="fa-solid fa-arrow-left"></i><span class="label">Back to Site</span>
+            </a>
+        </li>
+    </ul>
+
+    <div class="admin-sidebar-footer">
+        <button type="button" class="sidebar-collapse-btn label" onclick="toggleAdminSidebar()" title="Toggle sidebar (Ctrl+B)">
+            <i class="fa-solid fa-angles-left"></i> <span class="label">Collapse</span>
+        </button>
+        <ul class="admin-nav">
+            <li>
+                <a href="{{ url_for('auth.logout') }}" class="logout" data-tooltip="Logout">
+                    <i class="fa-solid fa-right-from-bracket"></i><span class="label">Logout</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+</aside>

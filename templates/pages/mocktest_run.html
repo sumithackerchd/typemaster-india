@@ -29,10 +29,12 @@
             <h2 id="typingTitle">Mock Test</h2>
         </div>
 
-        <div class="d-flex gap-2 align-items-center">
+        <div class="d-flex gap-2 align-items-center flex-wrap justify-content-end">
             <a href="{{ url_for('mocktest.setup') }}" class="mode" style="text-decoration:none;">&larr; New Test</a>
-            <button id="restartBtn" class="mode" type="button">&#8634; Restart</button>
-            <div class="timer-card">&#9201;&#65039; <span id="timer">{{ duration }}</span>s</div>
+            <button id="pauseBtn" class="mode" type="button"><i class="fa-solid fa-pause"></i> Pause</button>
+            <button id="submitBtn" class="mode mode-primary" type="button"><i class="fa-solid fa-flag-checkered"></i> Submit</button>
+            <button id="restartBtn" class="mode" type="button"><i class="fa-solid fa-rotate-left"></i> Restart</button>
+            <div class="timer-card"><i class="fa-regular fa-clock"></i> <span id="timer">{{ duration }}</span>s</div>
         </div>
 
     </div>

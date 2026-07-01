@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificate Preview</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/certificate.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Playfair+Display:wght@600;700;800&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600&display=swap" rel="stylesheet">
+    <style>
+        html, body { margin: 0; padding: 0; background: #f1f3f8; }
+        .certificate-page { padding: 0 !important; min-height: auto !important; background: transparent !important; }
+    </style>
+</head>
+<body>
+    <div class="certificate-page">
+        {% include "pages/_certificate_card.html" %}
+    </div>
+
+    <script>
+        // Font stack map mirrors the server-side _certificate_card.html mapping.
+        var FONT_MAP = {
+            "Cinzel": "'Cinzel', serif",
+            "Playfair Display": "'Playfair Display', serif",
+            "Cormorant Garamond": "'Cormorant Garamond', Georgia, serif",
+            "Georgia": "Georgia, 'Times New Roman', serif",
+            "Times New Roman": "'Times New Roman', Times, serif"
+        };
+        function applyDesign(d) {
+            if (!d) return;
+            var root = document.getElementById("certRoot");
+            if (!root) return;
+
+            if (d.cert_border_color) root.style.setProperty("--cert-border-color", d.cert_border_color);
+            if (d.cert_gold_color) root.style.setProperty("--cert-gold-color", d.cert_gold_color);
+            if (d.cert_heading_font) {
+                root.style.setProperty("--cert-heading-font", FONT_MAP[d.cert_heading_font] || "'Cinzel', serif");
+            }
+
+            setText("certTitle", d.cert_title);
+            setText("certSubtitle", d.cert_subtitle);
+            setText("certRibbonText", d.cert_ribbon_text);
+            setText("certWatermark", d.cert_watermark_text);
+
+            toggle("certRibbon", d.cert_ribbon_enabled);
+            toggle("certWatermark", d.cert_watermark_enabled);
+            toggle("certSeal", d.cert_seal_enabled);
+            toggle("certLogo", d.cert_logo_enabled);
+        }
+
+        function setText(id, val) {
+            if (val === undefined || val === null) return;
+            var el = document.getElementById(id);
+            if (el) el.textContent = val;
+        }
+        function toggle(id, on) {
+            if (on === undefined) return;
+            var el = document.getElementById(id);
+            if (el) el.style.display = on ? "" : "none";
+        }
+
+        window.addEventListener("message", function (e) {
+            if (e.data && e.data.type === "cert-design") {
+                applyDesign(e.data.design);
+            }
+        });
+        // Signal readiness so the parent can push the current design.
+        if (window.parent) window.parent.postMessage({ type: "cert-preview-ready" }, "*");
+    </script>
+</body>
+</html>

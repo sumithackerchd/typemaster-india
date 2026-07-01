@@ -1,0 +1,17 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}{{ code }} · TypeMaster India{% endblock %}
+
+{% block content %}
+<section class="container" style="min-height:60vh;display:flex;align-items:center;justify-content:center;padding:64px 0">
+  <div style="max-width:520px;text-align:center">
+    <div style="font-size:5rem;font-weight:800;line-height:1;letter-spacing:-2px" class="text-accent">{{ code }}</div>
+    <h1 class="h3 mt-3" style="font-family:'Sora',sans-serif">{{ title }}</h1>
+    <p class="text-muted mt-2 mb-4">{{ message }}</p>
+    <div class="d-flex gap-2 justify-content-center flex-wrap">
+      <a href="/" class="btn btn-brand"><i class="fa-solid fa-house me-1"></i> Back to Home</a>
+      <button onclick="history.back()" class="btn btn-ghost"><i class="fa-solid fa-arrow-left me-1"></i> Go Back</button>
+    </div>
+  </div>
+</section>
+{% endblock %}

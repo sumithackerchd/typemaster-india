@@ -1,10 +1,14 @@
 """Paragraph Database seeder for TypeMaster India.
 
 Generates and stores typing content:
-    * 100 English paragraphs
-    * 100 Hindi (Mangal) paragraphs
-    * 100 English random-word sets
-    * 100 Hindi random-word sets
+    * 500 English paragraphs
+    * 500 Hindi (Mangal) paragraphs
+    * 500 English random-word sets
+    * 500 Hindi random-word sets
+
+Content spans every paragraph category and all three difficulties, and each
+difficulty produces enough text for the 60 / 120 / 300 / 600 second tests.
+No two stored paragraphs share the same content (per language).
 
 The database is the primary source of truth. A JSON mirror is written to
 ``static/data/`` so the typing engine keeps working even if the database is
@@ -33,19 +37,30 @@ PARAGRAPH_CATEGORIES = [
     "railway",
     "up_police",
     "cpct",
+    "court",
+    "computer_operator",
+    "typing_exam",
+    "bank",
+    "office",
     "government",
     "programming",
     "general_knowledge",
+    "current_affairs",
     "typing_practice",
 ]
 
 DIFFICULTIES = ["easy", "medium", "hard"]
 
-# Sentences per difficulty bucket
-SENTENCES_PER_DIFFICULTY = {"easy": (1, 2), "medium": (3, 4), "hard": (5, 6)}
+# How many paragraphs / word-sets to generate per language.
+PARAGRAPHS_PER_LANGUAGE = 500
+WORDSETS_PER_LANGUAGE = 500
 
-# Word count per difficulty for random-word sets
-WORDS_PER_DIFFICULTY = {"easy": 20, "medium": 35, "hard": 50}
+# Sentences per difficulty bucket. Higher difficulty = longer text so that
+# even the 600 second (10 minute) test never runs out of content.
+SENTENCES_PER_DIFFICULTY = {"easy": (3, 5), "medium": (7, 11), "hard": (16, 26)}
+
+# Word count per difficulty for random-word sets.
+WORDS_PER_DIFFICULTY = {"easy": 40, "medium": 90, "hard": 220}
 
 
 # ---------------------------------------------------------------------------
@@ -66,6 +81,10 @@ EN_SENTENCES = {
         "Small daily habits build the foundation of a great future.",
         "Kindness costs nothing yet it is worth more than gold.",
         "The garden was full of bright flowers and busy honey bees.",
+        "Every sunset promises a brand new sunrise waiting for us.",
+        "Curiosity is the spark that lights the lamp of true learning.",
+        "A gentle word can turn a difficult day into a pleasant one.",
+        "The mountains stood silent under a blanket of soft white snow.",
     ],
     "ssc": [
         "The Staff Selection Commission conducts exams for various government posts.",
@@ -78,6 +97,8 @@ EN_SENTENCES = {
         "Mock tests help aspirants understand the real exam pattern clearly.",
         "Current affairs of the last six months are very important for the test.",
         "Speed and precision in typing matter for the skill test stage.",
+        "Solving previous year papers reveals the weight of every topic.",
+        "A disciplined timetable keeps preparation steady and stress free.",
     ],
     "railway": [
         "The Indian Railways is one of the largest rail networks in the world.",
@@ -90,6 +111,8 @@ EN_SENTENCES = {
         "Trains connect distant cities and carry millions of people each day.",
         "A station master coordinates the safe arrival and departure of trains.",
         "Consistent practice of arithmetic builds confidence for the exam.",
+        "The signalling system keeps every train moving in perfect order.",
+        "Freight corridors carry goods across the country day and night.",
     ],
     "up_police": [
         "The state police force maintains law and order across the region.",
@@ -102,6 +125,8 @@ EN_SENTENCES = {
         "Aspirants must stay updated with current legal and social affairs.",
         "Patrolling the streets keeps neighbourhoods safe during the night.",
         "Integrity is the most important quality expected from every recruit.",
+        "A calm mind under pressure is the mark of a trained officer.",
+        "Community trust grows when the police serve with fairness.",
     ],
     "cpct": [
         "The computer proficiency certification test checks basic typing speed.",
@@ -114,6 +139,78 @@ EN_SENTENCES = {
         "The certificate is valid for many state government job applications.",
         "Maintaining posture and finger placement improves long typing sessions.",
         "Practising on the standard layout prepares you for the real test.",
+        "Shortcut keys save valuable time during the practical assessment.",
+        "Regular breaks keep the fingers relaxed and the mind focused.",
+    ],
+    "court": [
+        "The court is a place where justice is delivered with fairness and care.",
+        "A stenographer must type legal dictation quickly and without any error.",
+        "Every judgment is recorded carefully for the official court register.",
+        "Lawyers present their arguments before the honourable presiding judge.",
+        "Accuracy in legal documents protects the rights of every citizen.",
+        "The clerk maintains case files and prepares the daily cause list.",
+        "Witnesses give their statements under a solemn oath of truth.",
+        "Court typing tests demand a very high standard of speed and accuracy.",
+        "The registrar verifies documents before they are placed on record.",
+        "Legal terminology must be typed exactly as it is dictated aloud.",
+        "Patience and precision are the finest qualities of a court typist.",
+        "The verdict is announced only after a careful review of the evidence.",
+    ],
+    "computer_operator": [
+        "A computer operator manages daily data entry with speed and accuracy.",
+        "Backing up important files prevents the loss of valuable information.",
+        "The operator prepares reports using spreadsheets and word processors.",
+        "Clean and organised folders make everyday work faster and easier.",
+        "Regular software updates keep the office systems safe and stable.",
+        "Fast and accurate typing is the core skill of a good operator.",
+        "Printers, scanners and networks are handled with basic technical care.",
+        "Passwords should be strong and changed at regular intervals.",
+        "The operator records attendance and updates the central database.",
+        "A tidy workspace and steady focus improve the quality of output.",
+        "Data must be checked twice before it is saved to the main server.",
+        "Simple shortcuts turn a long task into a quick and smooth routine.",
+    ],
+    "typing_exam": [
+        "The typing exam measures both your gross speed and your net accuracy.",
+        "Sit straight, relax your shoulders and place your fingers on the keys.",
+        "Read a few words ahead so your fingers never have to wait.",
+        "One careless error can lower your score more than a slow pace.",
+        "Steady breathing keeps your hands calm during the timed test.",
+        "The passage must be typed exactly as it appears on the screen.",
+        "Punctuation and capital letters are counted in the final result.",
+        "A short warm up before the exam sharpens your finger memory.",
+        "Do not look at the keyboard; trust the training in your hands.",
+        "Consistent daily practice is the surest path to a high score.",
+        "Speed grows naturally once accuracy becomes a firm habit.",
+        "Stay focused on the current line and let the rhythm carry you.",
+    ],
+    "bank": [
+        "A bank keeps the savings of the public safe and secure.",
+        "The clerk records every transaction with great care and honesty.",
+        "Interest is the reward that a bank pays on your deposits.",
+        "Loans help people and businesses grow when they are used wisely.",
+        "Online banking lets customers manage money from anywhere at any time.",
+        "The cashier balances the cash drawer at the end of each day.",
+        "Strong passwords protect an account from fraud and theft.",
+        "The bank exam tests reasoning, quantitative aptitude and English.",
+        "Customer service is the heart of a trusted banking institution.",
+        "Every cheque is verified before the amount is finally cleared.",
+        "Financial discipline today builds a secure and stable tomorrow.",
+        "The branch manager reviews reports and approves daily operations.",
+    ],
+    "office": [
+        "A well organised office runs smoothly from morning until evening.",
+        "Emails should be clear, polite and to the point at all times.",
+        "Meetings work best when everyone arrives prepared and on time.",
+        "Filing documents in order saves hours of searching later.",
+        "Teamwork turns a heavy workload into a shared and lighter task.",
+        "A neat desk reflects a calm and well organised mind.",
+        "Deadlines are met when tasks are planned and reviewed daily.",
+        "Good communication prevents small confusions from becoming problems.",
+        "The manager assigns duties and tracks the progress of each project.",
+        "Taking short notes during a call helps you remember the details.",
+        "Respect and courtesy make the workplace pleasant for everyone.",
+        "A printed report should be checked once more before it is sent.",
     ],
     "government": [
         "Government examinations open the door to stable and respected careers.",
@@ -126,6 +223,8 @@ EN_SENTENCES = {
         "Patience and persistence carry candidates through years of preparation.",
         "A clear understanding of the constitution helps in the polity section.",
         "Setting weekly targets keeps the long preparation journey on track.",
+        "Revision notes turn a huge syllabus into small manageable pieces.",
+        "Mock interviews build the confidence needed for the final stage.",
     ],
     "programming": [
         "A function should do one thing and do that one thing very well.",
@@ -138,6 +237,8 @@ EN_SENTENCES = {
         "Comments should explain why the code exists, not what it does.",
         "Breaking a big problem into small functions makes it easier to solve.",
         "Reading other people's code is one of the fastest ways to learn.",
+        "A good data structure often makes a hard problem feel simple.",
+        "Refactoring keeps a growing project healthy and easy to maintain.",
     ],
     "general_knowledge": [
         "Mount Everest is the highest mountain above sea level on the earth.",
@@ -150,6 +251,22 @@ EN_SENTENCES = {
         "The Sahara is the largest hot desert found anywhere in the world.",
         "Diamond is the hardest naturally occurring material known to science.",
         "The heart pumps blood through a vast network of veins and arteries.",
+        "The moon controls the rise and fall of the ocean tides.",
+        "Honey never spoils and can last for thousands of years.",
+    ],
+    "current_affairs": [
+        "Digital payments have become a part of everyday life across the nation.",
+        "Renewable energy projects are growing rapidly in many states.",
+        "Space missions continue to inspire young students to study science.",
+        "New expressways are reducing travel time between major cities.",
+        "Start ups are creating fresh jobs and bold ideas every single year.",
+        "Clean water and sanitation remain important goals for every village.",
+        "Sports achievements bring pride and unity to the whole country.",
+        "Awareness of climate change is rising among students and citizens.",
+        "Online education has reached learners in the most remote areas.",
+        "Financial literacy helps families plan their savings more wisely.",
+        "Healthcare services are expanding to smaller towns and districts.",
+        "Technology is making government services faster and more transparent.",
     ],
     "typing_practice": [
         "Place your fingers on the home row and keep your wrists relaxed.",
@@ -162,6 +279,8 @@ EN_SENTENCES = {
         "Focus on the words ahead and let a steady rhythm guide you.",
         "Accuracy first and speed will follow naturally with patience.",
         "Warm up your hands gently before starting a long typing test.",
+        "Keep your elbows close and your fingers curved over the keys.",
+        "A quiet room and a clear mind make practice far more effective.",
     ],
 }
 
@@ -176,7 +295,9 @@ EN_WORDS = (
     "person art war history party result change morning reason research girl "
     "guy moment air teacher force education value paper light table music road "
     "river garden market window letter ground future season nature future "
-    "honest brave bright simple strong gentle quiet happy clever modern global"
+    "honest brave bright simple strong gentle quiet happy clever modern global "
+    "answer chance course design effort growth income market notice object "
+    "policy quality region source target update village weather balance culture"
 ).split()
 
 
@@ -198,6 +319,10 @@ HI_SENTENCES = {
         "दया करने में कुछ खर्च नहीं होता पर यह सोने से भी मूल्यवान है।",
         "बगीचा रंग बिरंगे फूलों और मेहनती मधुमक्खियों से भरा हुआ था।",
         "प्रतिदिन का अभ्यास परिश्रम को सहज आदत में बदल देता है।",
+        "हर सूर्यास्त एक नए सवेरे का मधुर वादा लेकर आता है।",
+        "जिज्ञासा ही सच्चे ज्ञान का दीपक जलाने वाली चिंगारी है।",
+        "एक मधुर वचन कठिन दिन को भी सुखद बना देता है।",
+        "पर्वत श्वेत बर्फ की चादर ओढ़े मौन खड़े रहते हैं।",
     ],
     "ssc": [
         "कर्मचारी चयन आयोग विभिन्न सरकारी पदों के लिए परीक्षा आयोजित करता है।",
@@ -210,6 +335,8 @@ HI_SENTENCES = {
         "आंकड़ों के विश्लेषण में शुद्धता समग्र रैंक को ऊपर ले जाती है।",
         "गति और सटीकता कौशल परीक्षा चरण के लिए अत्यंत आवश्यक हैं।",
         "लाखों अभ्यर्थी हर वर्ष इस परीक्षा में बैठते हैं।",
+        "पिछले वर्षों के प्रश्नपत्र हल करने से हर विषय का महत्व समझ आता है।",
+        "अनुशासित समय सारणी तैयारी को स्थिर और तनावमुक्त बनाती है।",
     ],
     "railway": [
         "भारतीय रेल विश्व के सबसे बड़े रेल नेटवर्क में से एक है।",
@@ -222,6 +349,8 @@ HI_SENTENCES = {
         "अंकगणित का निरंतर अभ्यास परीक्षा के लिए आत्मविश्वास बढ़ाता है।",
         "स्टेशन मास्टर गाड़ियों के सुरक्षित आगमन और प्रस्थान का संचालन करता है।",
         "परीक्षा में गणित सामान्य बुद्धि और जागरूकता शामिल होती है।",
+        "सिग्नल प्रणाली हर गाड़ी को सही क्रम में चलाए रखती है।",
+        "माल गाड़ियाँ दिन रात देशभर में सामान पहुँचाती रहती हैं।",
     ],
     "up_police": [
         "पुलिस बल क्षेत्र में कानून और व्यवस्था बनाए रखता है।",
@@ -234,6 +363,8 @@ HI_SENTENCES = {
         "अभ्यर्थियों को वर्तमान कानूनी और सामाजिक घटनाओं से अवगत रहना चाहिए।",
         "रात में गश्त लगाना मोहल्लों को सुरक्षित बनाए रखता है।",
         "ईमानदारी हर भर्ती से अपेक्षित सबसे महत्वपूर्ण गुण है।",
+        "दबाव में शांत मन प्रशिक्षित अधिकारी की पहचान है।",
+        "निष्पक्ष सेवा से जनता का विश्वास बढ़ता है।",
     ],
     "cpct": [
         "कंप्यूटर दक्षता प्रमाणन परीक्षा बुनियादी टाइपिंग गति की जाँच करती है।",
@@ -246,6 +377,78 @@ HI_SENTENCES = {
         "यह प्रमाणपत्र कई राज्य सरकारी नौकरियों के लिए मान्य होता है।",
         "सही मुद्रा और अंगुलियों की स्थिति लंबे सत्र को सरल बनाती है।",
         "मानक लेआउट पर अभ्यास आपको वास्तविक परीक्षा के लिए तैयार करता है।",
+        "शॉर्टकट कुंजियाँ व्यावहारिक परीक्षा में बहुमूल्य समय बचाती हैं।",
+        "नियमित विराम अंगुलियों को शिथिल और मन को केंद्रित रखते हैं।",
+    ],
+    "court": [
+        "न्यायालय वह स्थान है जहाँ निष्पक्षता से न्याय दिया जाता है।",
+        "आशुलिपिक को विधिक श्रुतलेख तेज और बिना त्रुटि के टाइप करना होता है।",
+        "हर निर्णय न्यायालय के आधिकारिक रजिस्टर में सावधानी से दर्ज होता है।",
+        "अधिवक्ता माननीय न्यायाधीश के समक्ष अपने तर्क प्रस्तुत करते हैं।",
+        "विधिक दस्तावेज़ों की शुद्धता हर नागरिक के अधिकारों की रक्षा करती है।",
+        "लिपिक मुकदमों की फाइलें रखता और दैनिक वाद सूची तैयार करता है।",
+        "गवाह सत्य की गंभीर शपथ लेकर अपना बयान देते हैं।",
+        "न्यायालय की टाइपिंग परीक्षा गति और शुद्धता का ऊँचा स्तर माँगती है।",
+        "रजिस्ट्रार दस्तावेज़ों को अभिलेख में रखने से पहले सत्यापित करता है।",
+        "विधिक शब्दावली को ठीक वैसे ही टाइप करना होता है जैसे बोली जाती है।",
+        "धैर्य और सटीकता न्यायालय आशुलिपिक के श्रेष्ठ गुण हैं।",
+        "साक्ष्य की सावधानी से समीक्षा के बाद ही निर्णय सुनाया जाता है।",
+    ],
+    "computer_operator": [
+        "कंप्यूटर ऑपरेटर दैनिक डेटा प्रविष्टि को गति और शुद्धता से करता है।",
+        "महत्वपूर्ण फाइलों का बैकअप सूचना के नुकसान को रोकता है।",
+        "ऑपरेटर स्प्रेडशीट और वर्ड प्रोसेसर से रिपोर्ट तैयार करता है।",
+        "स्वच्छ और व्यवस्थित फोल्डर रोज़मर्रा के काम को आसान बनाते हैं।",
+        "नियमित सॉफ्टवेयर अपडेट कार्यालय प्रणालियों को सुरक्षित रखते हैं।",
+        "तेज और सटीक टाइपिंग एक अच्छे ऑपरेटर का मुख्य कौशल है।",
+        "प्रिंटर स्कैनर और नेटवर्क को बुनियादी तकनीकी सावधानी से संभाला जाता है।",
+        "पासवर्ड मजबूत होने चाहिए और नियमित अंतराल पर बदलने चाहिए।",
+        "ऑपरेटर उपस्थिति दर्ज करता और केंद्रीय डेटाबेस अद्यतन करता है।",
+        "साफ कार्यस्थल और स्थिर ध्यान कार्य की गुणवत्ता बढ़ाते हैं।",
+        "डेटा को मुख्य सर्वर पर सहेजने से पहले दो बार जाँचना चाहिए।",
+        "सरल शॉर्टकट लंबे कार्य को तेज और सहज बना देते हैं।",
+    ],
+    "typing_exam": [
+        "टाइपिंग परीक्षा आपकी सकल गति और शुद्ध सटीकता दोनों मापती है।",
+        "सीधे बैठें कंधे ढीले रखें और अंगुलियाँ कुंजियों पर रखें।",
+        "कुछ शब्द आगे पढ़ें ताकि अंगुलियों को कभी रुकना न पड़े।",
+        "एक लापरवाह त्रुटि धीमी गति से भी अधिक अंक घटा सकती है।",
+        "स्थिर साँस समयबद्ध परीक्षा में हाथों को शांत रखती है।",
+        "पाठ को ठीक वैसे ही टाइप करना है जैसा स्क्रीन पर दिखता है।",
+        "विराम चिह्न और बड़े अक्षर अंतिम परिणाम में गिने जाते हैं।",
+        "परीक्षा से पहले छोटा अभ्यास अंगुलियों की स्मृति को तेज करता है।",
+        "कीबोर्ड की ओर न देखें अपने हाथों के प्रशिक्षण पर भरोसा रखें।",
+        "निरंतर दैनिक अभ्यास ऊँचे अंक तक पहुँचने का सुनिश्चित मार्ग है।",
+        "शुद्धता आदत बनते ही गति स्वयं ही बढ़ने लगती है।",
+        "वर्तमान पंक्ति पर ध्यान दें और लय को आगे बढ़ने दें।",
+    ],
+    "bank": [
+        "बैंक जनता की बचत को सुरक्षित और संरक्षित रखता है।",
+        "लिपिक हर लेन देन को बड़ी सावधानी और ईमानदारी से दर्ज करता है।",
+        "ब्याज वह पुरस्कार है जो बैंक आपकी जमा राशि पर देता है।",
+        "ऋण लोगों और व्यवसायों को समझदारी से उपयोग करने पर बढ़ने में मदद करता है।",
+        "ऑनलाइन बैंकिंग ग्राहकों को कहीं भी कभी भी धन प्रबंधन की सुविधा देती है।",
+        "खजांची हर दिन के अंत में नकद दराज का मिलान करता है।",
+        "मजबूत पासवर्ड खाते को धोखाधड़ी और चोरी से बचाते हैं।",
+        "बैंक परीक्षा तर्क संख्यात्मक योग्यता और अंग्रेजी का परीक्षण करती है।",
+        "ग्राहक सेवा एक विश्वसनीय बैंकिंग संस्था का हृदय है।",
+        "राशि अंतिम रूप से स्वीकृत होने से पहले हर चेक सत्यापित होता है।",
+        "आज की वित्तीय अनुशासन सुरक्षित और स्थिर कल का निर्माण करती है।",
+        "शाखा प्रबंधक रिपोर्ट देखता और दैनिक कार्यों को स्वीकृति देता है।",
+    ],
+    "office": [
+        "एक सुव्यवस्थित कार्यालय सुबह से शाम तक सुचारु रूप से चलता है।",
+        "ईमेल हमेशा स्पष्ट विनम्र और सटीक होने चाहिए।",
+        "बैठकें तब सर्वोत्तम चलती हैं जब सब तैयार और समय पर आते हैं।",
+        "दस्तावेज़ों को क्रम में रखना बाद में घंटों की खोज बचाता है।",
+        "टीम भावना भारी काम को साझा और हल्का कार्य बना देती है।",
+        "साफ मेज एक शांत और व्यवस्थित मन को दर्शाती है।",
+        "कार्य की योजना और दैनिक समीक्षा से समय सीमा पूरी होती है।",
+        "अच्छा संवाद छोटी उलझनों को समस्या बनने से रोकता है।",
+        "प्रबंधक कार्य सौंपता और हर परियोजना की प्रगति पर नज़र रखता है।",
+        "कॉल के दौरान छोटे नोट लेना विवरण याद रखने में मदद करता है।",
+        "सम्मान और शिष्टाचार कार्यस्थल को सबके लिए सुखद बनाते हैं।",
+        "भेजने से पहले छपी हुई रिपोर्ट को एक बार और जाँचना चाहिए।",
     ],
     "government": [
         "सरकारी परीक्षाएँ स्थिर और सम्मानित करियर का द्वार खोलती हैं।",
@@ -258,6 +461,8 @@ HI_SENTENCES = {
         "धैर्य और दृढ़ता अभ्यर्थियों को वर्षों की तैयारी से पार ले जाती है।",
         "संविधान की स्पष्ट समझ राजव्यवस्था खंड में सहायता करती है।",
         "साप्ताहिक लक्ष्य निर्धारित करना लंबी तैयारी को सही दिशा में रखता है।",
+        "पुनरावृत्ति नोट्स विशाल पाठ्यक्रम को छोटे भागों में बदल देते हैं।",
+        "मॉक साक्षात्कार अंतिम चरण के लिए आवश्यक आत्मविश्वास बनाते हैं।",
     ],
     "programming": [
         "एक फलन को केवल एक ही कार्य करना चाहिए और वह भी बहुत अच्छे से।",
@@ -270,6 +475,8 @@ HI_SENTENCES = {
         "टिप्पणियाँ बताती हैं कि कोड क्यों है न कि वह क्या करता है।",
         "बड़ी समस्या को छोटे भागों में बाँटना उसे हल करना आसान बनाता है।",
         "दूसरों का कोड पढ़ना सीखने का सबसे तेज तरीका है।",
+        "अच्छी डेटा संरचना कठिन समस्या को अक्सर सरल बना देती है।",
+        "रीफैक्टरिंग बढ़ती परियोजना को स्वस्थ और सरल बनाए रखती है।",
     ],
     "general_knowledge": [
         "माउंट एवरेस्ट पृथ्वी पर समुद्र तल से सबसे ऊँचा पर्वत है।",
@@ -282,6 +489,22 @@ HI_SENTENCES = {
         "हृदय शिराओं और धमनियों के विशाल जाल से रक्त को पंप करता है।",
         "भारत का राष्ट्रीय पक्षी मोर अपनी सुंदरता के लिए प्रसिद्ध है।",
         "गंगा भारत की सबसे पवित्र और लंबी नदियों में से एक है।",
+        "चंद्रमा समुद्र में ज्वार भाटा के उतार चढ़ाव को नियंत्रित करता है।",
+        "शहद कभी खराब नहीं होता और हजारों वर्ष तक टिक सकता है।",
+    ],
+    "current_affairs": [
+        "डिजिटल भुगतान अब देशभर में रोज़मर्रा के जीवन का हिस्सा बन गया है।",
+        "नवीकरणीय ऊर्जा परियोजनाएँ कई राज्यों में तेजी से बढ़ रही हैं।",
+        "अंतरिक्ष अभियान युवा छात्रों को विज्ञान पढ़ने के लिए प्रेरित करते हैं।",
+        "नए एक्सप्रेसवे प्रमुख शहरों के बीच यात्रा समय घटा रहे हैं।",
+        "स्टार्ट अप हर वर्ष नए रोजगार और साहसी विचार पैदा कर रहे हैं।",
+        "स्वच्छ जल और स्वच्छता हर गाँव के लिए महत्वपूर्ण लक्ष्य हैं।",
+        "खेल उपलब्धियाँ पूरे देश में गर्व और एकता लाती हैं।",
+        "जलवायु परिवर्तन के प्रति जागरूकता छात्रों और नागरिकों में बढ़ रही है।",
+        "ऑनलाइन शिक्षा सबसे दूरदराज के क्षेत्रों तक पहुँच गई है।",
+        "वित्तीय साक्षरता परिवारों को अपनी बचत की समझदारी से योजना बनाने में मदद करती है।",
+        "स्वास्थ्य सेवाएँ छोटे शहरों और जिलों तक फैल रही हैं।",
+        "तकनीक सरकारी सेवाओं को तेज और अधिक पारदर्शी बना रही है।",
     ],
     "typing_practice": [
         "अपनी अंगुलियों को होम रो पर रखें और कलाई को शिथिल रखें।",
@@ -294,6 +517,8 @@ HI_SENTENCES = {
         "आगे के शब्दों पर ध्यान दें और एक स्थिर लय को मार्गदर्शक बनने दें।",
         "पहले शुद्धता और गति धैर्य के साथ स्वयं ही आ जाएगी।",
         "लंबी टाइपिंग परीक्षा शुरू करने से पहले हाथों को धीरे से गर्म करें।",
+        "कोहनियाँ पास रखें और अंगुलियों को कुंजियों पर मोड़ कर रखें।",
+        "शांत कमरा और स्पष्ट मन अभ्यास को कहीं अधिक प्रभावी बनाते हैं।",
     ],
 }
 
@@ -305,7 +530,8 @@ HI_WORDS = (
     "कानून नगर समुदाय नाम टीम मिनट विचार शरीर सूचना माता पिता चेहरा स्तर कार्यालय "
     "द्वार स्वास्थ्य व्यक्ति कला इतिहास परिणाम परिवर्तन सुबह कारण शोध लड़की पल वायु "
     "शिक्षक बल शिक्षा मूल्य कागज प्रकाश मेज संगीत सड़क नदी बगीचा बाजार खिड़की पत्र "
-    "भूमि भविष्य ऋतु प्रकृति ईमानदार बहादुर उज्ज्वल सरल मजबूत शांत प्रसन्न आधुनिक"
+    "भूमि भविष्य ऋतु प्रकृति ईमानदार बहादुर उज्ज्वल सरल मजबूत शांत प्रसन्न आधुनिक "
+    "उत्तर अवसर पाठ्यक्रम रचना प्रयास वृद्धि आय सूचना नीति गुणवत्ता स्रोत लक्ष्य गाँव मौसम"
 ).split()
 
 
@@ -316,9 +542,19 @@ HI_WORDS = (
 def _compose_paragraph(rng, sentences, difficulty):
     low, high = SENTENCES_PER_DIFFICULTY[difficulty]
     count = rng.randint(low, high)
+
     pool = sentences[:]
     rng.shuffle(pool)
-    chosen = pool[:count]
+
+    chosen = []
+    # Fill up to ``count`` sentences, reshuffling the pool when exhausted so we
+    # can build the long "hard" paragraphs without index errors.
+    while len(chosen) < count:
+        if not pool:
+            pool = sentences[:]
+            rng.shuffle(pool)
+        chosen.append(pool.pop())
+
     return " ".join(chosen)
 
 
@@ -332,7 +568,7 @@ def _word_count(text):
 
 
 def build_entries():
-    """Return a deterministic list of paragraph dicts (400 total)."""
+    """Return a deterministic list of paragraph dicts (2000 total)."""
     rng = random.Random(20240601)
     entries = []
     seen = set()
@@ -353,13 +589,13 @@ def build_entries():
         })
         return True
 
-    # ---- Paragraphs: 100 English + 100 Hindi ----
+    # ---- Paragraphs: 500 English + 500 Hindi ----
     for language, banks in (("english", EN_SENTENCES), ("hindi", HI_SENTENCES)):
         produced = 0
         guard = 0
         di = 0
         ci = 0
-        while produced < 100 and guard < 5000:
+        while produced < PARAGRAPHS_PER_LANGUAGE and guard < 200000:
             guard += 1
             category = PARAGRAPH_CATEGORIES[ci % len(PARAGRAPH_CATEGORIES)]
             difficulty = DIFFICULTIES[di % len(DIFFICULTIES)]
@@ -369,12 +605,12 @@ def build_entries():
                 ci += 1
                 di += 1
 
-    # ---- Random words: 100 English + 100 Hindi ----
+    # ---- Random words: 500 English + 500 Hindi ----
     for language, bank in (("english", EN_WORDS), ("hindi", HI_WORDS)):
         produced = 0
         guard = 0
         di = 0
-        while produced < 100 and guard < 5000:
+        while produced < WORDSETS_PER_LANGUAGE and guard < 200000:
             guard += 1
             difficulty = DIFFICULTIES[di % len(DIFFICULTIES)]
             content = _compose_words(rng, bank, difficulty)

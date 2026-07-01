@@ -47,6 +47,19 @@ class User(UserMixin, db.Model):
         nullable=False
     )
 
+    # Account status — admins can suspend/activate accounts.
+    is_active = db.Column(
+        db.Boolean,
+        default=True,
+        nullable=False
+    )
+
+    # Timestamp of the most recent successful login.
+    last_login = db.Column(
+        db.DateTime,
+        nullable=True
+    )
+
     avatar = db.Column(
         db.String(255),
         nullable=True

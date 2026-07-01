@@ -4,5 +4,6 @@
     <a href="{{ url_for('admin.results') }}" class="{{ 'active' if active == 'results' }}"><i class="fa-solid fa-chart-column"></i> Results</a>
     <a href="{{ url_for('admin.english_paragraphs') }}" class="{{ 'active' if active == 'english' }}"><i class="fa-solid fa-a"></i> English</a>
     <a href="{{ url_for('admin.hindi_paragraphs') }}" class="{{ 'active' if active == 'hindi' }}"><i class="fa-solid fa-om"></i> Hindi</a>
+    <a href="{{ url_for('downloads.manage') }}" class="{{ 'active' if active == 'downloads' }}"><i class="fa-solid fa-cloud-arrow-down"></i> Downloads</a>
     <a href="{{ url_for('admin.settings') }}" class="{{ 'active' if active == 'settings' }}"><i class="fa-solid fa-sliders"></i> Settings</a>
 </nav>

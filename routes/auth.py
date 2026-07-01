@@ -79,9 +79,14 @@ def login():
 
         if user and check_password_hash(user.password, form.password.data):
 
-            login_user(user)
+            if not user.is_active:
+                flash("Your account has been suspended. Please contact an administrator.", "danger")
+                return render_template("pages/login.html", form=form)
 
-            
+            user.last_login = datetime.utcnow()
+            db.session.commit()
+
+            login_user(user)
 
             return redirect(url_for("dashboard.dashboard_page"))
 

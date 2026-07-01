@@ -1,0 +1,134 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Custom Practice — TypeMaster India{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
+
+<div class="app-page">
+    <div class="container">
+
+        <div class="page-head fade-up">
+            <div>
+                <span class="eyebrow"><i class="fa-solid fa-wand-magic-sparkles"></i> Your Content</span>
+                <h1 class="ph-title">Custom Practice</h1>
+                <p class="ph-sub">Paste text, upload a file, or scan an image — then practice on your own material.</p>
+            </div>
+        </div>
+
+        <div class="row g-4">
+
+            <!-- ============ EDITOR ============ -->
+            <div class="col-lg-7">
+                <div class="panel panel-pad-lg fade-up">
+
+                    <div class="cp-tabs" role="tablist">
+                        <button class="cp-tab active" type="button" data-source="paste">
+                            <i class="fa-solid fa-paste"></i> Paste Text
+                        </button>
+                        <button class="cp-tab" type="button" data-source="file">
+                            <i class="fa-solid fa-file-arrow-up"></i> Upload File
+                        </button>
+                        <button class="cp-tab" type="button" data-source="ocr">
+                            <i class="fa-solid fa-image"></i> OCR Image
+                        </button>
+                    </div>
+
+                    <!-- Upload zone (file + ocr) -->
+                    <div class="cp-uploader" id="cpUploader" hidden>
+                        <input type="file" id="cpFileInput" hidden>
+                        <div class="cp-drop" id="cpDrop">
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                            <p id="cpDropLabel">Click to choose a file or drag &amp; drop</p>
+                            <small id="cpDropHint">TXT, DOCX, PDF, CSV, XLSX, JSON</small>
+                        </div>
+                        {% if not ocr_ready %}
+                        <div class="cp-ocr-warn" id="cpOcrWarn" hidden>
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                            Image OCR is not available on this server. You can still paste text or upload documents.
+                        </div>
+                        {% endif %}
+                        <div class="cp-status" id="cpStatus" hidden></div>
+                    </div>
+
+                    <label class="form-label mt-2">Text to practice</label>
+                    <textarea id="cpContent" class="form-control cp-textarea" rows="10"
+                              placeholder="Paste or type a paragraph here..."></textarea>
+
+                    <div class="cp-meta">
+                        <span><i class="fa-solid fa-font"></i> <span id="cpWordCount">0</span> words</span>
+                        <div class="cp-inline-fields">
+                            <input type="text" id="cpTitle" class="form-control form-control-sm"
+                                   placeholder="Title (for saving)">
+                            <select id="cpLanguage" class="form-select form-select-sm">
+                                <option value="english">English</option>
+                                <option value="hindi">Hindi</option>
+                            </select>
+                            <select id="cpDifficulty" class="form-select form-select-sm">
+                                <option value="easy">Easy</option>
+                                <option value="medium" selected>Medium</option>
+                                <option value="hard">Hard</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="cp-actions">
+                        <button id="cpStartBtn" class="btn btn-brand" type="button">
+                            <i class="fa-solid fa-play me-2"></i>Start Practice
+                        </button>
+                        <button id="cpSaveBtn" class="btn btn-ghost" type="button">
+                            <i class="fa-solid fa-floppy-disk me-2"></i>Save Paragraph
+                        </button>
+                        <button id="cpClearBtn" class="btn btn-ghost" type="button">
+                            <i class="fa-solid fa-eraser me-2"></i>Clear
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- ============ LIBRARY ============ -->
+            <div class="col-lg-5">
+                <div class="panel panel-pad-lg fade-up">
+                    <div class="cp-lib-tabs" role="tablist">
+                        <button class="cp-lib-tab active" type="button" data-view="saved">
+                            <i class="fa-solid fa-list"></i> Saved
+                        </button>
+                        <button class="cp-lib-tab" type="button" data-view="recent">
+                            <i class="fa-solid fa-clock-rotate-left"></i> Recent
+                        </button>
+                        <button class="cp-lib-tab" type="button" data-view="favorites">
+                            <i class="fa-solid fa-star"></i> Favorites
+                        </button>
+                    </div>
+
+                    <div id="cpLibrary" class="cp-library">
+                        <p class="text-muted cp-empty">Loading your paragraphs...</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    window.CUSTOM_PRACTICE = {
+        ocrReady: {{ 'true' if ocr_ready else 'false' }},
+        urls: {
+            extract: "{{ url_for('custom.extract') }}",
+            save: "{{ url_for('custom.save') }}",
+            list: "{{ url_for('custom.list_paragraphs') }}",
+            start: "{{ url_for('custom.practice_start') }}",
+            rename: "/custom/rename/",
+            edit: "/custom/edit/",
+            del: "/custom/delete/",
+            favorite: "/custom/favorite/",
+            practice: "/custom/practice/"
+        }
+    };
+</script>
+<script src="{{ url_for('static', filename='js/custom.js') }}"></script>
+
+{% endblock %}
