@@ -677,7 +677,7 @@ def settings():
             updates = {
                 "org_name": request.form.get("org_name", "TypeMaster India").strip(),
                 "founder_name": request.form.get("founder_name", "").strip(),
-                "founder_title": request.form.get("founder_title", "Founder").strip(),
+                "founder_title": request.form.get("founder_title", "Founder & CEO").strip(),
                 "primary_color": request.form.get("primary_color", "#6366f1").strip(),
                 "accent_color": request.form.get("accent_color", "#22d3ee").strip(),
             }

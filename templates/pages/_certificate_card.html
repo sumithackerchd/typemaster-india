@@ -21,7 +21,16 @@
         --cert-heading-font: {{ _heading_font }};
     }
     #certRoot .outer-border { border-color: var(--cert-border-color) !important; }
-    #certRoot .gold-ribbon { background: linear-gradient(135deg, var(--cert-gold-color), color-mix(in srgb, var(--cert-gold-color) 60%, #000)) !important; }
+    /* Keep the ribbon gradient identical to certificate.css + the PDF: a
+       horizontal dark→light→dark gold sweep with an embossed sheen. */
+    #certRoot .gold-ribbon {
+        background: linear-gradient(90deg,
+            color-mix(in srgb, var(--cert-gold-color) 55%, #000),
+            var(--cert-gold-color),
+            color-mix(in srgb, var(--cert-gold-color) 40%, #fff),
+            var(--cert-gold-color),
+            color-mix(in srgb, var(--cert-gold-color) 55%, #000)) !important;
+    }
     #certRoot .certificate-header h1 { font-family: var(--cert-heading-font) !important; color: var(--cert-border-color) !important; }
     #certRoot .gold-ribbon span { font-family: var(--cert-heading-font) !important; }
     #certRoot .stat-box h4 { color: var(--cert-border-color) !important; }
@@ -33,7 +42,7 @@
         display: grid;
         grid-template-columns: 1fr auto 1fr;
         align-items: end;
-        gap: 24px;
+        gap: 40px;
     }
     #certRoot .certificate-meta { justify-self: start; text-align: left; }
     #certRoot .certificate-qr { justify-self: center; text-align: center; }
@@ -95,11 +104,11 @@
     </section>
 
     <section class="stats-row">
-        <div class="stat-box"><div class="icon">🏁</div><span>GROSS WPM</span><h4>{{ result.gross_wpm }}</h4></div>
-        <div class="stat-box"><div class="icon">⚡</div><span>NET WPM</span><h4>{{ result.net_wpm }}</h4></div>
-        <div class="stat-box"><div class="icon">⌨️</div><span>CPM</span><h4>{{ result.cpm }}</h4></div>
-        <div class="stat-box"><div class="icon">🎯</div><span>ACCURACY</span><h4>{{ result.accuracy }}%</h4></div>
-        <div class="stat-box"><div class="icon">❗</div><span>ERRORS</span><h4>{{ result.errors }}</h4></div>
+        <div class="stat-box"><span>GROSS WPM</span><h4>{{ result.gross_wpm }}</h4></div>
+        <div class="stat-box"><span>NET WPM</span><h4>{{ result.net_wpm }}</h4></div>
+        <div class="stat-box"><span>CPM</span><h4>{{ result.cpm }}</h4></div>
+        <div class="stat-box"><span>ACCURACY</span><h4>{{ result.accuracy }}%</h4></div>
+        <div class="stat-box"><span>ERRORS</span><h4>{{ result.errors }}</h4></div>
     </section>
 
     <div class="certificate-metaline">

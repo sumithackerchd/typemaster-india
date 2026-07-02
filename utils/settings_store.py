@@ -26,7 +26,7 @@ DEFAULT_SETTINGS = {
     # Branding
     "org_name": "TypeMaster India",
     "founder_name": "Sumit Goswami",
-    "founder_title": "Founder",
+    "founder_title": "Founder & CEO",
     "primary_color": "#6366f1",
     "accent_color": "#22d3ee",
     # Certificate

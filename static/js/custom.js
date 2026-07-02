@@ -16,7 +16,7 @@
     var dropLabel = document.getElementById("cpDropLabel");
     var dropHint = document.getElementById("cpDropHint");
     var fileInput = document.getElementById("cpFileInput");
-    var ocrWarn = document.getElementById("cpOcrWarn");
+    var ocrStatus = document.getElementById("cpOcrStatus");
     var statusEl = document.getElementById("cpStatus");
 
     var contentEl = document.getElementById("cpContent");
@@ -92,12 +92,13 @@
                 dropLabel.innerText = "Click to choose an image or drag & drop";
                 dropHint.innerText = "PNG, JPG, JPEG, WEBP";
                 fileInput.accept = ".png,.jpg,.jpeg,.webp";
-                if (!CFG.ocrReady && ocrWarn) { ocrWarn.hidden = false; }
+                // Always surface the OCR status (green when ready, guide when not).
+                if (ocrStatus) { ocrStatus.hidden = false; }
             } else {
                 dropLabel.innerText = "Click to choose a file or drag & drop";
                 dropHint.innerText = "TXT, DOCX, PDF, CSV, XLSX, JSON";
                 fileInput.accept = ".txt,.docx,.pdf,.csv,.xlsx,.xls,.json";
-                if (ocrWarn) { ocrWarn.hidden = true; }
+                if (ocrStatus) { ocrStatus.hidden = true; }
             }
         }
     }

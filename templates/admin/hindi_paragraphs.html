@@ -48,6 +48,10 @@
 <div class="cp-status" id="importStatus" hidden></div>
 <div class="cp-progress" id="importProgress" hidden><span></span></div>
 
+<div class="admin-fade-in">
+    {% include 'partials/_ocr_status.html' with context %}
+</div>
+
 <div class="pm-add-panel admin-fade-in d1">
     <label class="form-label">Add new paragraph</label>
     <textarea id="newParagraph" class="form-control hindi-input mb-3" rows="3" placeholder="Type or paste Hindi paragraph..."></textarea>

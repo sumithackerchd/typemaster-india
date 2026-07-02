@@ -1,0 +1,68 @@
+{#
+  Reusable OCR status indicator.
+  Pass `ocr_ready` (bool) into the include context, e.g.:
+      {% include 'partials/_ocr_status.html' with context %}
+  Renders a green "active" badge when Tesseract is available, or an amber
+  panel with a copy-ready installation guide when it isn't.
+#}
+{% set _ocr_ready = ocr_ready if ocr_ready is defined else ocr_ok %}
+
+<div class="ocr-status {{ 'ocr-status--ok' if _ocr_ready else 'ocr-status--off' }}">
+  {% if _ocr_ready %}
+    <div class="ocr-status__head">
+      <span class="ocr-status__dot" aria-hidden="true"></span>
+      <i class="fa-solid fa-circle-check"></i>
+      <strong>Image OCR is active</strong>
+    </div>
+    <p class="ocr-status__msg">
+      Tesseract is installed and ready. You can scan images (JPG, PNG, WEBP) and
+      scanned PDFs, and the text will be extracted automatically.
+    </p>
+  {% else %}
+    <div class="ocr-status__head">
+      <span class="ocr-status__dot" aria-hidden="true"></span>
+      <i class="fa-solid fa-triangle-exclamation"></i>
+      <strong>Image OCR is not available on this server</strong>
+    </div>
+    <p class="ocr-status__msg">
+      You can still paste text or upload TXT, DOCX, PDF, CSV, XLSX or JSON files.
+      To enable scanning images and scanned PDFs, install the Tesseract OCR engine
+      (and Poppler for scanned PDFs) on the server, then restart the app.
+    </p>
+
+    <details class="ocr-status__guide">
+      <summary><i class="fa-solid fa-book"></i> Installation guide</summary>
+
+      <div class="ocr-guide">
+        <div class="ocr-guide__block">
+          <span class="ocr-guide__os">Ubuntu / Debian</span>
+          <pre><code>sudo apt-get update
+sudo apt-get install -y tesseract-ocr tesseract-ocr-hin poppler-utils</code></pre>
+        </div>
+
+        <div class="ocr-guide__block">
+          <span class="ocr-guide__os">macOS (Homebrew)</span>
+          <pre><code>brew install tesseract tesseract-lang poppler</code></pre>
+        </div>
+
+        <div class="ocr-guide__block">
+          <span class="ocr-guide__os">Windows</span>
+          <pre><code># 1. Install Tesseract (UB Mannheim build):
+#    https://github.com/UB-Mannheim/tesseract/wiki
+# 2. Install Poppler and add its /bin to PATH:
+#    https://github.com/oschwartz10612/poppler-windows/releases
+# 3. Add Tesseract to PATH, or set in your environment:
+#    TESSERACT_CMD=C:\Program Files\Tesseract-OCR\tesseract.exe</code></pre>
+        </div>
+
+        <p class="ocr-guide__note">
+          <i class="fa-solid fa-circle-info"></i>
+          The Python packages (<code>pytesseract</code>, <code>pdf2image</code>,
+          <code>opencv-python-headless</code>, <code>Pillow</code>) are already
+          included in <code>requirements.txt</code> — only the system binaries
+          above are needed. Restart the server after installing.
+        </p>
+      </div>
+    </details>
+  {% endif %}
+</div>

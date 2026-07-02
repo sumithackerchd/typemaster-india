@@ -5,7 +5,7 @@
     "maintenance_mode": false,
     "org_name": "TypeMaster India",
     "founder_name": "Sumit Goswami",
-    "founder_title": "Founder",
+    "founder_title": "Founder & CEO",
     "primary_color": "#6366f1",
     "accent_color": "#1bc9e4",
     "signature_path": "images/signature.png",
@@ -19,7 +19,7 @@
     "cert_watermark_text": "TYPEMASTER INDIA",
     "cert_seal_enabled": true,
     "cert_logo_enabled": true,
-    "cert_border_color": "#0d42a5",
+    "cert_border_color": "#0d3b8e",
     "cert_gold_color": "#c9a227",
     "cert_heading_font": "Cinzel",
     "cert_qr_position": "center",
@@ -34,5 +34,5 @@
     "max_upload_mb": 50,
     "require_email_verify": false,
     "session_timeout_minutes": 0,
-    "updated_at": "2026-07-01 19:46:32.717286"
+    "updated_at": "2026-07-01 18:52:19.766238"
 }

@@ -43,12 +43,9 @@
                             <p id="cpDropLabel">Click to choose a file or drag &amp; drop</p>
                             <small id="cpDropHint">TXT, DOCX, PDF, CSV, XLSX, JSON</small>
                         </div>
-                        {% if not ocr_ready %}
-                        <div class="cp-ocr-warn" id="cpOcrWarn" hidden>
-                            <i class="fa-solid fa-triangle-exclamation"></i>
-                            Image OCR is not available on this server. You can still paste text or upload documents.
+                        <div class="cp-ocr-status" id="cpOcrStatus" hidden>
+                            {% include 'partials/_ocr_status.html' with context %}
                         </div>
-                        {% endif %}
                         <div class="cp-status" id="cpStatus" hidden></div>
                     </div>
 
